@@ -1,0 +1,136 @@
+// @ts-nocheck
+
+import { Badge, Box, Icon } from "@chakra-ui/react";
+import React, { forwardRef, memo, useContext, useEffect, useRef } from "react";
+import {
+  TbRepeat,
+  TbRepeatOff,
+  TbRepeatOnce,
+  TbPlayerPlayFilled,
+  TbPlayerPauseFilled,
+  TbArrowsShuffle,
+  TbPlayerTrackNextFilled,
+  TbPlayerTrackPrevFilled,
+  TbArrowsRight,
+} from "react-icons/tb";
+import { PlayerButton } from "../buttons";
+import { TogglePlay } from "../../../wailsjs/go/player/Player";
+import { usePlayerStore } from "@/store";
+// import { PlayerContext } from "./PlayerContextProvider";
+// import { GlobalContext } from "../../store/GlobalContextProvider";
+
+const Controls = () => {
+  const paused = usePlayerStore((state) => state.paused);
+  const togglePaused = usePlayerStore((state) => state.togglePaused);
+  const loaded = usePlayerStore((state) => state.loaded);
+  const incrementPosition = usePlayerStore((state) => state.incrementPosition);
+  const setPosition = usePlayerStore((state) => state.setPosition);
+  const position = usePlayerStore((state) => state.position);
+  const playbackRate = usePlayerStore((state) => state.speed);
+  const time = useRef(null);
+  const handleTimeline = () => {
+    if (time.current) {
+      clearInterval(time.current);
+    }
+    time.current = setInterval(() => {
+      incrementPosition();
+    }, 1000 / playbackRate);
+  };
+  const { handlePlay } = {
+    handlePlay: () => {
+      TogglePlay().then((res) => {
+        console.log("coming from play", res);
+        if (time.current) {
+          clearInterval(time.current);
+        }
+        if (!res.paused) {
+          console.log("is paused", res.paused);
+          handleTimeline();
+        }
+        togglePaused(res.paused);
+        setPosition(res.position);
+      });
+    },
+  };
+  useEffect(() => {
+    if (!paused && loaded) {
+      handleTimeline();
+    }
+  }, [playbackRate]);
+  const { handleNextPrev, handleShuffle, shuffle, handleLoop, loop, queue } = {
+    handleLoop: () => {},
+    handleShuffle: () => {},
+    handleNextPrev: (val) => {},
+    shuffle: true,
+    loop: 0,
+    queue: { list: [] },
+  };
+
+  const loopVals = [TbRepeatOff, TbRepeat, TbRepeatOnce];
+  return (
+    <Box
+      width={"100%"}
+      display={"flex"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      color={"neutral.400"}
+      my={"4px"}
+    >
+      {/* main */}
+      <Box
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        width={"50%"}
+        px={"18px"}
+      >
+        <PlayerButton
+          action={() => handleLoop()}
+          color={loop === 0 ? "neutral.dark.300" : "brand.500"}
+          _hover={{ bg: "none" }}
+        >
+          <Icon as={loopVals[loop]} boxSize={4} />
+        </PlayerButton>
+        <PlayerButton
+          action={() => handleNextPrev("prev")}
+          disabled={queue.list.length < 1}
+          color={"neutral.dark.300"}
+          _hover={{ bg: "none", color: "neutral.dark.400" }}
+        >
+          <Icon as={TbPlayerTrackPrevFilled} boxSize={4} />
+        </PlayerButton>
+        <PlayerButton
+          action={() => handlePlay()}
+          disabled={!loaded}
+          color={"neutral.dark.300"}
+          border={`1px neutral.dark.200 solid`}
+          _hover={{ border: "none", bg: "white", color: "neutral.dark.900" }}
+          primary
+        >
+          <Icon
+            as={paused ? TbPlayerPlayFilled : TbPlayerPauseFilled}
+            boxSize={4}
+          />
+        </PlayerButton>
+
+        <PlayerButton
+          action={() => handleNextPrev("next")}
+          disabled={queue.list.length < 1}
+          color="neutral.dark.300"
+          _hover={{ bg: "none", color: "neutral.dark.400" }}
+        >
+          <Icon as={TbPlayerTrackNextFilled} boxSize={4} />
+        </PlayerButton>
+        <PlayerButton
+          action={async () => await handleShuffle()}
+          _hover={{ bg: "none" }}
+          color={shuffle ? "brand.500" : "neutral.dark.300"}
+        >
+          <Icon as={shuffle ? TbArrowsShuffle : TbArrowsRight} boxSize={4} />
+        </PlayerButton>
+      </Box>
+    </Box>
+  );
+};
+
+export default Controls;

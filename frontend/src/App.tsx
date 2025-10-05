@@ -2,6 +2,9 @@ import { useState } from "react";
 import logo from "./assets/images/logo-universal.png";
 import "./App.css";
 import { Greet } from "../wailsjs/go/main/App";
+import { LoadMusic } from "../wailsjs/go/player/Player";
+import Player from "./features/Player";
+import { Box } from "@chakra-ui/react";
 
 function App() {
   const [resultText, setResultText] = useState(
@@ -16,25 +19,9 @@ function App() {
   }
 
   return (
-    <div id="App">
-      <img src={logo} id="logo" alt="logo" />
-      <div id="result" className="result">
-        {resultText}
-      </div>
-      <div id="input" className="input-box">
-        <input
-          id="name"
-          className="input"
-          onChange={updateName}
-          autoComplete="off"
-          name="input"
-          type="text"
-        />
-        <button className="btn" onClick={greet}>
-          Greet
-        </button>
-      </div>
-    </div>
+    <Box bg={"neutral.dark.900"} id="App">
+      <Player />
+    </Box>
   );
 }
 

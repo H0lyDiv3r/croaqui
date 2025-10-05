@@ -1,0 +1,106 @@
+import { create } from "zustand";
+
+type currentTrack = {
+  artist: string;
+  comment: string;
+  date: string;
+  description: string;
+  title: string;
+};
+interface playerStore {
+  loaded: boolean;
+  paused: boolean;
+  position: number;
+  duration: number;
+  volume: number;
+  muted: boolean;
+  speed: number;
+  currentTrack: currentTrack;
+  setCurrentTrack: (trackInfo: { [key: string]: any }) => void;
+  togglePaused: (paused: boolean) => void;
+  toggleMute: (value: boolean) => void;
+  setLoaded: (loaded: boolean) => void;
+  setDuration: (duration: number) => void;
+  setPosition: (position: number) => void;
+  setVolume: (volume: number) => void;
+  setSpeed: (speed: number) => void;
+  setPlayerStatus: (vals: { [key: string]: any }) => void;
+  incrementPosition: () => void;
+}
+
+export const usePlayerStore = create<playerStore>((set) => ({
+  loaded: false,
+  paused: false,
+  position: 0,
+  duration: 0,
+  volume: 50,
+  muted: false,
+  speed: 1,
+  currentTrack: {
+    artist: "",
+    comment: "",
+    date: "",
+    description: "",
+    title: "",
+  },
+  setCurrentTrack: (trackInfo: { [key: string]: any }) =>
+    set((state) => {
+      console.log("setting track", trackInfo);
+      return {
+        ...state,
+        currentTrack: {
+          artist: trackInfo.artist || "",
+          comment: trackInfo.comment || "",
+          date: trackInfo.date || "",
+          description: trackInfo.description || "",
+          title: trackInfo.title || "",
+        },
+      };
+    }),
+  togglePaused: (paused) =>
+    set((state) => {
+      return { ...state, paused: paused };
+    }),
+  toggleMute: (value: boolean) =>
+    set((state) => {
+      return { ...state, muted: value };
+    }),
+  setLoaded: (loaded) =>
+    set((state) => {
+      return { ...state, loaded };
+    }),
+  setDuration: (duration: number) =>
+    set((state) => {
+      return { ...state, duration };
+    }),
+  setPosition: (position: number) =>
+    set((state) => {
+      console.log("i am here bro", position);
+      return { ...state, position };
+    }),
+  incrementPosition: () =>
+    set((state) => {
+      return { ...state, position: state.position + 1 };
+    }),
+  setVolume: (volume: number) =>
+    set((state) => {
+      return { ...state, volume };
+    }),
+  setSpeed: (speed: number) =>
+    set((state) => {
+      return { ...state, speed };
+    }),
+  setPlayerStatus: (vals: { [key: string]: any }) =>
+    set((state) => {
+      console.log("setting all", vals);
+      return {
+        ...state,
+        paused: vals.paused,
+        position: vals.position,
+        duration: vals.duration,
+        volume: vals.volume,
+        muted: vals.muted,
+        speed: vals.speed,
+      };
+    }),
+}));

@@ -1,0 +1,77 @@
+.volume input[type="range"] {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+    /* creating a custom design */
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 0%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.volume input[type="range"] {
+    /* ... */
+
+    /*  styling the track  */
+    height: 15px;
+    background: rgba(0, 0, 0, 0);
+}
+
+.volume input[type="range"]::-webkit-slider-runnable-track {
+    height: 15px;
+    background: rgba(0, 0, 0, 0);
+}
+
+/* Track: Mozilla Firefox */
+.volume input[type="range"]::-moz-range-track {
+    height: 15px;
+    background: rgba(0, 0, 0, 0);
+}
+
+.volume input[type="range"]::-webkit-slider-thumb {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+    /* creating a custom design */
+    height: 15px;
+    width: 5px;
+    background-color: #d3d3d3;
+    border-radius: 0%;
+    border: 0px solid rgba(244, 63, 94, 1);
+}
+
+.volume input[type="range"]::-moz-range-thumb {
+    height: 15px;
+    width: 5px;
+    background-color: #d3d3d3;
+    border-radius: 50%;
+    border: 0px solid rgba(244, 63, 94, 1);
+}
+
+.volume input[type="range"]::-webkit-slider-thumb {
+    /*  ...  */
+    /*  slider progress trick  */
+    box-shadow: -4000px 0 0 4000px #d3d3d3;
+    border-radius: 0%;
+}
+
+/* Thumb: Firefox */
+.volume input[type="range"]::-moz-range-thumb {
+    /*  ...  */
+    /*  slider progress trick  */
+    box-shadow: -4000px 0 0 4000px #d3d3d3;
+    border-radius: 0%;
+}
+.volume eprogress::-webkit-progress-bar {
+    background: none;
+    padding: none;
+    margin: none;
+    border: none;
+}
+.volume progress::-webkit-progress-value {
+    background: red;
+}
