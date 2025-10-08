@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+	"myproject/pkgs/dir"
 	"myproject/pkgs/player"
 
 	"github.com/wailsapp/wails/v2"
@@ -17,10 +18,11 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 	player := player.MPV()
+	dir := dir.NewDirectory()
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "myproject",
+		Title:  "Croaky",
 		Width:  1024,
 		Height: 768,
 		AssetServer: &assetserver.Options{
@@ -30,11 +32,13 @@ func main() {
 		OnStartup: func(ctx context.Context) {
 			app.startup(ctx)
 			player.StartUp(ctx)
+			dir.StartUp(ctx)
 
 		},
 		Bind: []interface{}{
 			app,
 			player,
+			dir,
 		},
 	})
 

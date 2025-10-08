@@ -8,6 +8,7 @@ type currentTrack = {
   title: string;
 };
 interface playerStore {
+  audioPath: string;
   loaded: boolean;
   paused: boolean;
   position: number;
@@ -15,6 +16,7 @@ interface playerStore {
   volume: number;
   muted: boolean;
   speed: number;
+  setAudioPath: (audioPath: string) => void;
   currentTrack: currentTrack;
   setCurrentTrack: (trackInfo: { [key: string]: any }) => void;
   togglePaused: (paused: boolean) => void;
@@ -29,6 +31,7 @@ interface playerStore {
 }
 
 export const usePlayerStore = create<playerStore>((set) => ({
+  audioPath: "",
   loaded: false,
   paused: false,
   position: 0,
@@ -43,6 +46,10 @@ export const usePlayerStore = create<playerStore>((set) => ({
     description: "",
     title: "",
   },
+  setAudioPath: (audioPath: string) =>
+    set((state) => {
+      return { ...state, audioPath };
+    }),
   setCurrentTrack: (trackInfo: { [key: string]: any }) =>
     set((state) => {
       console.log("setting track", trackInfo);

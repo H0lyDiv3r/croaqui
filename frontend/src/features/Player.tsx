@@ -54,6 +54,7 @@ const Player = () => {
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const audioPath = usePlayerStore((state) => state.audioPath);
   // const [showToast] = useShowToast();
 
   // const handleSetFavorite = useCallback(() => {
@@ -89,7 +90,7 @@ const Player = () => {
   // }, [favorite, currentTrack, showToast]);
 
   useEffect(() => {
-    LoadMusic("/home/yuri/Data/projects/go-player/mpv-test/tst.m4a")
+    LoadMusic(audioPath)
       .then((res) => {
         console.log("loaded loaded loaded", res);
         setLoaded(res.loaded);
@@ -134,7 +135,7 @@ const Player = () => {
     //       setFavorite(res.data);
     //     });
     // }
-  }, []);
+  }, [audioPath]);
 
   return (
     <Box
