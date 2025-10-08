@@ -1,12 +1,12 @@
-//@ts-nocheck
 import { Box, Icon, Input, Text } from "@chakra-ui/react";
 import React, { forwardRef, memo, useContext } from "react";
 import { FaVolumeLow, FaVolumeXmark } from "react-icons/fa6";
 import "./volume.css";
 import { SetVolume, ToggleMute } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
+import { ChakraIcon } from "../ChackraIcon";
 
-const VolumeControl = () => {
+const VolumeControl: React.FC = () => {
   const setVolumeState = usePlayerStore((state) => state.setVolume);
   const toggleMute = usePlayerStore((state) => state.toggleMute);
   const muted = usePlayerStore((state) => state.muted);
@@ -16,19 +16,19 @@ const VolumeControl = () => {
       console.log("where are we", Number(e.target.value));
       SetVolume(Number(e.target.value)).then((res) => {
         console.log("setting volume", res);
-        setVolumeState(res.volume);
+        setVolumeState(res.data.volume);
       });
     },
     handleMute: () => {
       ToggleMute().then((res) => {
-        toggleMute(res.muted);
+        toggleMute(res.data.muted);
       });
     },
   };
   return (
     <Box display={"flex"} alignItems={"center"} color={"neutral.dark.200"}>
-      <Icon
-        as={muted ? FaVolumeXmark : FaVolumeLow}
+      <ChakraIcon
+        icon={muted ? FaVolumeXmark : FaVolumeLow}
         onClick={() => handleMute()}
         marginRight={"2px"}
         boxSize={4}

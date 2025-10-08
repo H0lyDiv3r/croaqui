@@ -10,6 +10,18 @@ import (
 	"slices"
 )
 
+type DirectoryContents struct {
+	Content []string `json:"content"`
+}
+
+type AudioFiles struct {
+	AudioFiles []string `json:"audio_files"`
+}
+
+type ReturnType struct {
+	Data interface{} `json:"data"`
+}
+
 type Directory struct {
 	ctx context.Context
 }
@@ -22,7 +34,7 @@ func (d *Directory) StartUp(ctx context.Context) {
 	d.ctx = ctx
 }
 
-func (d *Directory) GetContents(path string) (interface{}, error) {
+func (d *Directory) GetContents(path string) (*ReturnType, error) {
 	contents, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -33,12 +45,10 @@ func (d *Directory) GetContents(path string) (interface{}, error) {
 			dirs = append(dirs, content.Name())
 		}
 	}
-	return struct {
-		Content []string `json:"content"`
-	}{Content: dirs}, nil
+	return &ReturnType{Data: DirectoryContents{Content: dirs}}, nil
 }
 
-func (d *Directory) GetAudio(path string) (interface{}, error) {
+func (d *Directory) GetAudio(path string) (*ReturnType, error) {
 	var audioFiles []string
 	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 		// if err != nil {
@@ -61,9 +71,7 @@ func (d *Directory) GetAudio(path string) (interface{}, error) {
 		log.Println(err)
 		return nil, err
 	}
-	return struct {
-		AudioFiles []string `json:"audio_files"`
-	}{AudioFiles: audioFiles}, nil
+	return &ReturnType{Data: AudioFiles{AudioFiles: audioFiles}}, nil
 }
 func isAudioFile(path string) bool {
 	MPVSupportedFormats := []string{

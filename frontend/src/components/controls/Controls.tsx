@@ -1,6 +1,4 @@
-// @ts-nocheck
-
-import { Badge, Box, Icon } from "@chakra-ui/react";
+import { Badge, Box, ChakraProvider, Icon } from "@chakra-ui/react";
 import React, { forwardRef, memo, useContext, useEffect, useRef } from "react";
 import {
   TbRepeat,
@@ -16,10 +14,11 @@ import {
 import { PlayerButton } from "../buttons";
 import { TogglePlay } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
+import { ChakraIcon } from "../ChackraIcon";
 // import { PlayerContext } from "./PlayerContextProvider";
 // import { GlobalContext } from "../../store/GlobalContextProvider";
 
-const Controls = () => {
+const Controls: React.FC = () => {
   const paused = usePlayerStore((state) => state.paused);
   const togglePaused = usePlayerStore((state) => state.togglePaused);
   const loaded = usePlayerStore((state) => state.loaded);
@@ -27,7 +26,7 @@ const Controls = () => {
   const setPosition = usePlayerStore((state) => state.setPosition);
   const position = usePlayerStore((state) => state.position);
   const playbackRate = usePlayerStore((state) => state.speed);
-  const time = useRef(null);
+  const time = useRef<NodeJS.Timeout | null>(null);
   const handleTimeline = () => {
     if (time.current) {
       clearInterval(time.current);
@@ -43,24 +42,31 @@ const Controls = () => {
         if (time.current) {
           clearInterval(time.current);
         }
-        if (!res.paused) {
-          console.log("is paused", res.paused);
+        if (!res.data.paused) {
+          console.log("is paused", res.data.paused);
           handleTimeline();
         }
-        togglePaused(res.paused);
-        setPosition(res.position);
+        togglePaused(res.data.paused);
+        setPosition(res.data.position);
       });
     },
   };
   useEffect(() => {
+    if (paused && time.current) {
+      clearInterval(time.current);
+    }
     if (!paused && loaded) {
       handleTimeline();
+      console.log("i am here bro handling timelie", paused, loaded);
     }
-  }, [playbackRate]);
+  }, [playbackRate, paused, loaded]);
+  // useEffect(() => {
+  //   handleTimeline();
+  // }, [loaded]);
   const { handleNextPrev, handleShuffle, shuffle, handleLoop, loop, queue } = {
     handleLoop: () => {},
     handleShuffle: () => {},
-    handleNextPrev: (val) => {},
+    handleNextPrev: (val: string) => {},
     shuffle: true,
     loop: 0,
     queue: { list: [] },
@@ -89,7 +95,7 @@ const Controls = () => {
           color={loop === 0 ? "neutral.dark.300" : "brand.500"}
           _hover={{ bg: "none" }}
         >
-          <Icon as={loopVals[loop]} boxSize={4} />
+          <ChakraIcon icon={loopVals[loop]} boxSize={4} />
         </PlayerButton>
         <PlayerButton
           action={() => handleNextPrev("prev")}
@@ -97,7 +103,7 @@ const Controls = () => {
           color={"neutral.dark.300"}
           _hover={{ bg: "none", color: "neutral.dark.400" }}
         >
-          <Icon as={TbPlayerTrackPrevFilled} boxSize={4} />
+          <ChakraIcon icon={TbPlayerTrackPrevFilled} boxSize={4} />
         </PlayerButton>
         <PlayerButton
           action={() => handlePlay()}
@@ -107,8 +113,8 @@ const Controls = () => {
           _hover={{ border: "none", bg: "white", color: "neutral.dark.900" }}
           primary
         >
-          <Icon
-            as={paused ? TbPlayerPlayFilled : TbPlayerPauseFilled}
+          <ChakraIcon
+            icon={paused ? TbPlayerPlayFilled : TbPlayerPauseFilled}
             boxSize={4}
           />
         </PlayerButton>
@@ -119,14 +125,17 @@ const Controls = () => {
           color="neutral.dark.300"
           _hover={{ bg: "none", color: "neutral.dark.400" }}
         >
-          <Icon as={TbPlayerTrackNextFilled} boxSize={4} />
+          <ChakraIcon icon={TbPlayerTrackNextFilled} boxSize={4} />
         </PlayerButton>
         <PlayerButton
-          action={async () => await handleShuffle()}
+          action={async () => handleShuffle()}
           _hover={{ bg: "none" }}
           color={shuffle ? "brand.500" : "neutral.dark.300"}
         >
-          <Icon as={shuffle ? TbArrowsShuffle : TbArrowsRight} boxSize={4} />
+          <ChakraIcon
+            icon={shuffle ? TbArrowsShuffle : TbArrowsRight}
+            boxSize={4}
+          />
         </PlayerButton>
       </Box>
     </Box>

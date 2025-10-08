@@ -1,11 +1,11 @@
 //@ts-nocheck
-
 import React, { forwardRef, memo, useContext, useState } from "react";
 import { Menu, MenuItem, Box, Icon, Button, Portal } from "@chakra-ui/react";
 // import { PlayerContext } from "./PlayerContextProvider";
 import { IoSpeedometer } from "react-icons/io5";
 import { SetSpeed } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
+import { ChakraIcon } from "../ChackraIcon";
 // import colors from "../../themes/colors";
 const speed = [
   {
@@ -30,14 +30,14 @@ const speed = [
   },
 ];
 
-const PlaybackRateControl = () => {
+const PlaybackRateControl: React.FC = () => {
   const setPlaybackRate = usePlayerStore((state) => state.setSpeed);
   const playbackRate = usePlayerStore((state) => state.speed);
   const { handlePlaybackRate } = {
     handlePlaybackRate: (value: any) => {
       SetSpeed(value).then((res) => {
         console.log(res);
-        setPlaybackRate(value);
+        setPlaybackRate(res.data.speed);
       });
     },
   };
@@ -53,7 +53,7 @@ const PlaybackRateControl = () => {
         <Menu.Root placement="left-start">
           <Menu.Trigger>
             {speed.map((val) => (
-              <Box key={val.id}>
+              <Button key={val.id}>
                 {playbackRate == val.value && (
                   <Box
                     // bg={"neutral.dark.800"}
@@ -69,11 +69,12 @@ const PlaybackRateControl = () => {
                     gap={2}
                     alignItems={"center"}
                   >
-                    <Icon as={IoSpeedometer} boxSize={4} />
+                    <ChakraIcon icon={IoSpeedometer} boxSize={4} />
+
                     {val.name}
                   </Box>
                 )}
-              </Box>
+              </Button>
             ))}
           </Menu.Trigger>
 

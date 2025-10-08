@@ -33,7 +33,7 @@ interface playerStore {
 export const usePlayerStore = create<playerStore>((set) => ({
   audioPath: "",
   loaded: false,
-  paused: false,
+  paused: true,
   position: 0,
   duration: 0,
   volume: 50,

@@ -2,7 +2,7 @@ import { Box, Text, Input } from "@chakra-ui/react";
 import { GetPosition, SetPosition } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 
-const TimeLine = () => {
+const TimeLine: React.FC = () => {
   const length = usePlayerStore((state) => state.duration);
   const loaded = usePlayerStore((state) => state.loaded);
   const setPositionState = usePlayerStore((state) => state.setPosition);
@@ -10,9 +10,9 @@ const TimeLine = () => {
   const { handlePosition } = {
     handlePosition: (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log("here", e.target.value);
-      SetPosition(Number(e.target.value)).then((res) => {
+      SetPosition(Number(e.target.value)).then(() => {
         GetPosition().then((res) => {
-          setPositionState(Math.round(res.position));
+          setPositionState(Math.round(res.data.position));
           console.log("here is it", res);
         });
       });

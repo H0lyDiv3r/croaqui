@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import logo from "./assets/images/logo-universal.png";
 import "./App.css";
 import { GetContents, GetAudio } from "../wailsjs/go/dir/Directory";
-import { LoadMusic } from "../wailsjs/go/player/Player";
+import { LoadMusic, GetMetadata, GetStatus } from "../wailsjs/go/player/Player";
 import Player from "./features/Player";
 import { Box, Button, For, Text } from "@chakra-ui/react";
 import { usePlayerStore } from "./store";
@@ -24,15 +24,36 @@ function App() {
   const getAudios = () => {
     GetAudio(path.join("/")).then((res) => {
       console.log(res);
-      setAudioFiles(res["audio_files"]);
+      setAudioFiles(res.data["audio_files"]);
     });
   };
+
+  const loadAudio = () => {
+    LoadMusic(audioPath)
+      .then((res) => {
+        console.log("loaded loaded loaded", res);
+        setLoaded(res.data.loaded);
+        GetMetadata().then((res) => {
+          setTrack(res.data);
+          console.log("am i here bro", res);
+        });
+        GetStatus().then((res) => {
+          console.log("getting status", res);
+          setAll(res.data);
+        });
+        // setAll(JSON.parse(res));
+      })
+      .catch((error) => {
+        console.error("Error loading music:", error);
+      });
+  };
+
   const getDir = () => {
     // console.log("joining happens like",["a", "b", "c", "d"])
     GetContents(path.join("/"))
       .then((res) => {
         console.log("result", res);
-        setDirs(res.content);
+        setDirs(res.data.content);
       })
       .catch((error) => {
         console.error("Error fetching directory contents:", error);

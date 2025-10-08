@@ -3,22 +3,22 @@
 import {player} from '../models';
 import {context} from '../models';
 
-export function GetMetadata():Promise<any>;
+export function GetMetadata():Promise<player.ReturnType>;
 
-export function GetPosition():Promise<any>;
+export function GetPosition():Promise<player.ReturnType>;
 
-export function GetStatus():Promise<player.PlayerStatus>;
+export function GetStatus():Promise<player.ReturnType>;
 
-export function LoadMusic(arg1:string):Promise<any>;
+export function LoadMusic(arg1:string):Promise<player.ReturnType>;
 
 export function SetPosition(arg1:number):Promise<void>;
 
-export function SetSpeed(arg1:number):Promise<any>;
+export function SetSpeed(arg1:number):Promise<player.ReturnType>;
 
-export function SetVolume(arg1:number):Promise<any>;
+export function SetVolume(arg1:number):Promise<player.ReturnType>;
 
 export function StartUp(arg1:context.Context):Promise<void>;
 
-export function ToggleMute():Promise<any>;
+export function ToggleMute():Promise<player.ReturnType>;
 
-export function TogglePlay():Promise<any>;
+export function TogglePlay():Promise<player.ReturnType>;

@@ -23,6 +23,10 @@ type PlayerStatus struct {
 	Speed    any `json:"speed"`
 }
 
+type ReturnType struct {
+	Data interface{} `json:"data"`
+}
+
 func MPV() *Player {
 	return &Player{}
 }
@@ -40,7 +44,7 @@ func (p *Player) StartUp(ctx context.Context) {
 	log.Print("player initialized successfuly")
 }
 
-func (p *Player) LoadMusic(url string) (interface{}, error) {
+func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
 	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
@@ -53,16 +57,16 @@ func (p *Player) LoadMusic(url string) (interface{}, error) {
 		ev := p.mpv.WaitEvent(-1) // wait indefinitely for next event
 		if ev.EventID == mpv.EventFileLoaded {
 			// File is loaded now
-			return struct {
+			return &ReturnType{Data: struct {
 				Loaded bool `json:"loaded"`
-			}{Loaded: true}, nil
+			}{Loaded: true}}, nil
 		}
 		// Optionally handle other events or add timeout/cancellation here
 	}
 
 }
 
-func (p *Player) GetMetadata() (any, error) {
+func (p *Player) GetMetadata() (*ReturnType, error) {
 	data, err := p.mpv.GetProperty("metadata", mpv.FormatString)
 	if err != nil {
 		log.Fatal("unable to get metadata", err)
@@ -74,43 +78,46 @@ func (p *Player) GetMetadata() (any, error) {
 		log.Fatal("unable to unmarshal metadata", err)
 		return nil, err
 	}
-	return result, nil
+	return &ReturnType{Data: struct {
+		MetaData interface{} `json:"metadata"`
+	}{MetaData: result}}, nil
 }
 
-func (p *Player) TogglePlay() (any, error) {
+func (p *Player) TogglePlay() (*ReturnType, error) {
 	if err := p.mpv.Command([]string{"cycle", "pause"}); err != nil {
 		log.Fatal("unable to play music", err)
 		return nil, err
 	}
 	paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
 	val, _ := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
-	return struct {
+	return &ReturnType{Data: struct {
 		Paused   bool    `json:"paused"`
 		Position float64 `json:"position"`
-	}{Paused: paused.(bool), Position: val.(float64)}, nil
+	}{Paused: paused.(bool), Position: val.(float64)},
+	}, nil
 }
 
-func (p *Player) ToggleMute() (any, error) {
+func (p *Player) ToggleMute() (*ReturnType, error) {
 	if err := p.mpv.Command([]string{"cycle", "mute"}); err != nil {
 		log.Fatal("unable to toggle mute", err)
 		return nil, err
 	}
 	isMuted, _ := p.mpv.GetProperty("mute", mpv.FormatFlag)
-	return struct {
+	return &ReturnType{Data: struct {
 		Muted bool `json:"muted"`
-	}{Muted: isMuted.(bool)}, nil
+	}{Muted: isMuted.(bool)}}, nil
 }
 
 // set speed
-func (p *Player) SetSpeed(speed float64) interface{} {
+func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 	if err := p.mpv.SetProperty("speed", mpv.FormatDouble, speed); err != nil {
 		log.Fatal("unable to set speed", err)
-		return nil
+		return nil, err
 	}
 	val, _ := p.mpv.GetProperty("speed", mpv.FormatDouble)
-	return struct {
+	return &ReturnType{Data: struct {
 		Speed float64 `json:"speed"`
-	}{Speed: val.(float64)}
+	}{Speed: val.(float64)}}, nil
 }
 
 // set position
@@ -122,26 +129,26 @@ func (p *Player) SetPosition(position float64) error {
 	return nil
 }
 
-func (p *Player) GetPosition() (any, error) {
+func (p *Player) GetPosition() (*ReturnType, error) {
 	val, _ := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
-	return struct {
+	return &ReturnType{Data: struct {
 		Position float64 `json:"position"`
-	}{Position: val.(float64)}, nil
+	}{Position: val.(float64)}}, nil
 }
 
 // set volume
-func (p *Player) SetVolume(volume int) (interface{}, error) {
+func (p *Player) SetVolume(volume int) (*ReturnType, error) {
 	if err := p.mpv.SetProperty("volume", mpv.FormatInt64, int64(volume)); err != nil {
 		log.Fatal("unable to set volume", err)
 		return nil, err
 	}
 	val, _ := p.mpv.GetProperty("volume", mpv.FormatInt64)
-	return struct {
+	return &ReturnType{Data: struct {
 		Volume int64 `json:"volume"`
-	}{Volume: val.(int64)}, nil
+	}{Volume: val.(int64)}}, nil
 }
 
-func (p *Player) GetStatus() PlayerStatus {
+func (p *Player) GetStatus() (*ReturnType, error) {
 	var status PlayerStatus
 
 	paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
@@ -161,5 +168,5 @@ func (p *Player) GetStatus() PlayerStatus {
 
 	speed, _ := p.mpv.GetProperty("speed", mpv.FormatInt64)
 	status.Speed = speed
-	return status
+	return &ReturnType{Data: status}, nil
 }

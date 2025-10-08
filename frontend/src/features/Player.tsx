@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useRef, useContext, memo } from "react";
 import "./player.css";
 import { Box, Icon, Image, Text } from "@chakra-ui/react";
@@ -19,35 +18,36 @@ import {
   LoadMusic,
 } from "../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
+import { ChakraIcon } from "@/components/ChackraIcon";
 
-const Player = () => {
-  const {
-    paused,
-    handleTimeline,
-    handleSetPlayerValues,
-    handlePosition,
-    handlePause,
-    handleLoaded,
-    loaded,
-  } = {
-    paused: false,
-    handleTimeline: (val: any) => {},
-    handleSetPlayerValues: (val: any) => {},
-    handlePosition: (val: any) => {},
-    handlePause: (val: any) => {},
-    handleLoaded: (val: any) => {},
-    loaded: false,
-  };
+const Player: React.FC = () => {
+  // const {
+  //   paused,
+  //   handleTimeline,
+  //   handleSetPlayerValues,
+  //   handlePosition,
+  //   handlePause,
+  //   handleLoaded,
+  //   loaded,
+  // } = {
+  //   paused: false,
+  //   handleTimeline: (val: any) => {},
+  //   handleSetPlayerValues: (val: any) => {},
+  //   handlePosition: (val: any) => {},
+  //   handlePause: (val: any) => {},
+  //   handleLoaded: (val: any) => {},
+  //   loaded: false,
+  // };
   const {
     currentTrackImage,
-    handleNextPrev,
-    loop,
-    handleSetCurrentTrackImage,
+    // handleNextPrev,
+    // loop,
+    // handleSetCurrentTrackImage,
   } = {
     currentTrackImage: null,
-    handleNextPrev: (val: any) => {},
-    loop: 0,
-    handleSetCurrentTrackImage: () => {},
+    // handleNextPrev: (val: any) => {},
+    // loop: 0,
+    // handleSetCurrentTrackImage: () => {},
   };
   const [favorite, setFavorite] = useState(true);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
@@ -93,14 +93,14 @@ const Player = () => {
     LoadMusic(audioPath)
       .then((res) => {
         console.log("loaded loaded loaded", res);
-        setLoaded(res.loaded);
+        setLoaded(res.data.loaded);
         GetMetadata().then((res) => {
-          setTrack(res);
+          setTrack(res.data);
           console.log("am i here bro", res);
         });
-        GetStatus().then((status) => {
-          console.log("getting status", status);
-          setAll(status);
+        GetStatus().then((res) => {
+          console.log("getting status", res);
+          setAll(res.data);
         });
         // setAll(JSON.parse(res));
       })
@@ -204,9 +204,9 @@ const Player = () => {
               </Text>
             </Box>
             <Box display={"flex"}>
-              <Icon
+              <ChakraIcon
                 // onClick={handleSetFavorite}
-                as={favorite ? TbHeartFilled : TbHeart}
+                icon={favorite ? TbHeartFilled : TbHeart}
                 boxSize={4}
                 color={favorite ? "secondary.500" : "neutral.dark.500"}
               />
