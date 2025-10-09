@@ -38,22 +38,13 @@ const Player: React.FC = () => {
   //   handleLoaded: (val: any) => {},
   //   loaded: false,
   // };
-  const {
-    currentTrackImage,
-    // handleNextPrev,
-    // loop,
-    // handleSetCurrentTrackImage,
-  } = {
-    currentTrackImage: null,
-    // handleNextPrev: (val: any) => {},
-    // loop: 0,
-    // handleSetCurrentTrackImage: () => {},
-  };
+
   const [favorite, setFavorite] = useState(true);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const currentTrackImage = usePlayerStore((state) => state.currentTrack);
   const audioPath = usePlayerStore((state) => state.audioPath);
   // const [showToast] = useShowToast();
 
@@ -90,23 +81,23 @@ const Player: React.FC = () => {
   // }, [favorite, currentTrack, showToast]);
 
   useEffect(() => {
-    LoadMusic(audioPath)
-      .then((res) => {
-        console.log("loaded loaded loaded", res);
-        setLoaded(res.data.loaded);
-        GetMetadata().then((res) => {
-          setTrack(res.data);
-          console.log("am i here bro", res);
-        });
-        GetStatus().then((res) => {
-          console.log("getting status", res);
-          setAll(res.data);
-        });
-        // setAll(JSON.parse(res));
-      })
-      .catch((error) => {
-        console.error("Error loading music:", error);
-      });
+    // LoadMusic(audioPath)
+    //   .then((res) => {
+    //     console.log("loaded loaded loaded", res);
+    //     setLoaded(res.data.loaded);
+    //     GetMetadata().then((res) => {
+    //       setTrack(res.data);
+    //       console.log("am i here bro", res);
+    //     });
+    //     GetStatus().then((res) => {
+    //       console.log("getting status", res);
+    //       setAll(res.data);
+    //     });
+    //     // setAll(JSON.parse(res));
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error loading music:", error);
+    //   });
     // if (currentTrack) {
     //   const trackName = `${import.meta.env.VITE_BASE_URL}${currentTrack.path}`;
     //   window.jsmediatags.read(trackName, {
@@ -175,8 +166,8 @@ const Player: React.FC = () => {
           >
             <Image
               src={
-                currentTrackImage
-                  ? `data:image/jpeg;base64,${currentTrackImage}`
+                currentTrack.image
+                  ? `data:image/jpeg;base64,${currentTrack.image}`
                   : "./trackImage.svg"
               }
               width={"100%"}

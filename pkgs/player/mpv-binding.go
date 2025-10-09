@@ -2,9 +2,12 @@ package player
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/gen2brain/go-mpv"
 )
@@ -54,14 +57,13 @@ func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 	}
 
 	for {
-		ev := p.mpv.WaitEvent(-1) // wait indefinitely for next event
+		ev := p.mpv.WaitEvent(-1)
 		if ev.EventID == mpv.EventFileLoaded {
-			// File is loaded now
+			fmt.Println("the file is loaded")
 			return &ReturnType{Data: struct {
 				Loaded bool `json:"loaded"`
 			}{Loaded: true}}, nil
 		}
-		// Optionally handle other events or add timeout/cancellation here
 	}
 
 }
@@ -73,6 +75,7 @@ func (p *Player) GetMetadata() (*ReturnType, error) {
 		return nil, err
 	}
 	var result interface{}
+
 	err = json.Unmarshal([]byte(data.(string)), &result)
 	if err != nil {
 		log.Fatal("unable to unmarshal metadata", err)
@@ -169,4 +172,55 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 	speed, _ := p.mpv.GetProperty("speed", mpv.FormatInt64)
 	status.Speed = speed
 	return &ReturnType{Data: status}, nil
+}
+
+func (p *Player) GetImage() (*ReturnType, error) {
+	countRaw, err := p.mpv.GetProperty("track-list/count", mpv.FormatInt64)
+	if err != nil {
+		log.Printf("failed to get track count: %v", err)
+		return nil, err
+	}
+
+	count := countRaw.(int64)
+
+	// Subscribe to property updates
+	for i := range count {
+		prop := fmt.Sprintf("track-list/%d/albumart", i)
+		val, err := p.mpv.GetProperty(prop, mpv.FormatFlag)
+
+		if err != nil {
+			log.Printf("failed to get album art: %v", err)
+			return nil, err
+		}
+		if art, ok := val.(bool); ok && art {
+			idProp := fmt.Sprintf("track-list/%d/id", 1)
+			idRaw, _ := p.mpv.GetProperty(idProp, mpv.FormatInt64)
+			id := idRaw.(int64)
+			p.mpv.SetPropertyString("vo", "null")
+			p.mpv.SetProperty("vid", mpv.FormatInt64, id)
+			for {
+				ev := p.mpv.WaitEvent(0.1)
+				if ev != nil && ev.EventID == mpv.EventVideoReconfig {
+					break
+				}
+			}
+			output := "./tmp/album_art.jpg"
+			time.Sleep(100 * time.Millisecond)
+			if err := p.mpv.Command([]string{"screenshot-to-file", output}); err != nil {
+				log.Printf("failed to take screenshot: %v", err)
+				return nil, err
+			}
+			data, err := os.ReadFile(output)
+			if err != nil {
+				return nil, err
+			}
+			b64 := base64.StdEncoding.EncodeToString(data)
+			return &ReturnType{Data: struct {
+				Success bool   `json:"success"`
+				Image   string `json:"image"`
+			}{Success: true, Image: b64}}, nil
+		}
+
+	}
+	return nil, fmt.Errorf("no album art found")
 }

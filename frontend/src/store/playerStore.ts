@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type currentTrack = {
+  image: string | null;
   artist: string;
   comment: string;
   date: string;
@@ -18,6 +19,7 @@ interface playerStore {
   speed: number;
   setAudioPath: (audioPath: string) => void;
   currentTrack: currentTrack;
+  setCurrentTrackImage: (image: string | null) => void;
   setCurrentTrack: (trackInfo: { [key: string]: any }) => void;
   togglePaused: (paused: boolean) => void;
   toggleMute: (value: boolean) => void;
@@ -40,6 +42,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
   muted: false,
   speed: 1,
   currentTrack: {
+    image: null,
     artist: "",
     comment: "",
     date: "",
@@ -56,6 +59,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
       return {
         ...state,
         currentTrack: {
+          ...state.currentTrack,
           artist: trackInfo.artist || "",
           comment: trackInfo.comment || "",
           date: trackInfo.date || "",
@@ -63,6 +67,10 @@ export const usePlayerStore = create<playerStore>((set) => ({
           title: trackInfo.title || "",
         },
       };
+    }),
+  setCurrentTrackImage: (image: string | null) =>
+    set((state) => {
+      return { ...state, currentTrack: { ...state.currentTrack, image } };
     }),
   togglePaused: (paused) =>
     set((state) => {

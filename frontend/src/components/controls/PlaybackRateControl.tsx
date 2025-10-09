@@ -52,9 +52,9 @@ const PlaybackRateControl: React.FC = () => {
       >
         <Menu.Root placement="left-start">
           <Menu.Trigger>
-            {speed.map((val) => (
-              <Button key={val.id}>
-                {playbackRate == val.value && (
+            {speed.map((val) => {
+              return (
+                playbackRate == val.value && (
                   <Box
                     // bg={"neutral.dark.800"}
                     borderStyle={"solid"}
@@ -73,9 +73,9 @@ const PlaybackRateControl: React.FC = () => {
 
                     {val.name}
                   </Box>
-                )}
-              </Button>
-            ))}
+                )
+              );
+            })}
           </Menu.Trigger>
 
           <Portal>

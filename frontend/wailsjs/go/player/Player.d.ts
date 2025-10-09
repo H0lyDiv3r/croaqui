@@ -3,6 +3,8 @@
 import {player} from '../models';
 import {context} from '../models';
 
+export function GetImage():Promise<player.ReturnType>;
+
 export function GetMetadata():Promise<player.ReturnType>;
 
 export function GetPosition():Promise<player.ReturnType>;

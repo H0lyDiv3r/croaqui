@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import logo from "./assets/images/logo-universal.png";
 import "./App.css";
 import { GetContents, GetAudio } from "../wailsjs/go/dir/Directory";
-import { LoadMusic, GetMetadata, GetStatus } from "../wailsjs/go/player/Player";
+import {
+  LoadMusic,
+  GetMetadata,
+  GetStatus,
+  GetImage,
+} from "../wailsjs/go/player/Player";
 import Player from "./features/Player";
 import { Box, Button, For, Text } from "@chakra-ui/react";
 import { usePlayerStore } from "./store";
@@ -18,6 +23,12 @@ function App() {
   const [audioFiles, setAudioFiles] = useState<string[]>([]);
   const [path, setPath] = useState<string[]>(["/"]);
   const setAudioPath = usePlayerStore((state) => state.setAudioPath);
+  const setAll = usePlayerStore((state) => state.setPlayerStatus);
+  const setLoaded = usePlayerStore((state) => state.setLoaded);
+  const setTrack = usePlayerStore((state) => state.setCurrentTrack);
+  const setCurrentTrackImage = usePlayerStore(
+    (state) => state.setCurrentTrackImage,
+  );
   const updateName = (e: any) => setName(e.target.value);
   const updateResultText = (result: string) => setResultText(result);
 
@@ -28,14 +39,18 @@ function App() {
     });
   };
 
-  const loadAudio = () => {
-    LoadMusic(audioPath)
+  const loadAudio = (item) => {
+    LoadMusic(item)
       .then((res) => {
         console.log("loaded loaded loaded", res);
         setLoaded(res.data.loaded);
         GetMetadata().then((res) => {
-          setTrack(res.data);
-          console.log("am i here bro", res);
+          setTrack(res.data.metadata);
+          console.log("am i here bro showing metadata", res);
+        });
+        GetImage().then((res) => {
+          console.log("image", res);
+          setCurrentTrackImage(res.data.image);
         });
         GetStatus().then((res) => {
           console.log("getting status", res);
@@ -79,6 +94,7 @@ function App() {
   return (
     <Box bg={"neutral.dark.900"} h={"100%"} id="App">
       <Player />
+      <Button onClick={() => GetImage()}>get image</Button>
       <Box h={"100%"}>
         {path.join("/")}
         <Button onClick={() => getAudios()}>get audio</Button>
@@ -107,7 +123,7 @@ function App() {
           <Box bg={"neutral.dark.800"} flexGrow={"1"}>
             <For each={audioFiles}>
               {(item, idx) => (
-                <Box key={idx} my={"24px"} onClick={() => setAudioPath(item)}>
+                <Box key={idx} my={"24px"} onClick={() => loadAudio(item)}>
                   <Text>{item}</Text>
                 </Box>
               )}
