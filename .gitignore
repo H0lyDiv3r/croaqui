@@ -5,3 +5,4 @@ build
 test-files
 tmp
 resources
+ffprobe
