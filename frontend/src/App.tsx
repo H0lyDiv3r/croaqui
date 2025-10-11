@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import logo from "./assets/images/logo-universal.png";
 import "./App.css";
-import { GetContents, GetAudio } from "../wailsjs/go/dir/Directory";
+import {
+  GetContents,
+  GetAudio,
+  GetDirs,
+  ScanForAudio,
+} from "../wailsjs/go/dir/Directory";
 import {
   LoadMusic,
   GetMetadata,
@@ -19,7 +24,7 @@ function App() {
     "Please enter your name below 👇",
   );
   const [name, setName] = useState("");
-  const [dirs, setDirs] = useState<string[]>([]);
+  const [dirs, setDirs] = useState<any[]>([]);
   const [audioFiles, setAudioFiles] = useState<string[]>([]);
   const [path, setPath] = useState<string[]>(["/"]);
   const setAudioPath = usePlayerStore((state) => state.setAudioPath);
@@ -32,10 +37,18 @@ function App() {
   const updateName = (e: any) => setName(e.target.value);
   const updateResultText = (result: string) => setResultText(result);
 
-  const getAudios = () => {
-    GetAudio(path.join("/")).then((res) => {
+  const scan = () => {
+    ScanForAudio("/home/yuri/Data/music").then((res) => {
       console.log(res);
       setAudioFiles(res.data["audio_files"]);
+    });
+  };
+
+  const getAudios = () => {
+    // console.log("getting audios", path.join("/"));
+    GetAudio(path.join("/")).then((res) => {
+      console.log("getting audios from db", res.data.files);
+      setAudioFiles(res.data.files);
     });
   };
 
@@ -63,16 +76,28 @@ function App() {
       });
   };
 
-  const getDir = () => {
+  const getContent = () => {
     // console.log("joining happens like",["a", "b", "c", "d"])
     GetContents(path.join("/"))
       .then((res) => {
         console.log("result", res);
-        setDirs(res.data.content);
+        // setDirs(res.data.content);
+        // setDirs(res.data.dirs);
       })
       .catch((error) => {
         console.error("Error fetching directory contents:", error);
         // setPath((prev) => [...path.]);
+      });
+  };
+
+  const getDir = () => {
+    GetDirs(path.join("/"))
+      .then((res) => {
+        console.log("result getting die", res);
+        setDirs(res.data.dirs);
+      })
+      .catch((error) => {
+        console.error("Error fetching directory contents:", error);
       });
   };
 
@@ -98,6 +123,8 @@ function App() {
       <Box h={"100%"}>
         {path.join("/")}
         <Button onClick={() => getAudios()}>get audio</Button>
+
+        <Button onClick={() => scan()}>scan audio</Button>
         <Box display={"flex"} h={"100%"}>
           <Box
             width={"200px"}
@@ -112,10 +139,12 @@ function App() {
                   key={idx}
                   my={"24px"}
                   onClick={() => {
-                    setCurrentPath(dir);
+                    // setCurrentPath(dir.path);
+                    setPath(dir.path.split("/"));
+                    console.log("i am here bro im here", dir);
                   }}
                 >
-                  {dir}
+                  {dir.name}
                 </Box>
               )}
             </For>
@@ -123,8 +152,8 @@ function App() {
           <Box bg={"neutral.dark.800"} flexGrow={"1"}>
             <For each={audioFiles}>
               {(item, idx) => (
-                <Box key={idx} my={"24px"} onClick={() => loadAudio(item)}>
-                  <Text>{item}</Text>
+                <Box key={idx} my={"24px"} onClick={() => loadAudio(item.path)}>
+                  <Text>{item.title}</Text>
                 </Box>
               )}
             </For>

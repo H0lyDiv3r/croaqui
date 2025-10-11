@@ -1,0 +1,73 @@
+package db
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"myproject/pkgs/ffmpeg"
+	"path/filepath"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
+type DB struct {
+	ctx      context.Context
+	Instance *gorm.DB
+}
+
+var DBInstance *DB
+
+func NewDB() *DB {
+	DBInstance = &DB{}
+	return DBInstance
+}
+
+func (d *DB) StartUp(ctx context.Context) {
+	d.ctx = ctx
+	dataBase, err := gorm.Open(sqlite.Open("/home/yuri/Data/projects/music-player-go/test-files/test.db"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	d.Instance = dataBase
+	dataBase.AutoMigrate(&MusicMetaData{})
+	dataBase.AutoMigrate(&MusicFile{})
+	dataBase.AutoMigrate(&Directory{})
+	// dataBase.Create(&Product{Code: "D42", Price: 100})
+
+	log.Print("DB startup")
+}
+
+func (d *DB) WriteAudioData(path string) error {
+
+	metadata, err := ffmpeg.FFmpegInstance.GetMetadataFFProbe(path)
+	if err != nil {
+		fmt.Println("Error getting metadata:", err)
+		return err
+	}
+	format := metadata.Format
+	musicMetadata := MusicMetaData{
+		Title:    format.Tags.Title,
+		Artist:   format.Tags.Artist,
+		Album:    format.Tags.Album,
+		Duration: format.Duration,
+		Genre:    format.Tags.Genre,
+		Date:     format.Tags.Date,
+	}
+	result := d.Instance.Create(&MusicFile{Name: filepath.Base(path), Path: path, ParentPath: filepath.Dir(path), MetaData: musicMetadata})
+
+	if result.Error != nil {
+		fmt.Println("Error writing to database:", result.Error)
+		return result.Error
+	}
+	return nil
+}
+
+func (d *DB) WriteDirData(data Directory) error {
+	result := d.Instance.Create(&data)
+	if result.Error != nil {
+		fmt.Println("Error writing to database:", result.Error)
+		return result.Error
+	}
+	return nil
+}

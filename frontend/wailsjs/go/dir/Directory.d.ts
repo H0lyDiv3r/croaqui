@@ -7,4 +7,8 @@ export function GetAudio(arg1:string):Promise<dir.ReturnType>;
 
 export function GetContents(arg1:string):Promise<dir.ReturnType>;
 
+export function GetDirs(arg1:string):Promise<dir.ReturnType>;
+
+export function ScanForAudio(arg1:string):Promise<void>;
+
 export function StartUp(arg1:context.Context):Promise<void>;

@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"myproject/pkgs/db"
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 )
 
 type DirectoryContents struct {
@@ -48,31 +50,92 @@ func (d *Directory) GetContents(path string) (*ReturnType, error) {
 	return &ReturnType{Data: DirectoryContents{Content: dirs}}, nil
 }
 
-func (d *Directory) GetAudio(path string) (*ReturnType, error) {
-	var audioFiles []string
-	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
-		// if err != nil {
-		// 	return err
-		// }
-		// isAudioFile(path)
+func (d *Directory) GetDirs(path string) (*ReturnType, error) {
+	type dirs []struct {
+		Name  string `json:"name"`
+		Path  string `json:"path"`
+		Depth int    `json:"depth"`
+	}
+	var result dirs
 
-		if d.IsDir() {
+	//find the smallest depth starting with path
+	res := db.DBInstance.Instance.Raw(`
+		SELECT name,path,depth,parent_path pp FROM directories d
+		WHERE pp LIKE ? AND depth = (
+			SELECT MIN(depth) FROM directories d2
+				WHERE d2.parent_path LIKE ?
+		)
+		`, path+"%", path+"%").Scan(&result)
+
+	fmt.Println("this is it", result, path)
+
+	// res := db.DBInstance.Instance.Raw(`
+	// 	SELECT name,path,depth FROM directories d
+	//  	WHERE path LIKE ? AND depth > ?
+	// 	`, path+"%", len(parts)+1).Scan(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &ReturnType{Data: struct {
+		Dirs dirs `json:"dirs"`
+	}{Dirs: result}}, nil
+}
+
+func (d *Directory) GetAudio(path string) (*ReturnType, error) {
+	var result []struct {
+		Name     string `json:"name"`
+		Path     string `json:"path"`
+		Title    string `json:"title"`
+		Artist   string `json:"artist"`
+		Album    string `json:"album"`
+		Duration string `json:"duration"`
+		Genre    string `json:"genre"`
+	}
+	res := db.DBInstance.Instance.Raw(`
+		SELECT *
+		FROM music_files mf
+		  	LEFT JOIN music_meta_data mmd ON mf.meta_data_id = mmd.id
+		WHERE mf.path LIKE ?
+		`, path+"%").Scan(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &ReturnType{Data: struct {
+		Files interface{} `json:"files"`
+	}{Files: result}}, nil
+}
+
+func (d *Directory) ScanForAudio(path string) error {
+	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
 			return nil
+		}
+		if d.IsDir() {
+			parts := strings.Split(path, "/")
+			db.DBInstance.WriteDirData(db.Directory{
+				Name:       d.Name(),
+				Path:       path,
+				ParentPath: filepath.Dir(path),
+				Depth:      len(parts) - 1,
+			})
 		}
 
 		if isAudioFile(path) {
-			audioFiles = append(audioFiles, path)
+			err := db.DBInstance.WriteAudioData(path)
+			if err != nil {
+				return err
+			}
 		}
-		fmt.Println("visited:", path, isAudioFile(path))
 		return nil
 	})
 
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
-	return &ReturnType{Data: AudioFiles{AudioFiles: audioFiles}}, nil
+	return nil
 }
+
 func isAudioFile(path string) bool {
 	MPVSupportedFormats := []string{
 		// Lossy formats

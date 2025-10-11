@@ -10,6 +10,14 @@ export function GetContents(arg1) {
   return window['go']['dir']['Directory']['GetContents'](arg1);
 }
 
+export function GetDirs(arg1) {
+  return window['go']['dir']['Directory']['GetDirs'](arg1);
+}
+
+export function ScanForAudio(arg1) {
+  return window['go']['dir']['Directory']['ScanForAudio'](arg1);
+}
+
 export function StartUp(arg1) {
   return window['go']['dir']['Directory']['StartUp'](arg1);
 }

@@ -56,6 +56,7 @@ const PlaybackRateControl: React.FC = () => {
               return (
                 playbackRate == val.value && (
                   <Box
+                    key={val.value}
                     // bg={"neutral.dark.800"}
                     borderStyle={"solid"}
                     borderWidth={"1px"}
