@@ -18,6 +18,9 @@ import {
 import Player from "./features/Player";
 import { Box, Button, For, Text } from "@chakra-ui/react";
 import { usePlayerStore } from "./store";
+import { DirTree } from "./components/dir-tree";
+import { MusicList } from "./components/music-list";
+import { PathBar } from "./components/path-bar";
 
 function App() {
   const [resultText, setResultText] = useState(
@@ -113,14 +116,36 @@ function App() {
   };
 
   useEffect(() => {
-    getDir();
+    // getDir();
   }, [path]);
 
   return (
-    <Box bg={"neutral.dark.900"} h={"100%"} id="App">
+    <Box
+      display={"flex"}
+      flexDir={"column"}
+      bg={"neutral.dark.900"}
+      h={"100vh"}
+      id="App"
+    >
       <Player />
-      <Button onClick={() => GetImage()}>get image</Button>
-      <Box h={"100%"}>
+      <Box flex={1} minH={0}>
+        <Box display={"flex"} height={"100%"}>
+          <Box bg={"neutral.dark.800"} w={"350px"} height={"100%"} p={"4"}>
+            <PathBar />
+            <DirTree />
+          </Box>
+          <Box flex={1} height={"100%"}>
+            <MusicList />
+          </Box>
+          <Box bg={"neutral.dark.800"} minW={"350px"} height={"100%"}>
+            aa
+          </Box>
+        </Box>
+      </Box>
+      <Box bg={"neutral.dark.800"} height={"2rem"}>
+        footer
+      </Box>
+      {/*<Box h={"100%"}>
         {path.join("/")}
         <Button onClick={() => getAudios()}>get audio</Button>
 
@@ -159,7 +184,7 @@ function App() {
             </For>
           </Box>
         </Box>
-      </Box>
+      </Box>*/}
     </Box>
   );
 }

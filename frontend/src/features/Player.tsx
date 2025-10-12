@@ -130,15 +130,14 @@ const Player: React.FC = () => {
 
   return (
     <Box
-      bgImage={"/musicLiner.svg"}
+      bgImage={"./musicLiner.svg"}
       bgSize={"cover"}
       bgPos={"left"}
       width={"100%"}
-      height={"100%"}
       display={"flex"}
+      height={"7rem"}
     >
       <Box
-        bg={"rgba(0,0,0,0)"}
         backdropFilter={"auto"}
         backdropBlur={"1px"}
         width={"100%"}

@@ -52,6 +52,7 @@ func (d *Directory) GetContents(path string) (*ReturnType, error) {
 
 func (d *Directory) GetDirs(path string) (*ReturnType, error) {
 	type dirs []struct {
+		Id    int    `json:"id"`
 		Name  string `json:"name"`
 		Path  string `json:"path"`
 		Depth int    `json:"depth"`
@@ -60,7 +61,7 @@ func (d *Directory) GetDirs(path string) (*ReturnType, error) {
 
 	//find the smallest depth starting with path
 	res := db.DBInstance.Instance.Raw(`
-		SELECT name,path,depth,parent_path pp FROM directories d
+		SELECT id,name,path,depth,parent_path pp FROM directories d
 		WHERE pp LIKE ? AND depth = (
 			SELECT MIN(depth) FROM directories d2
 				WHERE d2.parent_path LIKE ?
@@ -83,6 +84,7 @@ func (d *Directory) GetDirs(path string) (*ReturnType, error) {
 
 func (d *Directory) GetAudio(path string) (*ReturnType, error) {
 	var result []struct {
+		Id       int    `json:"id"`
 		Name     string `json:"name"`
 		Path     string `json:"path"`
 		Title    string `json:"title"`
