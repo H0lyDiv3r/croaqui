@@ -19,26 +19,11 @@ import {
 } from "../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "@/components/ChackraIcon";
+import { useGeneralStore } from "@/store/generalStore";
+import { SwitchTheme } from "@/components";
+import { getNeutral } from "@/utils";
 
 const Player: React.FC = () => {
-  // const {
-  //   paused,
-  //   handleTimeline,
-  //   handleSetPlayerValues,
-  //   handlePosition,
-  //   handlePause,
-  //   handleLoaded,
-  //   loaded,
-  // } = {
-  //   paused: false,
-  //   handleTimeline: (val: any) => {},
-  //   handleSetPlayerValues: (val: any) => {},
-  //   handlePosition: (val: any) => {},
-  //   handlePause: (val: any) => {},
-  //   handleLoaded: (val: any) => {},
-  //   loaded: false,
-  // };
-
   const [favorite, setFavorite] = useState(true);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
@@ -46,87 +31,6 @@ const Player: React.FC = () => {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const currentTrackImage = usePlayerStore((state) => state.currentTrack);
   const audioPath = usePlayerStore((state) => state.audioPath);
-  // const [showToast] = useShowToast();
-
-  // const handleSetFavorite = useCallback(() => {
-  //   if (favorite) {
-  //     api
-  //       .delete("/playlist/deleteFromPlaylist", {
-  //         params: {
-  //           name: "favorites",
-  //           path: currentTrack.path,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         showToast("success", "removed from playlist");
-  //         setFavorite(false);
-  //       })
-  //       .catch(() => {
-  //         showToast("success", "failed to remove");
-  //       });
-  //   } else {
-  //     api
-  //       .post("/playlist/addToPlaylist", {
-  //         ...currentTrack,
-  //         playlist: "favorites",
-  //       })
-  //       .then(() => {
-  //         showToast("success", "added to playlist");
-  //         setFavorite(true);
-  //       })
-  //       .catch(() => {
-  //         showToast("error", "failed to add to playlist");
-  //       });
-  //   }
-  // }, [favorite, currentTrack, showToast]);
-
-  useEffect(() => {
-    // LoadMusic(audioPath)
-    //   .then((res) => {
-    //     console.log("loaded loaded loaded", res);
-    //     setLoaded(res.data.loaded);
-    //     GetMetadata().then((res) => {
-    //       setTrack(res.data);
-    //       console.log("am i here bro", res);
-    //     });
-    //     GetStatus().then((res) => {
-    //       console.log("getting status", res);
-    //       setAll(res.data);
-    //     });
-    //     // setAll(JSON.parse(res));
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error loading music:", error);
-    //   });
-    // if (currentTrack) {
-    //   const trackName = `${import.meta.env.VITE_BASE_URL}${currentTrack.path}`;
-    //   window.jsmediatags.read(trackName, {
-    //     onSuccess: (tags) => {
-    //       if (tags.tags.picture) {
-    //         let byteCode = tags.tags.picture.data;
-    //         let base64String = btoa(String.fromCharCode(...byteCode));
-    //         handleSetCurrentTrackImage(base64String);
-    //       } else {
-    //         handleSetCurrentTrackImage(null);
-    //       }
-    //     },
-    //     onError: (error) => {
-    //       console.log(error);
-    //     },
-    //   });
-    // }
-    // if (currentTrack) {
-    //   api
-    //     .get("/playlist/inFav", {
-    //       params: {
-    //         path: currentTrack.path,
-    //       },
-    //     })
-    //     .then((res) => {
-    //       setFavorite(res.data);
-    //     });
-    // }
-  }, [audioPath]);
 
   return (
     <Box
@@ -153,7 +57,10 @@ const Player: React.FC = () => {
           minH={"full"}
           display={"flex"}
           alignItems={"center"}
-          color={"neutral.dark.100"}
+          color={getNeutral("light", 100)}
+          _dark={{
+            color: getNeutral("dark", 100),
+          }}
         >
           <Box
             minWidth={"1"}
@@ -187,7 +94,10 @@ const Player: React.FC = () => {
               </Text>
               <Text
                 fontSize={"sm"}
-                color={"neutral.dark.300"}
+                color={getNeutral("light", 300)}
+                _dark={{
+                  color: getNeutral("dark", 300),
+                }}
                 whiteSpace={"nowrap"}
               >
                 {currentTrack ? currentTrack.artist || "unknown" : "unknown"}
@@ -198,7 +108,10 @@ const Player: React.FC = () => {
                 // onClick={handleSetFavorite}
                 icon={favorite ? TbHeartFilled : TbHeart}
                 boxSize={4}
-                color={favorite ? "secondary.500" : "neutral.dark.500"}
+                color={favorite ? "secondary.500" : getNeutral("light", 500)}
+                _dark={{
+                  color: favorite ? "secondary.500" : getNeutral("dark", 500),
+                }}
               />
             </Box>
           </Box>
@@ -227,6 +140,7 @@ const Player: React.FC = () => {
         >
           <PlaybackRateControl />
           <VolumeControl />
+          <SwitchTheme />
         </Box>
       </Box>
     </Box>

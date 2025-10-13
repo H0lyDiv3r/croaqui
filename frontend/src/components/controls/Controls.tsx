@@ -15,6 +15,7 @@ import { PlayerButton } from "../buttons";
 import { TogglePlay } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
+import { getNeutral } from "@/utils";
 // import { PlayerContext } from "./PlayerContextProvider";
 // import { GlobalContext } from "../../store/GlobalContextProvider";
 
@@ -79,7 +80,8 @@ const Controls: React.FC = () => {
       display={"flex"}
       alignItems={"center"}
       justifyContent={"center"}
-      color={"neutral.400"}
+      color={getNeutral("light", 400)}
+      _dark={{ color: getNeutral("dark", 400) }}
       my={"4px"}
     >
       {/* main */}
@@ -92,7 +94,8 @@ const Controls: React.FC = () => {
       >
         <PlayerButton
           action={() => handleLoop()}
-          color={loop === 0 ? "neutral.dark.300" : "brand.500"}
+          color={loop === 0 ? getNeutral("light", 300) : "brand.500"}
+          _dark={{ color: loop === 0 ? getNeutral("dark", 300) : "brand.500" }}
           _hover={{ bg: "none" }}
         >
           <ChakraIcon icon={loopVals[loop]} boxSize={4} />
@@ -100,17 +103,34 @@ const Controls: React.FC = () => {
         <PlayerButton
           action={() => handleNextPrev("prev")}
           disabled={queue.list.length < 1}
-          color={"neutral.dark.300"}
-          _hover={{ bg: "none", color: "neutral.dark.400" }}
+          color={getNeutral("light", 300)}
+          _dark={{ color: getNeutral("dark", 300) }}
+          _hover={{
+            bg: "none",
+            color: getNeutral("light", 400),
+            _dark: { color: getNeutral("dark", 400) },
+          }}
         >
           <ChakraIcon icon={TbPlayerTrackPrevFilled} boxSize={4} />
         </PlayerButton>
         <PlayerButton
           action={() => handlePlay()}
           disabled={!loaded}
-          color={"neutral.dark.300"}
-          border={`1px neutral.dark.200 solid`}
-          _hover={{ border: "none", bg: "white", color: "neutral.dark.900" }}
+          color={getNeutral("light", 300)}
+          border={`1px ${getNeutral("light", 200)} solid`}
+          _dark={{
+            color: getNeutral("dark", 300),
+            border: `1px ${getNeutral("dark", 200)} solid`,
+          }}
+          _hover={{
+            border: "none",
+            bg: getNeutral("light", 200),
+            color: getNeutral("light", 900),
+            _dark: {
+              bg: getNeutral("dark", 200),
+              color: getNeutral("dark", 900),
+            },
+          }}
           primary
         >
           <ChakraIcon
@@ -122,15 +142,25 @@ const Controls: React.FC = () => {
         <PlayerButton
           action={() => handleNextPrev("next")}
           disabled={queue.list.length < 1}
-          color="neutral.dark.300"
-          _hover={{ bg: "none", color: "neutral.dark.400" }}
+          color={getNeutral("light", 300)}
+          _dark={{
+            color: getNeutral("dark", 300),
+          }}
+          _hover={{
+            bg: "none",
+            color: getNeutral("light", 400),
+            _dark: { color: getNeutral("dark", 400) },
+          }}
         >
           <ChakraIcon icon={TbPlayerTrackNextFilled} boxSize={4} />
         </PlayerButton>
         <PlayerButton
           action={async () => handleShuffle()}
           _hover={{ bg: "none" }}
-          color={shuffle ? "brand.500" : "neutral.dark.300"}
+          color={shuffle ? "brand.500" : getNeutral("light", 300)}
+          _dark={{
+            color: shuffle ? "brand.500" : getNeutral("dark", 300),
+          }}
         >
           <ChakraIcon
             icon={shuffle ? TbArrowsShuffle : TbArrowsRight}

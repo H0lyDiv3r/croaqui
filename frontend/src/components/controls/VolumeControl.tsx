@@ -5,6 +5,7 @@ import "./volume.css";
 import { SetVolume, ToggleMute } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
+import { getNeutral } from "@/utils";
 
 const VolumeControl: React.FC = () => {
   const setVolumeState = usePlayerStore((state) => state.setVolume);
@@ -26,7 +27,12 @@ const VolumeControl: React.FC = () => {
     },
   };
   return (
-    <Box display={"flex"} alignItems={"center"} color={"neutral.dark.200"}>
+    <Box
+      display={"flex"}
+      alignItems={"center"}
+      color={getNeutral("light", 200)}
+      _dark={{ color: getNeutral("dark", 200) }}
+    >
       <ChakraIcon
         icon={muted ? FaVolumeXmark : FaVolumeLow}
         onClick={() => handleMute()}
@@ -40,7 +46,8 @@ const VolumeControl: React.FC = () => {
         display={"flex"}
         overflow={"hidden"}
         width={"100px"}
-        bg={"neutral.dark.800"}
+        bg={getNeutral("light", 800)}
+        _dark={{ bg: getNeutral("dark", 800) }}
         pos={"relative"}
         opacity={muted ? 0.3 : 1}
       >

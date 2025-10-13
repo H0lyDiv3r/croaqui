@@ -6,6 +6,8 @@ import { IoSpeedometer } from "react-icons/io5";
 import { SetSpeed } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
+import { useGeneralStore } from "@/store/generalStore";
+import { getNeutral } from "@/utils";
 // import colors from "../../themes/colors";
 const speed = [
   {
@@ -48,7 +50,8 @@ const PlaybackRateControl: React.FC = () => {
         flexDir={"column"}
         alignItems={"center"}
         mx={"12px"}
-        color={"neutral.dark.200"}
+        color={getNeutral("light", 200)}
+        _dark={{ color: getNeutral("dark", 200) }}
       >
         <Menu.Root placement="left-start">
           <Menu.Trigger>
@@ -60,7 +63,8 @@ const PlaybackRateControl: React.FC = () => {
                     // bg={"neutral.dark.800"}
                     borderStyle={"solid"}
                     borderWidth={"1px"}
-                    borderColor={"neutral.dark.700"}
+                    borderColor={getNeutral("light", 700)}
+                    _dark={{ borderColor: getNeutral("dark", 700) }}
                     borderRadius={"md"}
                     width={"8rem"}
                     py={"1.5"}
@@ -82,10 +86,11 @@ const PlaybackRateControl: React.FC = () => {
           <Portal>
             <Menu.Positioner>
               <Menu.Content
-                bg={"neutral.dark.800"}
+                bg={getNeutral("light", 800)}
+                _dark={{ bg: getNeutral("dark", 800) }}
                 borderStyle={"solid"}
                 borderWidth={"1px"}
-                borderColor={"neutral.dark.700"}
+                borderColor={getNeutral(700)}
                 mt={"2"}
               >
                 {speed.map((val) => (
@@ -96,9 +101,15 @@ const PlaybackRateControl: React.FC = () => {
                     bg={val.value == playbackRate && "brand.500"}
                     color={
                       val.value == playbackRate
-                        ? "neutral.dark.800"
-                        : "neutral.dark.200"
+                        ? getNeutral("light", 800)
+                        : getNeutral("light", 200)
                     }
+                    _dark={{
+                      color:
+                        val.value == playbackRate
+                          ? getNeutral("dark", 800)
+                          : getNeutral("dark", 200),
+                    }}
                     borderRadius={"8px"}
                     display={"flex"}
                     justifyContent={"center"}

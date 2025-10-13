@@ -4,6 +4,7 @@ import "./style.css";
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import { system } from "./themes";
+import { Provider } from "./components/ui/provider";
 
 const container = document.getElementById("root");
 
@@ -11,8 +12,8 @@ const root = createRoot(container!);
 
 root.render(
   <React.StrictMode>
-    <ChakraProvider value={system}>
+    <Provider>
       <App />
-    </ChakraProvider>
+    </Provider>
   </React.StrictMode>,
 );

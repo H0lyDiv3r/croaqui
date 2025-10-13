@@ -10,6 +10,7 @@ import { useNavigationStore } from "@/store";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaFolder } from "react-icons/fa6";
+import { getNeutral } from "@/utils";
 
 export const DirTree = () => {
   const dirs = useNavigationStore((state) => state.dirs);
@@ -41,14 +42,26 @@ export const DirTree = () => {
   }, [currentPath]);
 
   return (
-    <Box textAlign={"left"} textWrap={"nowrap"} whiteSpace={"nowrap"}>
+    <Box
+      textAlign={"left"}
+      textWrap={"nowrap"}
+      whiteSpace={"nowrap"}
+      color={getNeutral("light", 200)}
+      _dark={{ color: getNeutral("dark", 200) }}
+    >
       <>
         {dirs.map(
           (dir: { id: string; name: string; path: string }): JSX.Element => (
             <Box
               borderRadius={"sm"}
               overflow={"hidden"}
-              _hover={{ bg: "neutral.dark.700", cursor: "pointer" }}
+              _hover={{
+                bg: getNeutral("light", 700),
+                cursor: "pointer",
+                _dark: {
+                  bg: getNeutral("dark", 700),
+                },
+              }}
               key={dir.id}
               onClick={() => {
                 GetDirs(dir.path).then((res) => {

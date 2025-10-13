@@ -1,6 +1,7 @@
 import { Box, Text, Input } from "@chakra-ui/react";
 import { GetPosition, SetPosition } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
+import { getNeutral } from "@/utils";
 
 const TimeLine: React.FC = () => {
   const length = usePlayerStore((state) => state.duration);
@@ -24,7 +25,8 @@ const TimeLine: React.FC = () => {
       display={"flex"}
       justifyContent={"center"}
       alignItems={"center"}
-      color={"neutral.dark.200"}
+      color={getNeutral("light", 200)}
+      _dark={{ color: getNeutral("dark", 200) }}
       my={"4px"}
       fontSize={"sm"}
     >
@@ -40,7 +42,8 @@ const TimeLine: React.FC = () => {
       </Box>
       <Box
         className="timeline"
-        bg={"neutral.dark.800"}
+        bg={getNeutral("light", 800)}
+        _dark={{ bg: getNeutral("dark", 800) }}
         height={"1"}
         _hover={{ height: "4px" }}
         mx={"4px"}

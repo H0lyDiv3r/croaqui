@@ -21,6 +21,10 @@ import { usePlayerStore } from "./store";
 import { DirTree } from "./components/dir-tree";
 import { MusicList } from "./components/music-list";
 import { PathBar } from "./components/path-bar";
+import { useGeneralStore } from "./store/generalStore";
+import { get } from "node:https";
+import { useColorMode } from "./components/ui/color-mode";
+import { getNeutral } from "./utils";
 
 function App() {
   const [resultText, setResultText] = useState(
@@ -37,6 +41,8 @@ function App() {
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
+
+  const { colorMode } = useColorMode();
   const updateName = (e: any) => setName(e.target.value);
   const updateResultText = (result: string) => setResultText(result);
 
@@ -115,76 +121,49 @@ function App() {
       });
   };
 
-  useEffect(() => {
-    // getDir();
-  }, [path]);
-
   return (
     <Box
       display={"flex"}
       flexDir={"column"}
-      bg={"neutral.dark.900"}
+      bg={getNeutral("light", 900)}
+      _dark={{ bg: getNeutral("dark", 900), color: getNeutral("dark", 200) }}
+      color={getNeutral("light", 200)}
       h={"100vh"}
       id="App"
     >
       <Player />
       <Box flex={1} minH={0}>
         <Box display={"flex"} height={"100%"}>
-          <Box bg={"neutral.dark.800"} w={"350px"} height={"100%"} p={"4"}>
+          <Box
+            bg={getNeutral("light", 800)}
+            _dark={{ bg: getNeutral("dark", 800) }}
+            w={"350px"}
+            height={"100%"}
+            p={"4"}
+          >
             <PathBar />
             <DirTree />
           </Box>
           <Box flex={1} height={"100%"}>
             <MusicList />
           </Box>
-          <Box bg={"neutral.dark.800"} minW={"350px"} height={"100%"}>
+          <Box
+            bg={getNeutral("light", 800)}
+            _dark={{ bg: getNeutral("dark", 800) }}
+            minW={"350px"}
+            height={"100%"}
+          >
             aa
           </Box>
         </Box>
       </Box>
-      <Box bg={"neutral.dark.800"} height={"2rem"}>
+      <Box
+        bg={getNeutral("light", 800)}
+        _dark={{ bg: getNeutral("dark", 800) }}
+        height={"2rem"}
+      >
         footer
       </Box>
-      {/*<Box h={"100%"}>
-        {path.join("/")}
-        <Button onClick={() => getAudios()}>get audio</Button>
-
-        <Button onClick={() => scan()}>scan audio</Button>
-        <Box display={"flex"} h={"100%"}>
-          <Box
-            width={"200px"}
-            overflow={"hidden"}
-            textAlign={"left"}
-            textWrap={"nowrap"}
-          >
-            <Button onClick={() => getDir()}>getdir</Button>
-            <For each={dirs}>
-              {(dir, idx) => (
-                <Box
-                  key={idx}
-                  my={"24px"}
-                  onClick={() => {
-                    // setCurrentPath(dir.path);
-                    setPath(dir.path.split("/"));
-                    console.log("i am here bro im here", dir);
-                  }}
-                >
-                  {dir.name}
-                </Box>
-              )}
-            </For>
-          </Box>
-          <Box bg={"neutral.dark.800"} flexGrow={"1"}>
-            <For each={audioFiles}>
-              {(item, idx) => (
-                <Box key={idx} my={"24px"} onClick={() => loadAudio(item.path)}>
-                  <Text>{item.title}</Text>
-                </Box>
-              )}
-            </For>
-          </Box>
-        </Box>
-      </Box>*/}
     </Box>
   );
 }
