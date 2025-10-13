@@ -25,6 +25,7 @@ import { useGeneralStore } from "./store/generalStore";
 import { get } from "node:https";
 import { useColorMode } from "./components/ui/color-mode";
 import { getNeutral } from "./utils";
+import { SidebarNavigator } from "./features/sidebar-navigator";
 
 function App() {
   const [resultText, setResultText] = useState(
@@ -139,10 +140,8 @@ function App() {
             _dark={{ bg: getNeutral("dark", 800) }}
             w={"350px"}
             height={"100%"}
-            p={"4"}
           >
-            <PathBar />
-            <DirTree />
+            <SidebarNavigator />
           </Box>
           <Box flex={1} height={"100%"}>
             <MusicList />

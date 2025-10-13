@@ -72,7 +72,7 @@ export const DirTree = () => {
                 getAudios(dir.path);
               }}
             >
-              <Box display={"flex"} alignItems={"center"} gap={"2"} m={"2"}>
+              <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>
                 <ChakraIcon icon={FaFolder}></ChakraIcon>
                 <Text overflow={"hidden"}>{dir.name}</Text>
               </Box>
