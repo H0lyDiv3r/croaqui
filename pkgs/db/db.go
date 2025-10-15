@@ -42,6 +42,7 @@ func (d *DB) StartUp(ctx context.Context) {
 
 func (d *DB) WriteAudioData(path string) error {
 
+	var exists bool
 	metadata, err := ffmpeg.FFmpegInstance.GetMetadataFFProbe(path)
 	if err != nil {
 		fmt.Println("Error getting metadata:", err)
@@ -56,6 +57,13 @@ func (d *DB) WriteAudioData(path string) error {
 		Genre:    format.Tags.Genre,
 		Date:     format.Tags.Date,
 	}
+	d.Instance.Raw(`
+	SELECT EXISTS(SELECT 1 FROM music_files m WHERE m.path = ? )
+	`, path).Scan(&exists)
+	if exists {
+		log.Print("file already exists")
+		return nil
+	}
 	result := d.Instance.Create(&MusicFile{Name: filepath.Base(path), Path: path, ParentPath: filepath.Dir(path), MetaData: musicMetadata})
 
 	if result.Error != nil {
@@ -66,6 +74,14 @@ func (d *DB) WriteAudioData(path string) error {
 }
 
 func (d *DB) WriteDirData(data Directory) error {
+	var exists bool
+	d.Instance.Raw(`
+		SELECT EXISTS(SELECT 1 FROM directories WHERE path = ?)
+	`, data.Path).Scan(&exists)
+	if exists {
+		log.Print("dir already exists")
+		return nil
+	}
 	result := d.Instance.Create(&data)
 	if result.Error != nil {
 		fmt.Println("Error writing to database:", result.Error)
