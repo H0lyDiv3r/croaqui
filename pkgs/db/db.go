@@ -33,7 +33,9 @@ func (d *DB) StartUp(ctx context.Context) {
 	dataBase.AutoMigrate(&MusicMetaData{})
 	dataBase.AutoMigrate(&MusicFile{})
 	dataBase.AutoMigrate(&Directory{})
-	// dataBase.Create(&Product{Code: "D42", Price: 100})
+	dataBase.AutoMigrate(&Playlist{})
+	dataBase.AutoMigrate(&PlaylistMusic{})
+	// d.Instance.Create(&Playlist{Name: "favorites"})
 
 	log.Print("DB startup")
 }

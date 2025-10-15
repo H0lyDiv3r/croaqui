@@ -132,7 +132,7 @@ function App() {
       h={"100vh"}
       id="App"
     >
-      <Player />
+      <Box h={"5rem"}>aa</Box>
       <Box flex={1} minH={0}>
         <Box display={"flex"} height={"100%"}>
           <Box
@@ -156,13 +156,7 @@ function App() {
           </Box>
         </Box>
       </Box>
-      <Box
-        bg={getNeutral("light", 800)}
-        _dark={{ bg: getNeutral("dark", 800) }}
-        height={"2rem"}
-      >
-        footer
-      </Box>
+      <Player />
     </Box>
   );
 }

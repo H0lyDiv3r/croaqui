@@ -32,3 +32,20 @@ export namespace player {
 
 }
 
+export namespace playlist {
+	
+	export class ReturnType {
+	    data: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReturnType(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.data = source["data"];
+	    }
+	}
+
+}
+

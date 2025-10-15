@@ -7,6 +7,7 @@ import (
 	"myproject/pkgs/dir"
 	"myproject/pkgs/ffmpeg"
 	"myproject/pkgs/player"
+	"myproject/pkgs/playlist"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -23,30 +24,32 @@ func main() {
 	dir := dir.NewDirectory()
 	data := db.NewDB()
 	ffmpeg := ffmpeg.NewFFmpeg()
-
+	playlists := playlist.NewPlaylist()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "Croaky",
-		Width:     1024,
-		Height:    1024,
-		MinWidth:  768,
-		MinHeight: 512,
+		Width:     10,
+		Height:    10,
+		MinWidth:  10,
+		MinHeight: 10,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup: func(ctx context.Context) {
 			app.startup(ctx)
-			player.StartUp(ctx)
-			dir.StartUp(ctx)
 			data.StartUp(ctx)
+			dir.StartUp(ctx)
 			ffmpeg.StartUp(ctx)
+			player.StartUp(ctx)
+			playlists.StartUp(ctx)
 
 		},
 		Bind: []interface{}{
 			app,
-			player,
 			dir,
+			player,
+			playlists,
 			// ffmpeg,
 		},
 	})

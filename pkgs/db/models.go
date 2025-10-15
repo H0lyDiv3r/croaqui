@@ -30,3 +30,16 @@ type Directory struct {
 	Depth      int
 	ParentPath string
 }
+
+type Playlist struct {
+	gorm.Model
+	ID   uint `gorm:"primaryKey"`
+	Name string
+}
+
+type PlaylistMusic struct {
+	gorm.Model
+	PlaylistID uint `gorm:"primaryKey"`
+	MusicID    uint `gorm:"primaryKey"`
+	Position   uint
+}

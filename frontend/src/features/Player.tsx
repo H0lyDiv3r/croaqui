@@ -39,7 +39,14 @@ const Player: React.FC = () => {
       bgPos={"left"}
       width={"100%"}
       display={"flex"}
-      height={"7rem"}
+      height={"6rem"}
+      boxShadow={"0px 0px 12px rgba(0, 0, 0, 0.2)"}
+      borderTop={"2px solid"}
+      borderColor={getNeutral("light", 700)}
+      borderX={"none"}
+      _dark={{
+        borderColor: getNeutral("dark", 700),
+      }}
     >
       <Box
         backdropFilter={"auto"}
