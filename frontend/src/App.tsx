@@ -56,7 +56,11 @@ function App() {
 
   const getAudios = () => {
     // console.log("getting audios", path.join("/"));
-    GetAudio(path.join("/")).then((res) => {
+    GetAudio(
+      JSON.stringify({
+        path: path.join("/"),
+      }),
+    ).then((res) => {
       console.log("getting audios from db", res.data.files);
       setAudioFiles(res.data.files);
     });

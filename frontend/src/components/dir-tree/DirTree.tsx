@@ -6,18 +6,18 @@ import {
   TreeView,
 } from "@chakra-ui/react";
 import { GetAudio, GetDirs } from "../../../wailsjs/go/dir/Directory";
-import { useNavigationStore } from "@/store";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaFolder } from "react-icons/fa6";
 import { getNeutral } from "@/utils";
+import { useDataStore } from "@/store";
+import { getAudio } from "@/utils/data/audioData";
 
 export const DirTree = () => {
-  const dirs = useNavigationStore((state) => state.dirs);
-  const setDirs = useNavigationStore((state) => state.setDirs);
-  const currentPath = useNavigationStore((state) => state.currentPath);
-  const setCurrentPath = useNavigationStore((state) => state.setCurrentPath);
-  const setMusicFiles = useNavigationStore((state) => state.setMusicFiles);
+  const dirs = useDataStore((state) => state.dirs);
+  const setDirs = useDataStore((state) => state.setDirs);
+  const currentPath = useDataStore((state) => state.currentPath);
+  const setCurrentPath = useDataStore((state) => state.setCurrentPath);
   const getDir = () => {
     GetDirs(currentPath)
       .then((res) => {
@@ -28,17 +28,9 @@ export const DirTree = () => {
         console.error("Error fetching directory contents:", error);
       });
   };
-  const getAudios = (path: string) => {
-    // console.log("getting audios", path.join("/"));
-    GetAudio(path).then((res) => {
-      console.log("getting audios from db", res.data.files);
-      setMusicFiles(res.data.files);
-    });
-  };
 
   useEffect(() => {
     getDir();
-    getAudios(currentPath);
   }, [currentPath]);
 
   return (
@@ -69,7 +61,6 @@ export const DirTree = () => {
                     setCurrentPath(dir.path);
                   }
                 });
-                getAudios(dir.path);
               }}
             >
               <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>

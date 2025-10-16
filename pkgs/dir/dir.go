@@ -2,6 +2,7 @@ package dir
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
@@ -82,8 +83,8 @@ func (d *Directory) GetDirs(path string) (*ReturnType, error) {
 	}{Dirs: result}}, nil
 }
 
-func (d *Directory) GetAudio(path string) (*ReturnType, error) {
-	var result []struct {
+func (d *Directory) GetAudio(filter string) (*ReturnType, error) {
+	type audio struct {
 		Id       int    `json:"id"`
 		Name     string `json:"name"`
 		Path     string `json:"path"`
@@ -93,18 +94,65 @@ func (d *Directory) GetAudio(path string) (*ReturnType, error) {
 		Duration string `json:"duration"`
 		Genre    string `json:"genre"`
 	}
-	res := db.DBInstance.Instance.Raw(`
-		SELECT *
-		FROM music_files mf
-		  	LEFT JOIN music_meta_data mmd ON mf.meta_data_id = mmd.id
-		WHERE mf.path LIKE ?
-		`, path+"%").Scan(&result)
-	if res.Error != nil {
-		return nil, res.Error
+
+	var result = []audio{}
+
+	var filterSettings struct {
+		Artist string `json:"artist"`
+		Album  string `json:"album"`
+		Genre  string `json:"genre"`
+		Path   string `json:"path"`
+		Title  string `json:"title"`
+		Sort   []struct {
+			Field string `json:"field"`
+			Order string `json:"order"`
+		} `json:"sort"`
+		Limit int `json:"limit"`
+		Page  int `json:"page"`
 	}
+
+	err := json.Unmarshal([]byte(filter), &filterSettings)
+	if err != nil {
+		return nil, err
+	}
+	query := db.DBInstance.Instance.Model(&db.MusicFile{}).Select("*").Joins(`LEFT JOIN music_meta_data mm ON music_files.meta_data_id = mm.id`)
+
+	if filterSettings.Path != "" {
+		query = query.Where(`path LIKE ?`, filterSettings.Path+"%")
+	}
+	if filterSettings.Title != "" {
+		query = query.Where(`title LIKE ?`, filterSettings.Title)
+	}
+	if filterSettings.Artist != "" {
+		query = query.Where(`artist LIKE ?`, filterSettings.Artist)
+	}
+	if filterSettings.Album != "" {
+		query = query.Where(`album LIKE ?`, filterSettings.Album)
+	}
+	if filterSettings.Genre != "" {
+		query = query.Where(`genre LIKE ?`, filterSettings.Genre)
+	}
+	if len(filterSettings.Sort) > 0 {
+		for _, sort := range filterSettings.Sort {
+			query = query.Order(fmt.Sprintf("%s %s", sort.Field, sort.Order))
+		}
+	}
+
+	var count int64
+	query.Count(&count)
+	offset := filterSettings.Page * filterSettings.Limit
+	fmt.Println("this is the new offset:", filterSettings)
+	if filterSettings.Limit > 0 {
+		query = query.Limit(filterSettings.Limit)
+		query = query.Offset(offset)
+	}
+
+	query.Scan(&result)
+
 	return &ReturnType{Data: struct {
-		Files interface{} `json:"files"`
-	}{Files: result}}, nil
+		Files   []audio `json:"files"`
+		HasMore bool    `json:"hasMore"`
+	}{Files: result, HasMore: offset+filterSettings.Limit < int(count)}}, nil
 }
 
 func (d *Directory) ScanForAudio(path string) error {

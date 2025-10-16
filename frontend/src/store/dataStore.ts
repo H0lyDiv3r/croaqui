@@ -1,5 +1,6 @@
 import { dir } from "wailsjs/go/models";
 import { create } from "zustand";
+import { useQueryStore } from "./queryStore";
 
 type dir = {
   id: string;
@@ -7,7 +8,7 @@ type dir = {
   path: string;
 };
 
-type NavigationStore = {
+type DataStore = {
   currentPath: string;
   dirs: dir[];
   musicFiles: any[];
@@ -16,11 +17,15 @@ type NavigationStore = {
   setCurrentPath: (dir: string) => void;
 };
 
-export const useNavigationStore = create<NavigationStore>((set) => ({
+export const useDataStore = create<DataStore>((set) => ({
   currentPath: "/",
   dirs: [],
   musicFiles: [],
   setMusicFiles: (musicFiles: any[]) => set({ musicFiles }),
   setDirs: (dirs: dir[]) => set({ dirs }),
-  setCurrentPath: (path: string) => set({ currentPath: path }),
+  setCurrentPath: (path: string) =>
+    set((state) => {
+      useQueryStore.setState({ path: path });
+      return { ...state, currentPath: path };
+    }),
 }));

@@ -1,30 +1,43 @@
-import { useNavigationStore, usePlayerStore } from "@/store";
+import { useDataStore, usePlayerStore, useQueryStore } from "@/store";
 import { Box, For, Grid, GridItem } from "@chakra-ui/react";
 import {
   GetImage,
-  GetMetadata,
   GetStatus,
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
 import { getNeutral } from "@/utils";
+import { useEffect, useRef, useState } from "react";
+import { GetAudio } from "wailsjs/go/dir/Directory";
+import { getAudio } from "@/utils/data/audioData";
 
 export const MusicList = () => {
-  const audioFiles = useNavigationStore((state) => state.musicFiles);
+  const audioFiles = useDataStore((state) => state.musicFiles);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
+  const currentPath = useDataStore((state) => state.currentPath);
+
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
-  const loadAudio = (audioPath: string) => {
-    LoadMusic(audioPath)
+
+  const handleScroll = () => {
+    const current = scrollRef.current;
+    if (!current) return;
+    if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
+      console.log("Fetching");
+      // getAudios(currentPath);
+      getAudio();
+    }
+  };
+
+  const loadAudio = (item: any) => {
+    LoadMusic(item.path)
       .then((res) => {
-        console.log("loaded loaded loaded", res);
+        console.log("loaded loaded loaded", res, item);
         setLoaded(res.data.loaded);
-        GetMetadata().then((res) => {
-          setTrack(res.data.metadata);
-          console.log("am i here bro showing metadata", res);
-        });
+        setTrack(item);
         GetImage().then((res) => {
           console.log("image", res);
           setCurrentTrackImage(res.data.image);
@@ -49,6 +62,9 @@ export const MusicList = () => {
       .join(":");
   }
 
+  useEffect(() => {
+    getAudio();
+  }, [currentPath]);
   return (
     <Box height={"100%"}>
       <Box
@@ -90,7 +106,13 @@ export const MusicList = () => {
           <GridItem colSpan={1}></GridItem>
         </Grid>
 
-        <Box flex={1} minH={0} overflow={"auto"}>
+        <Box
+          flex={1}
+          minH={0}
+          overflow={"auto"}
+          onScroll={handleScroll}
+          ref={scrollRef}
+        >
           {audioFiles.map((item, idx) => (
             <Grid
               templateColumns="repeat(24, 1fr)"
@@ -112,7 +134,7 @@ export const MusicList = () => {
                 },
               }}
               onClick={() => {
-                loadAudio(item.path);
+                loadAudio(item);
               }}
             >
               <GridItem colSpan={1} overflow={"hidden"}>

@@ -1,25 +1,15 @@
-import { useNavigationStore } from "@/store";
 import { useGeneralStore } from "@/store/generalStore";
 import { getNeutral } from "@/utils";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { useRef } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
+import { useDataStore } from "@/store";
 
 export const PathBar = () => {
-  const currentPath = useNavigationStore((state) => state.currentPath);
-  const setCurrentPath = useNavigationStore((state) => state.setCurrentPath);
+  const currentPath = useDataStore((state) => state.currentPath);
+  const setCurrentPath = useDataStore((state) => state.setCurrentPath);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const backTrack = () => {
-    const path = currentPath.split("/");
-    console.log("this is the path", path);
-    path.pop();
-    console.log("new path", currentPath, path.join("/"));
-    setCurrentPath(path.join("/"));
-    // setCurrentPath(path.join("/"));
-    // getDir();
-    // getAudios(currentPath);
-  };
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (!scrollRef.current) return;

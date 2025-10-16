@@ -25,12 +25,7 @@ import { getNeutral } from "@/utils";
 
 const Player: React.FC = () => {
   const [favorite, setFavorite] = useState(true);
-  const setAll = usePlayerStore((state) => state.setPlayerStatus);
-  const setLoaded = usePlayerStore((state) => state.setLoaded);
-  const setTrack = usePlayerStore((state) => state.setCurrentTrack);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
-  const currentTrackImage = usePlayerStore((state) => state.currentTrack);
-  const audioPath = usePlayerStore((state) => state.audioPath);
 
   return (
     <Box
