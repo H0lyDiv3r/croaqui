@@ -1,4 +1,4 @@
-export namespace dir {
+export namespace media {
 	
 	export class ReturnType {
 	    data: any;

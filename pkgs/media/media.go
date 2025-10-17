@@ -1,0 +1,72 @@
+package media
+
+import (
+	"context"
+	"path/filepath"
+	"slices"
+)
+
+type DirectoryContents struct {
+	Content []string `json:"content"`
+}
+
+type AudioFiles struct {
+	AudioFiles []string `json:"audio_files"`
+}
+
+type ReturnType struct {
+	Data interface{} `json:"data"`
+}
+
+type Media struct {
+	ctx context.Context
+}
+
+func NewMedia() *Media {
+	return &Media{}
+}
+
+func (m *Media) StartUp(ctx context.Context) {
+	m.ctx = ctx
+	m.GetAlbums()
+	// m.GetAlbumsWithRoutines()
+}
+
+func isAudioFile(path string) bool {
+	MPVSupportedFormats := []string{
+		// Lossy formats
+		".mp3",
+		".aac",
+		".m4a",
+		".ogg",
+		".opus",
+		".wma",
+		".ac3",
+		".eac3",
+		".dts",
+
+		// Lossless formats
+		".flac",
+		".alac",
+		".wav",
+		".aiff",
+		".aif",
+		".ape",
+		".tta",
+
+		// Container formats
+		".mka",
+		".avi",
+		".mp4",
+		".caf",
+		".au",
+
+		// Streaming / playlist formats
+		".m3u",
+		".m3u8",
+		".pls",
+	}
+	ext := filepath.Ext(path)
+	// return ext == ".mp3" || ext == ".wav" || ext == ".flac"
+	return slices.Contains(MPVSupportedFormats, ext)
+}

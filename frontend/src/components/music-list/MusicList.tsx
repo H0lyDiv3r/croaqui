@@ -1,5 +1,5 @@
-import { useDataStore, usePlayerStore, useQueryStore } from "@/store";
-import { Box, For, Grid, GridItem } from "@chakra-ui/react";
+import { useDataStore, usePlayerStore } from "@/store";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
 import {
   GetImage,
   GetStatus,
@@ -7,7 +7,6 @@ import {
 } from "../../../wailsjs/go/player/Player";
 import { getNeutral } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { GetAudio } from "wailsjs/go/dir/Directory";
 import { getAudio } from "@/utils/data/audioData";
 
 export const MusicList = () => {

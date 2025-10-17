@@ -5,13 +5,12 @@ import {
   Text,
   TreeView,
 } from "@chakra-ui/react";
-import { GetAudio, GetDirs } from "../../../wailsjs/go/dir/Directory";
+import { GetDirs } from "../../../wailsjs/go/media/Media";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaFolder } from "react-icons/fa6";
 import { getNeutral } from "@/utils";
 import { useDataStore } from "@/store";
-import { getAudio } from "@/utils/data/audioData";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);

@@ -1,4 +1,3 @@
-import { dir } from "wailsjs/go/models";
 import { create } from "zustand";
 import { useQueryStore } from "./queryStore";
 

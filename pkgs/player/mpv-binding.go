@@ -175,10 +175,21 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 }
 
 func (p *Player) GetImage() (*ReturnType, error) {
-	countRaw, err := p.mpv.GetProperty("track-list/count", mpv.FormatInt64)
+	b64, err := GetImageFFprobe(p.mpv)
+	if err != nil {
+		return nil, err
+	}
+	return &ReturnType{Data: struct {
+		Success bool   `json:"success"`
+		Image   string `json:"image"`
+	}{Success: true, Image: b64}}, nil
+}
+
+func GetImageFFprobe(m *mpv.Mpv) (string, error) {
+	countRaw, err := m.GetProperty("track-list/count", mpv.FormatInt64)
 	if err != nil {
 		log.Printf("failed to get track count: %v", err)
-		return nil, err
+		return "", err
 	}
 
 	count := countRaw.(int64)
@@ -186,41 +197,38 @@ func (p *Player) GetImage() (*ReturnType, error) {
 	// Subscribe to property updates
 	for i := range count {
 		prop := fmt.Sprintf("track-list/%d/albumart", i)
-		val, err := p.mpv.GetProperty(prop, mpv.FormatFlag)
+		val, err := m.GetProperty(prop, mpv.FormatFlag)
 
 		if err != nil {
 			log.Printf("failed to get album art: %v", err)
-			return nil, err
+			return "", err
 		}
 		if art, ok := val.(bool); ok && art {
 			idProp := fmt.Sprintf("track-list/%d/id", 1)
-			idRaw, _ := p.mpv.GetProperty(idProp, mpv.FormatInt64)
+			idRaw, _ := m.GetProperty(idProp, mpv.FormatInt64)
 			id := idRaw.(int64)
-			p.mpv.SetPropertyString("vo", "null")
-			p.mpv.SetProperty("vid", mpv.FormatInt64, id)
+			m.SetPropertyString("vo", "null")
+			m.SetProperty("vid", mpv.FormatInt64, id)
 			for {
-				ev := p.mpv.WaitEvent(0.1)
+				ev := m.WaitEvent(0.1)
 				if ev != nil && ev.EventID == mpv.EventVideoReconfig {
 					break
 				}
 			}
 			output := "./tmp/album_art.jpg"
 			time.Sleep(100 * time.Millisecond)
-			if err := p.mpv.Command([]string{"screenshot-to-file", output}); err != nil {
+			if err := m.Command([]string{"screenshot-to-file", output}); err != nil {
 				log.Printf("failed to take screenshot: %v", err)
-				return nil, err
+				return "", err
 			}
 			data, err := os.ReadFile(output)
 			if err != nil {
-				return nil, err
+				return "", err
 			}
 			b64 := base64.StdEncoding.EncodeToString(data)
-			return &ReturnType{Data: struct {
-				Success bool   `json:"success"`
-				Image   string `json:"image"`
-			}{Success: true, Image: b64}}, nil
+			return b64, nil
 		}
 
 	}
-	return nil, fmt.Errorf("no album art found")
+	return "", fmt.Errorf("no album art found")
 }

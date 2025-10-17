@@ -4,8 +4,8 @@ import (
 	"context"
 	"embed"
 	"myproject/pkgs/db"
-	"myproject/pkgs/dir"
 	"myproject/pkgs/ffmpeg"
+	"myproject/pkgs/media"
 	"myproject/pkgs/player"
 	"myproject/pkgs/playlist"
 
@@ -21,7 +21,7 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 	player := player.MPV()
-	dir := dir.NewDirectory()
+	media := media.NewMedia()
 	data := db.NewDB()
 	ffmpeg := ffmpeg.NewFFmpeg()
 	playlists := playlist.NewPlaylist()
@@ -39,7 +39,7 @@ func main() {
 		OnStartup: func(ctx context.Context) {
 			app.startup(ctx)
 			data.StartUp(ctx)
-			dir.StartUp(ctx)
+			media.StartUp(ctx)
 			ffmpeg.StartUp(ctx)
 			player.StartUp(ctx)
 			playlists.StartUp(ctx)
@@ -47,7 +47,7 @@ func main() {
 		},
 		Bind: []interface{}{
 			app,
-			dir,
+			media,
 			player,
 			playlists,
 			// ffmpeg,

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os/exec"
 )
@@ -49,10 +50,12 @@ func (f *FFmpeg) GetMetadataFFProbe(path string) (Metadata, error) {
 		return Metadata{}, err
 	}
 	var result Metadata
-	err = json.Unmarshal(out.Bytes(), &result)
+	var res map[string]interface{}
+	err = json.Unmarshal(out.Bytes(), &res)
 	if err != nil {
 		return Metadata{}, err
 	}
+	fmt.Println("coming from ffprobe", out.String())
 
 	return result, nil
 }

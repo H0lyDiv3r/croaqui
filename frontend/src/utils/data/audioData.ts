@@ -1,5 +1,5 @@
 import { useDataStore, useQueryStore } from "@/store";
-import { GetAudio } from "../../../wailsjs/go/dir/Directory";
+import { GetAudio } from "../../../wailsjs/go/media/Media";
 
 export const getAudio = async () => {
   if (!useQueryStore.getState().hasMore) {

@@ -65,8 +65,8 @@ const Player: React.FC = () => {
           }}
         >
           <Box
-            minWidth={"1"}
-            maxW={"16"}
+            width={"16"}
+            minW={"16"}
             height={"16"}
             mx={"6px"}
             borderRadius={"4px"}
