@@ -17,7 +17,6 @@ export const useGeneralStore = create<GeneralStore>((set, get) => ({
   },
   toggleTheme: () =>
     set((state) => {
-      console.log("switching theme", state.theme);
       return { theme: state.theme === "DARK" ? "LIGHT" : "DARK" };
     }),
 }));

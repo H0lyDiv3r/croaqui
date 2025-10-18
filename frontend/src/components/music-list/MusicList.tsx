@@ -1,4 +1,4 @@
-import { useDataStore, usePlayerStore } from "@/store";
+import { useDataStore, usePlayerStore, useQueryStore } from "@/store";
 import { Box, Grid, GridItem } from "@chakra-ui/react";
 import {
   GetImage,
@@ -21,28 +21,46 @@ export const MusicList = () => {
     (state) => state.setCurrentTrackImage,
   );
 
-  const handleScroll = () => {
+  const getAudioFiles = async () => {
+    const audioFiles = await getAudio({ hasMore: true, page: 0 });
+    // setAll(audioFiles);
+    useDataStore.setState((state) => ({
+      ...state,
+      musicFiles: [...audioFiles],
+    }));
+  };
+
+  const handleScroll = async () => {
     const current = scrollRef.current;
     if (!current) return;
     if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
-      console.log("Fetching");
       // getAudios(currentPath);
-      getAudio();
+      useQueryStore.setState((state) => ({
+        ...state,
+        page: state.page + 1,
+      }));
+      const newPage = await getAudio({
+        // page: useQueryStore.getState().page + 1,
+      });
+      if (!newPage) {
+        return;
+      }
+      useDataStore.setState((state) => ({
+        ...state,
+        musicFiles: [...state.musicFiles, ...newPage],
+      }));
     }
   };
 
   const loadAudio = (item: any) => {
     LoadMusic(item.path)
       .then((res) => {
-        console.log("loaded loaded loaded", res, item);
         setLoaded(res.data.loaded);
         setTrack(item);
         GetImage().then((res) => {
-          console.log("image", res);
           setCurrentTrackImage(res.data.image);
         });
         GetStatus().then((res) => {
-          console.log("getting status", res);
           setAll(res.data);
         });
         // setAll(JSON.parse(res));
@@ -62,7 +80,8 @@ export const MusicList = () => {
   }
 
   useEffect(() => {
-    getAudio();
+    // getAudio();
+    getAudioFiles();
   }, [currentPath]);
   return (
     <Box height={"100%"}>

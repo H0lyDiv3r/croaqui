@@ -10,21 +10,32 @@ import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaFolder } from "react-icons/fa6";
 import { getNeutral } from "@/utils";
-import { useDataStore } from "@/store";
+import { QueryParams, useDataStore } from "@/store";
+import { getAudio } from "@/utils/data/audioData";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);
   const setDirs = useDataStore((state) => state.setDirs);
   const currentPath = useDataStore((state) => state.currentPath);
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);
+  const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const getDir = () => {
     GetDirs(currentPath)
       .then((res) => {
-        console.log("result getting die", res);
         setDirs(res.data.dirs);
       })
       .catch((error) => {
         console.error("Error fetching directory contents:", error);
+      });
+  };
+
+  const getAudioFiles = (params: Partial<QueryParams> | null) => {
+    getAudio({ ...params, page: 0, hasMore: true })
+      .then((res) => {
+        setAudioFiles(res);
+      })
+      .catch((error) => {
+        console.error("Error fetching audio contents:", error);
       });
   };
 
@@ -58,6 +69,8 @@ export const DirTree = () => {
                 GetDirs(dir.path).then((res) => {
                   if (res.data.dirs) {
                     setCurrentPath(dir.path);
+                  } else {
+                    getAudioFiles({ path: dir.path });
                   }
                 });
               }}

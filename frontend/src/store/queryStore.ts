@@ -19,7 +19,7 @@ type Sort = {
   order: string;
 };
 
-type QueryParams = {
+export type QueryParams = {
   artist: string;
   album: string;
   genre: string;

@@ -55,7 +55,6 @@ export const usePlayerStore = create<playerStore>((set) => ({
     }),
   setCurrentTrack: (trackInfo: { [key: string]: any }) =>
     set((state) => {
-      console.log("setting track", trackInfo);
       return {
         ...state,
         currentTrack: {
@@ -90,7 +89,6 @@ export const usePlayerStore = create<playerStore>((set) => ({
     }),
   setPosition: (position: number) =>
     set((state) => {
-      console.log("i am here bro", position);
       return { ...state, position };
     }),
   incrementPosition: () =>
@@ -107,7 +105,6 @@ export const usePlayerStore = create<playerStore>((set) => ({
     }),
   setPlayerStatus: (vals: { [key: string]: any }) =>
     set((state) => {
-      console.log("setting all", vals);
       return {
         ...state,
         paused: vals.paused,

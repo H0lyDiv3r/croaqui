@@ -1,28 +1,30 @@
-import { useDataStore, useQueryStore } from "@/store";
+import { QueryParams, useDataStore, useQueryStore } from "@/store";
 import { GetAudio } from "../../../wailsjs/go/media/Media";
 
-export const getAudio = async () => {
-  if (!useQueryStore.getState().hasMore) {
+export const getAudio = async (params?: Partial<QueryParams> | null) => {
+  const query = {
+    ...useQueryStore.getState(),
+    ...params,
+  };
+  if (!query.hasMore) {
     return;
   }
-  console.log("about to make a request", useQueryStore.getState());
+
   const response = await GetAudio(
     JSON.stringify({
       ...useQueryStore.getState(),
+      ...params,
     }),
   );
+
   if (!response) {
     console.error("Failed to fetch audio data");
     return [];
   }
-  useDataStore.setState((state) => ({
-    ...state,
-    musicFiles: [...state.musicFiles, ...response.data.files],
-  }));
+
   useQueryStore.setState((state) => ({
     ...state,
     hasMore: response.data.hasMore,
-    page: state.page + 1,
   }));
-  console.log("Coming from sparate deata", response);
+  return response.data.files;
 };

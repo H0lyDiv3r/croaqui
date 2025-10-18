@@ -10,11 +10,9 @@ const TimeLine: React.FC = () => {
   const position = usePlayerStore((state) => state.position);
   const { handlePosition } = {
     handlePosition: (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("here", e.target.value);
       SetPosition(Number(e.target.value)).then(() => {
         GetPosition().then((res) => {
           setPositionState(Math.round(res.data.position));
-          console.log("here is it", res);
         });
       });
     },

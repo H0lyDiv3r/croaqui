@@ -39,12 +39,10 @@ const Controls: React.FC = () => {
   const { handlePlay } = {
     handlePlay: () => {
       TogglePlay().then((res) => {
-        console.log("coming from play", res);
         if (time.current) {
           clearInterval(time.current);
         }
         if (!res.data.paused) {
-          console.log("is paused", res.data.paused);
           handleTimeline();
         }
         togglePaused(res.data.paused);
@@ -58,7 +56,6 @@ const Controls: React.FC = () => {
     }
     if (!paused && loaded) {
       handleTimeline();
-      console.log("i am here bro handling timelie", paused, loaded);
     }
   }, [playbackRate, paused, loaded]);
   // useEffect(() => {

@@ -14,9 +14,7 @@ const VolumeControl: React.FC = () => {
   const volume = usePlayerStore((state) => state.volume);
   const { handleVolume, handleMute } = {
     handleVolume: (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("where are we", Number(e.target.value));
       SetVolume(Number(e.target.value)).then((res) => {
-        console.log("setting volume", res);
         setVolumeState(res.data.volume);
       });
     },
