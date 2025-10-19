@@ -142,7 +142,6 @@ const Player: React.FC = () => {
         >
           <PlaybackRateControl />
           <VolumeControl />
-          <SwitchTheme />
         </Box>
       </Box>
     </Box>

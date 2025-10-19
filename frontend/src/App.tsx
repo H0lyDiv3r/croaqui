@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import "./App.css";
 import Player from "./features/Player";
 import { Box, Button, Image, Text } from "@chakra-ui/react";
@@ -6,9 +8,11 @@ import { getNeutral } from "./utils";
 import { SidebarNavigator } from "./features/sidebar-navigator";
 import { GetAlbums, GetAlbumsWithRoutines } from "../wailsjs/go/media/Media";
 import { useState } from "react";
+import { NavBar } from "./features/navbar";
+import { Route, Router, Switch } from "wouter";
+import { Albums, Library } from "./pages";
 
 function App() {
-  const [albums, setAlbums] = useState<any>([]);
   return (
     <Box
       display={"flex"}
@@ -19,30 +23,16 @@ function App() {
       h={"100vh"}
       id="App"
     >
-      <Box h={"5rem"}>aa</Box>
-      <Box flex={1} minH={0}>
-        <Box display={"flex"} height={"100%"}>
-          <Box
-            bg={getNeutral("light", 800)}
-            _dark={{ bg: getNeutral("dark", 800) }}
-            w={"350px"}
-            height={"100%"}
-          >
-            <SidebarNavigator />
-          </Box>
-          <Box flex={1} height={"100%"}>
-            <MusicList />
-          </Box>
-          <Box
-            bg={getNeutral("light", 800)}
-            _dark={{ bg: getNeutral("dark", 800) }}
-            minW={"350px"}
-            height={"100%"}
-          >
-            aa
-          </Box>
+      {/*<Box h={"5rem"}>aa</Box>*/}
+      <NavBar />
+
+      <Switch>
+        <Box flex={1} minH={0}>
+          <Route path="/library" component={Library} />
+          <Route path="/albums" component={Albums} />
         </Box>
-      </Box>
+      </Switch>
+
       <Player />
     </Box>
   );

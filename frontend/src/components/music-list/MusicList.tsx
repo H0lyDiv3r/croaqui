@@ -1,5 +1,5 @@
 import { useDataStore, usePlayerStore, useQueryStore } from "@/store";
-import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
 import {
   GetImage,
   GetStatus,
@@ -35,13 +35,13 @@ export const MusicList = () => {
     if (!current) return;
     if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
       // getAudios(currentPath);
+      const newPage = await getAudio({
+        page: useQueryStore.getState().page + 1,
+      });
       useQueryStore.setState((state) => ({
         ...state,
-        page: state.page + 1,
+        page: state.hasMore ? state.page + 1 : state.page,
       }));
-      const newPage = await getAudio({
-        // page: useQueryStore.getState().page + 1,
-      });
       if (!newPage) {
         return;
       }
@@ -81,6 +81,9 @@ export const MusicList = () => {
 
   useEffect(() => {
     // getAudio();
+    useQueryStore.setState((state) => {
+      return { ...state, page: 0 };
+    });
     getAudioFiles();
   }, [currentPath]);
   return (
@@ -99,7 +102,7 @@ export const MusicList = () => {
           templateColumns="repeat(24, 1fr)"
           fontSize={"md"}
           p={"2"}
-          py={"4"}
+          py={"2"}
           gap={4}
           // borderBottom={"1px white solid"}
           // borderTop={"1px white solid"}
@@ -115,13 +118,23 @@ export const MusicList = () => {
           fontWeight={500}
           bg={getNeutral("light", 700)}
         >
-          <GridItem colSpan={1}>#</GridItem>
-          <GridItem colSpan={8}>Title</GridItem>
-          <GridItem colSpan={4}>Artist</GridItem>
-          <GridItem colSpan={4}>Album</GridItem>
-          <GridItem colSpan={4}>Genre</GridItem>
-          <GridItem colSpan={2}>Duration</GridItem>
-          <GridItem colSpan={1}></GridItem>
+          <GridItem whiteSpace={"nowrap"} colSpan={1}>
+            #
+          </GridItem>
+          <GridItem whiteSpace={"nowrap"} colSpan={8}>
+            Title
+          </GridItem>
+
+          <GridItem whiteSpace={"nowrap"} colSpan={6}>
+            Album
+          </GridItem>
+          <GridItem whiteSpace={"nowrap"} colSpan={6}>
+            Genre
+          </GridItem>
+          <GridItem whiteSpace={"nowrap"} colSpan={2}>
+            Duration
+          </GridItem>
+          <GridItem whiteSpace={"nowrap"} colSpan={1}></GridItem>
         </Grid>
 
         <Box
@@ -133,16 +146,18 @@ export const MusicList = () => {
         >
           {audioFiles.map((item, idx) => (
             <Grid
+              alignItems={"center"}
               templateColumns="repeat(24, 1fr)"
               fontSize={"sm"}
               whiteSpace={"nowrap"}
               gap={4}
               p={"2"}
-              py={"3"}
               key={item.id}
               bg={idx % 2 === 0 ? getNeutral("light", 800) : "none"}
+              color={getNeutral("light", 200)}
               _dark={{
                 bg: idx % 2 === 0 ? getNeutral("dark", 800) : "none",
+                color: getNeutral("dark", 200),
               }}
               _hover={{
                 bg: getNeutral("light", 700),
@@ -159,16 +174,24 @@ export const MusicList = () => {
                 {idx + 1}
               </GridItem>
               <GridItem colSpan={8} overflow={"hidden"}>
-                {item.title}
+                <Text whiteSpace={"nowrap"}>{item.title}</Text>
+                <Text
+                  whiteSpace={"nowrap"}
+                  fontSize={"xs"}
+                  color={getNeutral("light", 400)}
+                  _dark={{
+                    color: getNeutral("dark", 400),
+                  }}
+                >
+                  {item.artist}
+                </Text>
               </GridItem>
-              <GridItem colSpan={4} overflow={"hidden"}>
-                {item.artist}
+
+              <GridItem colSpan={6} overflow={"hidden"}>
+                {item.album ? item.album : "-"}
               </GridItem>
-              <GridItem colSpan={4} overflow={"hidden"}>
-                {item.album}
-              </GridItem>
-              <GridItem colSpan={4} overflow={"hidden"}>
-                {item.genre}
+              <GridItem colSpan={6} overflow={"hidden"}>
+                {item.genre ? item.genre : "-"}
               </GridItem>
               <GridItem colSpan={2} overflow={"hidden"}>
                 {toHMS(item.duration)}

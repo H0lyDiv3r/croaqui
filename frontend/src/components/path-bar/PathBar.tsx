@@ -18,20 +18,18 @@ export const PathBar = () => {
   return (
     <>
       <Box
-        borderColor={getNeutral("light", 600)}
+        borderColor={getNeutral("light", 700)}
         borderStyle={"solid"}
         borderWidth={"1px"}
-        borderRight={"none"}
-        borderLeft={"none"}
+        borderRadius={"md"}
         color={getNeutral("light", 100)}
         bg={getNeutral("light", 800)}
         _dark={{
           color: getNeutral("dark", 100),
-          borderColor: getNeutral("dark", 600),
+          borderColor: getNeutral("dark", 700),
           bg: getNeutral("dark", 800),
         }}
-        px={2}
-        py={4}
+        p={2}
         display="flex"
         alignItems="center"
         gap={2}
