@@ -10,7 +10,7 @@ import { GetAlbums, GetAlbumsWithRoutines } from "../wailsjs/go/media/Media";
 import { useState } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Router, Switch } from "wouter";
-import { Albums, Library } from "./pages";
+import { AlbumDetail, Albums, Library } from "./pages";
 
 function App() {
   return (
@@ -27,9 +27,10 @@ function App() {
       <NavBar />
 
       <Switch>
-        <Box flex={1} minH={0}>
+        <Box display={"flex"} flex={1} minH={0}>
           <Route path="/library" component={Library} />
           <Route path="/albums" component={Albums} />
+          <Route path="/albums/:id" component={AlbumDetail} />
         </Box>
       </Switch>
 

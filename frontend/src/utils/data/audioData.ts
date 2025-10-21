@@ -1,5 +1,5 @@
 import { QueryParams, useDataStore, useQueryStore } from "@/store";
-import { GetAudio } from "../../../wailsjs/go/media/Media";
+import { GetAlbums, GetAudio } from "../../../wailsjs/go/media/Media";
 
 export const getAudio = async (params?: Partial<QueryParams> | null) => {
   const query = {
@@ -27,4 +27,15 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
     hasMore: response.data.hasMore,
   }));
   return response.data.files;
+};
+
+export const getAlbums = async () => {
+  const albums = await GetAlbums();
+  if (!albums) {
+    console.log("failed to fetch albums", albums);
+    return;
+  }
+  console.log("albums", albums);
+
+  return albums.data;
 };

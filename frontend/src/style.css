@@ -1,3 +1,9 @@
+@font-face {
+    font-family: "Rubik";
+    src: url("../public/fonts/Rubik/Rubik-VariableFont_wght.ttf")
+        format("truetype");
+}
+
 html {
     background-color: #121721;
     text-align: center;

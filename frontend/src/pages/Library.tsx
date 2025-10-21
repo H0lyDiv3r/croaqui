@@ -5,7 +5,7 @@ import { Box } from "@chakra-ui/react";
 
 export const Library = () => {
   return (
-    <Box display={"flex"} height={"100%"}>
+    <Box display={"flex"} height={"100%"} width={"100%"}>
       <Box
         // bg={getNeutral("light", 800)}
         // _dark={{ bg: getNeutral("dark", 800) }}

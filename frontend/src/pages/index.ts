@@ -1,2 +1,2 @@
 export * from "./Library";
-export * from "./Albums";
+export * from "./albums";

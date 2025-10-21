@@ -130,30 +130,43 @@ func (m *Media) GetAlbums() (*ReturnType, error) {
 		Artist   string `json:"artist"`
 		Duration string `json:"duration"`
 		Image    string `json:"image"`
+		Songs    int    `json:"songs"`
 	}
 
-	var result []album
+	type counts struct {
+		Artists int `json:"artists"`
+		Albums  int `json:"albums"`
+	}
+
+	var result struct {
+		Albums []album `json:"albums"`
+		Counts counts  `json:"counts"`
+	}
 
 	db.DBInstance.Instance.Raw(`
-	SELECT path,album,artist,duration FROM music_files m
+	SELECT path,album,artist,SUM(duration) AS duration,COUNT(m.id) AS songs FROM music_files m
 	LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
 
 	GROUP BY album
-	`).Scan(&result)
+	`).Scan(&result.Albums)
+
+	db.DBInstance.Instance.Raw(`
+	SELECT COUNT(DISTINCT artist) AS artists,COUNT(DISTINCT album) AS albums FROM music_files m
+	LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+	`).Scan(&result.Counts)
 
 	// fmt.Println("this is it buddy", result[0].Path)
 
-	for idx, item := range result {
+	for idx, item := range result.Albums {
 		img, err := fetchImage(item.Path)
 		if err != nil {
 			fmt.Println("error fetching image", err)
-			result[idx].Image = fmt.Sprintf("%s/%s", item.Path, "cover.jpg")
+			result.Albums[idx].Image = fmt.Sprintf("%s/%s", item.Path, "cover.jpg")
 			continue
 		}
-		result[idx].Image = img
+		result.Albums[idx].Image = img
 	}
 
-	fmt.Print("show me whay you are doing", result)
 	// url := "/home/yuri/Data/projects/music-player-go/test-files/tst.m4a"
 	// metaData, _ := ffmpeg.FFmpegInstance.GetMetadataFFProbe("/home/yuri/Data/projects/music-player-go/test-files/tst.m4a")
 	// fmt.Println("this is the metadata", metaData)
@@ -163,7 +176,8 @@ func (m *Media) GetAlbums() (*ReturnType, error) {
 	return &ReturnType{
 		Data: struct {
 			Albums []album `json:"albums"`
-		}{Albums: result},
+			Counts counts  `json:"counts"`
+		}{Albums: result.Albums, Counts: result.Counts},
 	}, nil
 }
 
