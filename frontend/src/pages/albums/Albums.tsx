@@ -68,20 +68,30 @@ export const Albums = () => {
               albums.map((item, idx) => {
                 return (
                   <Card.Root
-                    maxWidth={"16rem"}
                     key={idx}
                     width={"100%"}
                     h={"18rem"}
                     overflow={"hidden"}
                     boxShadow={"0px 0px 12px rgba(0, 0, 0, 0.2)"}
                     my={"2"}
+                    p={2}
                     onClick={() => {
                       console.log("routing to", item.album);
-                      navigate(`/albums/${item.album}`);
+                      navigate(`/albums/${encodeURIComponent(item.album)}`);
                     }}
-                    borderRadius={"lg"}
+                    borderRadius={"xl"}
+                    bg={getNeutral("light", 900)}
+                    _dark={{
+                      bg: getNeutral("dark", 800),
+                    }}
                   >
-                    <Card.Body p={"0"} transform="translateZ(0)">
+                    <Card.Body
+                      p={"0"}
+                      borderRadius={"lg"}
+                      overflow={"hidden"}
+                      bg={"gray"}
+                      pos={"relative"}
+                    >
                       <Image
                         src={`data:image/jpeg;base64,${item.image}`}
                         alt={item.album}
@@ -91,9 +101,38 @@ export const Albums = () => {
                         onError={(e) => {
                           e.currentTarget.style.display = "none"; // hides the broken image entirely
                         }}
-                        // filter={"blur(1px)"}
                       />
-                      <Image
+                      <Box
+                        pos={"absolute"}
+                        width={"100%"}
+                        height={"100%"}
+                        display={"flex"}
+                        flexDirection={"column"}
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                        color={"white"}
+                        textAlign={"center"}
+                      >
+                        <Box
+                          width={"80%"}
+                          gap={0}
+                          bg={getNeutral("light", 900)}
+                          color={getNeutral("light", 200)}
+                          _dark={{
+                            color: getNeutral("dark", 100),
+                            bg: getNeutral("dark", 800),
+                          }}
+                          borderBottomRadius={"xl"}
+                        >
+                          <Text fontSize={"sm"}>
+                            {/*{item.album.length > 20
+                              ? item.album.slice(0, 20) + "..."
+                              : item.album}*/}
+                            {item.album}
+                          </Text>
+                        </Box>
+                      </Box>
+                      {/*<Image
                         pos={"absolute"}
                         bg={"red"}
                         height={"100%"}
@@ -113,7 +152,7 @@ export const Albums = () => {
                           WebkitMaskImage:
                             "linear-gradient(to bottom,rgba(0, 0, 0, 0) 40%, black 70% )",
                         }}
-                      />
+                      />*/}
 
                       {/*
                       <Box
@@ -159,72 +198,46 @@ export const Albums = () => {
                           </Text>
                         </Box>
                       </Box>*/}
-                      <Box
-                        width={"100%"}
-                        height={"100%"}
-                        pos={"absolute"}
-                        bottom={"0"}
-                        left={"0"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                        justifyContent={"end"}
-                        p={2}
-                        color={getNeutral("light", 900)}
-                        fontSize={"sm"}
-                        bg={
-                          "linear-gradient(to bottom, rgba(0,0,0,0)20%, rgba(0,0,0,0.4)70%)"
-                        }
-                        _dark={{
-                          color: getNeutral("dark", 200),
-                        }}
-                        fontWeight={500}
-                      >
-                        <Box>
-                          <Text
-                            fontSize={"md"}
-                            _dark={{
-                              color: getNeutral("dark", 100),
-                            }}
-                          >
-                            {item.album.length > 20
-                              ? item.album.slice(0, 20) + "..."
-                              : item.album}
-                          </Text>
-                          <Text>By {item.artist} </Text>
-                        </Box>
-                        <Box
-                          display={"flex"}
-                          gap={2}
-                          mt={2}
-                          color={getNeutral("light", 800)}
-                          _dark={{ color: getNeutral("dark", 300) }}
-                        >
-                          <Box display={"flex"} gap={1} alignItems={"center"}>
-                            <ChakraIcon icon={FaMusic} boxSize={4} />
-                            <Text>{item.songs}</Text>
-                          </Box>
-                          <Box display={"flex"} gap={1} alignItems={"center"}>
-                            <ChakraIcon icon={FaClock} boxSize={4} />
-
-                            <Text p={"2px"}>
-                              {Math.floor(item.duration / 3600)
-                                .toString()
-                                .padStart(2, "0")}
-                              :
-                              {(Math.floor(item.duration / 60) % 60)
-                                .toString()
-                                .padStart(2, "0")}
-                              :
-                              {Math.floor(item.duration % 60)
-                                .toString()
-                                .padStart(2, "0")}
-                            </Text>
-                          </Box>
-                        </Box>
-                      </Box>
 
                       {/*<Text>{item.album}</Text>*/}
                     </Card.Body>
+                    <Card.Footer
+                      p={2}
+                      flexDir={"column"}
+                      justifyContent={"start"}
+                    >
+                      <Text fontSize={"sm"}>By {item.artist} </Text>
+                      <Box
+                        display={"flex"}
+                        width={"100%"}
+                        gap={2}
+                        mt={2}
+                        color={getNeutral("light", 200)}
+                        _dark={{ color: getNeutral("dark", 300) }}
+                      >
+                        <Box display={"flex"} gap={1} alignItems={"center"}>
+                          <ChakraIcon icon={FaMusic} boxSize={4} />
+                          <Text>{item.songs}</Text>
+                        </Box>
+                        <Box display={"flex"} gap={1} alignItems={"center"}>
+                          <ChakraIcon icon={FaClock} boxSize={4} />
+
+                          <Text p={"2px"}>
+                            {Math.floor(item.duration / 3600)
+                              .toString()
+                              .padStart(2, "0")}
+                            :
+                            {(Math.floor(item.duration / 60) % 60)
+                              .toString()
+                              .padStart(2, "0")}
+                            :
+                            {Math.floor(item.duration % 60)
+                              .toString()
+                              .padStart(2, "0")}
+                          </Text>
+                        </Box>
+                      </Box>
+                    </Card.Footer>
                   </Card.Root>
                 );
               })}
