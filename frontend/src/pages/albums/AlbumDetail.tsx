@@ -1,6 +1,6 @@
 import { getNeutral } from "@/utils";
-import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import {
   GetImage,
   GetStatus,
@@ -8,11 +8,13 @@ import {
 } from "../../../wailsjs/go/player/Player";
 import { useDataStore, usePlayerStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
+import { GetAlbumImage } from "../../../wailsjs/go/media/Media";
 // import { useParams } from "wouter";
 
 export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   // const params = useParams();
 
+  const [banner, setBanner] = useState("");
   const audioFiles = useDataStore((state) => state.musicFiles);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
@@ -52,6 +54,10 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
         console.error("Error loading music:", error);
       });
   };
+  const getBanner = async () => {
+    const banner = await GetAlbumImage(decodeURIComponent(params.id));
+    return banner.data.image;
+  };
   function toHMS(totalSeconds: number): string {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -62,8 +68,11 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
       .join(":");
   }
   useEffect(() => {
-    getAudioFiles();
-    console.log("here come the params", params);
+    const fetchData = async function fetchData() {
+      await getAudioFiles();
+      setBanner(await getBanner());
+    };
+    fetchData();
   }, []);
   return (
     <Box
@@ -85,9 +94,19 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
           height={"18rem"}
           bg={getNeutral("light", 800)}
           borderRadius={"xl"}
+          overflow={"hidden"}
         >
-          {" "}
-          image
+          <Image
+            src={`data:image/jpeg;base64,${banner}`}
+            alt="Album Cover"
+            width="100%"
+            height="100%"
+            objectFit="cover"
+            objectPosition={"center"}
+            // onError={(e) => {
+            //   e.currentTarget.style.display = "none"; // hides the broken image entirely
+            // }}
+          />
         </Box>
         <Box flex={1} minH={0} overflow={"auto"} width={"80%"}>
           {audioFiles.map((item, idx) => (
