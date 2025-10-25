@@ -1,12 +1,7 @@
 package ffmpeg
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"os/exec"
 )
 
 type FFmpeg struct {
@@ -39,26 +34,26 @@ func NewFFmpeg() *FFmpeg {
 	return FFmpegInstance
 }
 
-func (f *FFmpeg) GetMetadataFFProbe(path string) (Metadata, error) {
-	cmd := exec.Command("./ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
+// func (f *FFmpeg) GetMetadataFFProbe(path string) (Metadata, error) {
+// 	cmd := exec.Command("./ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", path)
+// 	var out bytes.Buffer
+// 	cmd.Stdout = &out
 
-	err := cmd.Run()
-	if err != nil {
-		log.Print("failed to parse metadata", err)
-		return Metadata{}, err
-	}
-	var result Metadata
-	var res map[string]interface{}
-	err = json.Unmarshal(out.Bytes(), &res)
-	if err != nil {
-		return Metadata{}, err
-	}
-	fmt.Println("coming from ffprobe", out.String())
+// 	err := cmd.Run()
+// 	if err != nil {
+// 		log.Print("failed to parse metadata", err)
+// 		return Metadata{}, err
+// 	}
+// 	var result Metadata
+// 	var res map[string]interface{}
+// 	err = json.Unmarshal(out.Bytes(), &res)
+// 	if err != nil {
+// 		return Metadata{}, err
+// 	}
+// 	fmt.Println("coming from ffprobe", out.String())
 
-	return result, nil
-}
+// 	return result, nil
+// }
 
 func (f *FFmpeg) StartUp(ctx context.Context) {
 	f.ctx = ctx

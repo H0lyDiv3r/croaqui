@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"myproject/pkgs/ffmpeg"
+	"myproject/pkgs/taglib"
 	"path/filepath"
 
 	"gorm.io/driver/sqlite"
@@ -43,7 +43,7 @@ func (d *DB) StartUp(ctx context.Context) {
 func (d *DB) WriteAudioData(path string) error {
 
 	var exists bool
-	metadata, err := ffmpeg.FFmpegInstance.GetMetadataFFProbe(path)
+	metadata, err := taglib.TaglibInstance.GetMetadataTaglib(path)
 	if err != nil {
 		fmt.Println("Error getting metadata:", err)
 		return err

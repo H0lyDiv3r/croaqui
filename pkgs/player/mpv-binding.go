@@ -175,7 +175,7 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 }
 
 func (p *Player) GetImage() (*ReturnType, error) {
-	b64, err := GetImageFFprobe(p.mpv)
+	b64, err := GetImageFromAudio(p.mpv)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +185,11 @@ func (p *Player) GetImage() (*ReturnType, error) {
 	}{Success: true, Image: b64}}, nil
 }
 
-func GetImageFFprobe(m *mpv.Mpv) (string, error) {
+func GetImageFromAudio(m *mpv.Mpv) (string, error) {
+	if err := os.MkdirAll("./tmp", 0755); err != nil {
+		return "", err
+	}
+
 	countRaw, err := m.GetProperty("track-list/count", mpv.FormatInt64)
 	if err != nil {
 		log.Printf("failed to get track count: %v", err)
@@ -209,13 +213,19 @@ func GetImageFFprobe(m *mpv.Mpv) (string, error) {
 			id := idRaw.(int64)
 			m.SetPropertyString("vo", "null")
 			m.SetProperty("vid", mpv.FormatInt64, id)
+			//create output files
+			tempfile, err := os.CreateTemp("./tmp", "album_image_*.jpg")
+			defer os.Remove(tempfile.Name())
+			tempfile.Close()
+
+			output := tempfile.Name()
 			for {
 				ev := m.WaitEvent(0.1)
 				if ev != nil && ev.EventID == mpv.EventVideoReconfig {
 					break
 				}
 			}
-			output := "./tmp/album_art.jpg"
+			// output := "./tmp/album_art.jpg"
 			time.Sleep(100 * time.Millisecond)
 			if err := m.Command([]string{"screenshot-to-file", output}); err != nil {
 				log.Printf("failed to take screenshot: %v", err)

@@ -20,6 +20,7 @@ export const AlbumCard = ({ item }: { item: Item }) => {
   const [image, setImage] = useState<string | null>(null);
   const getImage = async (albumName: string) => {
     const res = await GetAlbumImage(albumName);
+    console.log("image fetched", res.data.image);
     setImage(res.data.image);
   };
   useEffect(() => {

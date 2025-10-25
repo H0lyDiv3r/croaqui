@@ -60,11 +60,6 @@ func isAudioFile(path string) bool {
 		".mp4",
 		".caf",
 		".au",
-
-		// Streaming / playlist formats
-		".m3u",
-		".m3u8",
-		".pls",
 	}
 	ext := filepath.Ext(path)
 	// return ext == ".mp3" || ext == ".wav" || ext == ".flac"

@@ -8,6 +8,7 @@ import (
 	"myproject/pkgs/media"
 	"myproject/pkgs/player"
 	"myproject/pkgs/playlist"
+	"myproject/pkgs/taglib"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -25,6 +26,7 @@ func main() {
 	data := db.NewDB()
 	ffmpeg := ffmpeg.NewFFmpeg()
 	playlists := playlist.NewPlaylist()
+	taglib := taglib.NewTaglib()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "Croaky",
@@ -43,6 +45,7 @@ func main() {
 			ffmpeg.StartUp(ctx)
 			player.StartUp(ctx)
 			playlists.StartUp(ctx)
+			taglib.Startup(ctx)
 
 		},
 		Bind: []interface{}{

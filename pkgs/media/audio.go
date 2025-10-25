@@ -2,6 +2,7 @@ package media
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
@@ -90,13 +91,15 @@ func (m *Media) ScanForAudio(path string) error {
 			return nil
 		}
 		if d.IsDir() {
-			parts := strings.Split(path, "/")
-			db.DBInstance.WriteDirData(db.Directory{
-				Name:       d.Name(),
-				Path:       path,
-				ParentPath: filepath.Dir(path),
-				Depth:      len(parts) - 1,
-			})
+			if m.hasAudio(path) {
+				parts := strings.Split(path, "/")
+				db.DBInstance.WriteDirData(db.Directory{
+					Name:       d.Name(),
+					Path:       path,
+					ParentPath: filepath.Dir(path),
+					Depth:      len(parts) - 1,
+				})
+			}
 		}
 
 		if isAudioFile(path) {
@@ -113,6 +116,26 @@ func (m *Media) ScanForAudio(path string) error {
 		return err
 	}
 	return nil
+}
+
+func (m *Media) hasAudio(path string) bool {
+	var ErrAudioFound = errors.New("audio file found")
+	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if isAudioFile(path) {
+			return ErrAudioFound
+		}
+		return nil
+	})
+
+	if err == ErrAudioFound {
+		return true
+	}
+
+	return false
+
 }
 
 //updateAudio

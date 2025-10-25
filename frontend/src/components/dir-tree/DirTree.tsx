@@ -52,36 +52,37 @@ export const DirTree = () => {
       _dark={{ color: getNeutral("dark", 200) }}
     >
       <>
-        {dirs.map(
-          (dir: { id: string; name: string; path: string }): JSX.Element => (
-            <Box
-              borderRadius={"sm"}
-              overflow={"hidden"}
-              _hover={{
-                bg: getNeutral("light", 700),
-                cursor: "pointer",
-                _dark: {
-                  bg: getNeutral("dark", 700),
-                },
-              }}
-              key={dir.id}
-              onClick={() => {
-                GetDirs(dir.path).then((res) => {
-                  if (res.data.dirs) {
-                    setCurrentPath(dir.path);
-                  } else {
-                    getAudioFiles({ path: dir.path });
-                  }
-                });
-              }}
-            >
-              <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>
-                <ChakraIcon icon={FaFolder}></ChakraIcon>
-                <Text overflow={"hidden"}>{dir.name}</Text>
+        {dirs &&
+          dirs.map(
+            (dir: { id: string; name: string; path: string }): JSX.Element => (
+              <Box
+                borderRadius={"sm"}
+                overflow={"hidden"}
+                _hover={{
+                  bg: getNeutral("light", 700),
+                  cursor: "pointer",
+                  _dark: {
+                    bg: getNeutral("dark", 700),
+                  },
+                }}
+                key={dir.id}
+                onClick={() => {
+                  GetDirs(dir.path).then((res) => {
+                    if (res.data.dirs) {
+                      setCurrentPath(dir.path);
+                    } else {
+                      getAudioFiles({ path: dir.path });
+                    }
+                  });
+                }}
+              >
+                <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>
+                  <ChakraIcon icon={FaFolder}></ChakraIcon>
+                  <Text overflow={"hidden"}>{dir.name}</Text>
+                </Box>
               </Box>
-            </Box>
-          ),
-        )}
+            ),
+          )}
       </>
     </Box>
   );

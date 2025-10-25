@@ -18,9 +18,9 @@ type MusicMetaData struct {
 	Title    string
 	Artist   string
 	Album    string
-	Duration string
+	Duration int
 	Genre    string
-	Date     string
+	Date     int
 }
 type Directory struct {
 	gorm.Model

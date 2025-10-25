@@ -68,7 +68,7 @@ func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {
 
 	var result []Album
 	db.DBInstance.Instance.Raw(`
-	SELECT path FROM music_files m
+	SELECT path,album FROM music_files m
 	LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
 	WHERE album = ?
 	`, album).Scan(&result)
@@ -82,13 +82,17 @@ func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {
 		// 	continue
 		// }
 		// result[idx].Image = img
+		if item.Album == "unknown" {
+			fmt.Println("album is unknown")
+			continue
+		}
 		img, err := FetchImage(item.Path)
 		if err != nil {
 			fmt.Println("error fetching image", err)
 			continue
 		}
+
 		if img != "" {
-			fmt.Println("Found Image", img)
 			return &ReturnType{
 				Data: struct {
 					Image string `json:"image"`

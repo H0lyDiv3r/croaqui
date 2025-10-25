@@ -6,7 +6,6 @@ import (
 	"myproject/pkgs/db"
 	"myproject/pkgs/player"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/gen2brain/go-mpv"
@@ -58,19 +57,13 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 	}{Dirs: result}}, nil
 }
 
-var locker sync.Mutex
-
 func FetchImage(url string) (string, error) {
-	locker.Lock()
-	defer locker.Unlock()
-	// var b64 string
 	p := mpv.New()
 	p.Initialize()
 	defer p.TerminateDestroy()
 	p.SetProperty("pause", mpv.FormatFlag, true)
 	p.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.Command([]string{"loadfile", url}); err != nil {
-		fmt.Println("unable to load")
 		log.Print("unable to load music", err)
 		return "", err
 	}
@@ -83,7 +76,7 @@ func FetchImage(url string) (string, error) {
 		default:
 			ev := p.WaitEvent(100)
 			if ev.EventID == mpv.EventFileLoaded {
-				b64, err := player.GetImageFFprobe(p)
+				b64, err := player.GetImageFromAudio(p)
 				if err != nil {
 
 					return "", err
