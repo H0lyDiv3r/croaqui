@@ -6,3 +6,6 @@ test-files
 tmp
 resources
 ffprobe
+libtag_c.a
+libtag.a
+tag_c.h
