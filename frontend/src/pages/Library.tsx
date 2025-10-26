@@ -1,4 +1,5 @@
 import { MusicList } from "@/components/music-list";
+import { QueueBar } from "@/features/queue-bar/QueueBar";
 import { SidebarNavigator } from "@/features/sidebar-navigator";
 import { getNeutral } from "@/utils";
 import { Box } from "@chakra-ui/react";
@@ -9,7 +10,6 @@ export const Library = () => {
       <Box
         // bg={getNeutral("light", 800)}
         // _dark={{ bg: getNeutral("dark", 800) }}
-        w={"350px"}
         height={"100%"}
       >
         <SidebarNavigator />
@@ -17,8 +17,8 @@ export const Library = () => {
       <Box flex={1} height={"100%"}>
         <MusicList />
       </Box>
-      <Box minW={"350px"} height={"100%"}>
-        aa
+      <Box height={"100%"}>
+        <QueueBar />
       </Box>
     </Box>
   );

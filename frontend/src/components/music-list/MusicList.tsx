@@ -119,23 +119,26 @@ export const MusicList = () => {
           fontWeight={500}
           bg={getNeutral("light", 700)}
         >
-          <GridItem whiteSpace={"nowrap"} colSpan={1}>
+          <GridItem whiteSpace={"nowrap"} colSpan={{ base: 3, lg: 1 }}>
             #
           </GridItem>
-          <GridItem whiteSpace={"nowrap"} colSpan={8}>
+          <GridItem whiteSpace={"nowrap"} colSpan={{ base: 6, lg: 8 }}>
             Title
           </GridItem>
 
-          <GridItem whiteSpace={"nowrap"} colSpan={6}>
+          <GridItem whiteSpace={"nowrap"} colSpan={{ base: 5, lg: 6 }}>
             Album
           </GridItem>
-          <GridItem whiteSpace={"nowrap"} colSpan={6}>
+          <GridItem whiteSpace={"nowrap"} colSpan={{ base: 4, lg: 6 }}>
             Genre
           </GridItem>
-          <GridItem whiteSpace={"nowrap"} colSpan={2}>
+          <GridItem whiteSpace={"nowrap"} colSpan={{ base: 4, lg: 2 }}>
             Duration
           </GridItem>
-          <GridItem whiteSpace={"nowrap"} colSpan={1}></GridItem>
+          <GridItem
+            whiteSpace={"nowrap"}
+            colSpan={{ base: 2, lg: 1 }}
+          ></GridItem>
         </Grid>
 
         <Box
@@ -169,10 +172,10 @@ export const MusicList = () => {
                 loadAudio(item);
               }}
             >
-              <GridItem colSpan={1} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>
                 {idx + 1}
               </GridItem>
-              <GridItem colSpan={8} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 6, lg: 8 }} overflow={"hidden"}>
                 <Text whiteSpace={"nowrap"}>{item.title}</Text>
                 <Text
                   whiteSpace={"nowrap"}
@@ -186,16 +189,16 @@ export const MusicList = () => {
                 </Text>
               </GridItem>
 
-              <GridItem colSpan={6} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 5, lg: 6 }} overflow={"hidden"}>
                 {item.album ? item.album : "-"}
               </GridItem>
-              <GridItem colSpan={6} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 4, lg: 6 }} overflow={"hidden"}>
                 {item.genre ? item.genre : "-"}
               </GridItem>
-              <GridItem colSpan={2} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 4, lg: 2 }} overflow={"hidden"}>
                 {toHMS(item.duration)}
               </GridItem>
-              <GridItem colSpan={1} overflow={"hidden"}>
+              <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
                 ...
               </GridItem>
             </Grid>

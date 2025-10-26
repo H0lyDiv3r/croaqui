@@ -1,30 +1,27 @@
+//@ts-nocheck
 import React, { useRef, useContext, memo } from "react";
 import "./player.css";
-import { Box, Icon, Image, Text } from "@chakra-ui/react";
+import { Box, Icon, Image, Menu, Portal, Text } from "@chakra-ui/react";
 
 import { useEffect } from "react";
 // import { motion } from "framer-motion";
 import { useState } from "react";
 import { TbHeart, TbHeartFilled } from "react-icons/tb";
-// import { useShowToast } from "../../hooks/useShowToast";
-import { useCallback } from "react";
+
 import PlaybackRateControl from "@/components/controls/PlaybackRateControl";
 import VolumeControl from "@/components/controls/VolumeControl";
 import Controls from "@/components/controls/Controls";
 import TimeLine from "@/components/controls/TimeLine";
-import {
-  GetMetadata,
-  GetStatus,
-  LoadMusic,
-} from "../../wailsjs/go/player/Player";
+
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "@/components/ChackraIcon";
-import { useGeneralStore } from "@/store/generalStore";
-import { SwitchTheme } from "@/components";
-import { getNeutral } from "@/utils";
 
+import { getNeutral } from "@/utils";
+import { useScreenSize } from "@/hooks";
+import { FaGear } from "react-icons/fa6";
 const Player: React.FC = () => {
   const [favorite, setFavorite] = useState(true);
+  const { isMedium, isSmall } = useScreenSize();
   const currentTrack = usePlayerStore((state) => state.currentTrack);
 
   return (
@@ -121,7 +118,7 @@ const Player: React.FC = () => {
 
         {/* center   */}
         <Box
-          width={"40%"}
+          width={isMedium || isSmall ? "60%" : "40%"}
           display={"flex"}
           flexDir={"column"}
           justifyContent={"center"}
@@ -131,21 +128,69 @@ const Player: React.FC = () => {
         </Box>
 
         {/* right */}
-        <Box
-          width={"30%"}
-          height={"100%"}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"flex-end"}
-          px={"6px"}
-          overflow={"hidden"}
-        >
-          <PlaybackRateControl />
-          <VolumeControl />
-        </Box>
+        {isMedium || isSmall ? (
+          <PlayerSettings />
+        ) : (
+          <Box
+            width={"30%"}
+            height={"100%"}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"flex-end"}
+            px={"6px"}
+            overflow={"hidden"}
+          >
+            <PlaybackRateControl />
+            <VolumeControl />
+          </Box>
+        )}
       </Box>
     </Box>
   );
 };
 
 export default memo(Player);
+const PlayerSettings = () => {
+  return (
+    <Menu.Root>
+      <Menu.Trigger
+        width={"10%"}
+        height={"100%"}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        px={"6px"}
+        overflow={"hidden"}
+        _hover={{ cursor: "pointer" }}
+      >
+        <ChakraIcon icon={FaGear} boxSize={5} />
+      </Menu.Trigger>
+      <Portal>
+        <Menu.Positioner>
+          <Menu.Content
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+            bg={getNeutral("light", 800)}
+            _dark={{
+              bg: getNeutral("dark", 800),
+              borderColor: getNeutral("dark", 700),
+              color: getNeutral("dark", 300),
+            }}
+            border="1px solid"
+            borderColor={getNeutral("light", 700)}
+            color={getNeutral("light", 300)}
+            gap={6}
+          >
+            <Box>
+              <PlaybackRateControl />
+            </Box>
+            <Box>
+              <VolumeControl />
+            </Box>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Portal>
+    </Menu.Root>
+  );
+};

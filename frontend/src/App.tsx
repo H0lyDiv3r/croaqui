@@ -15,6 +15,7 @@ import { useState } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Router, Switch } from "wouter";
 import { AlbumDetail, Albums, Library } from "./pages";
+import { useScreenSize } from "./hooks";
 
 function App() {
   const handleScan = () => {
@@ -22,6 +23,7 @@ function App() {
       console.log("res", res);
     });
   };
+  const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
   return (
     <Box
       display={"flex"}
@@ -32,6 +34,10 @@ function App() {
       h={"100vh"}
       id="App"
     >
+      {isSmall ? "small" : ""}
+      {isMedium ? "medium" : ""}
+      {isLarge ? "large" : ""}
+      {isExtraLarge ? "extraLarge" : ""}
       {/*<Box h={"5rem"}>aa</Box>*/}
       <NavBar />
       {/*<Button onClick={handleScan}>scan</Button>*/}
