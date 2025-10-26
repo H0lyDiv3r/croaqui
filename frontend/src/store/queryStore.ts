@@ -29,6 +29,7 @@ export type QueryParams = {
   sort: Sort[];
   hasMore: boolean;
   page: number;
+  clearQuery: () => void;
 };
 
 type QueryAction = {
@@ -49,4 +50,22 @@ export const useQueryStore = create<QueryParams & QueryAction>((set, get) => ({
     set((state) => {
       return { ...state, ...params };
     }),
+  clearQuery: () => {
+    set((state) => {
+      return {
+        ...state,
+        ...{
+          artist: "",
+          album: "",
+          genre: "",
+          title: "",
+          path: "/",
+          limit: 40,
+          sort: [],
+          hasMore: true,
+          page: 0,
+        },
+      };
+    });
+  },
 }));

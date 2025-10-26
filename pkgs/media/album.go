@@ -1,6 +1,7 @@
 package media
 
 import (
+	"encoding/json"
 	"fmt"
 	"myproject/pkgs/db"
 )
@@ -14,54 +15,87 @@ type Album struct {
 	Songs    int    `json:"songs"`
 }
 
-func (m *Media) GetAlbums() (*ReturnType, error) {
+type counts struct {
+	Artists int `json:"artists"`
+	Albums  int `json:"albums"`
+}
 
-	type counts struct {
-		Artists int `json:"artists"`
-		Albums  int `json:"albums"`
-	}
+type filterData struct {
+	Limit  int    `json:"limit"`
+	Page   int    `json:"offset"`
+	Artist string `json:"artist"`
+}
+
+func (m *Media) GetAlbums(filters string) (*ReturnType, error) {
 
 	var result struct {
 		Albums []Album `json:"albums"`
 		Counts counts  `json:"counts"`
 	}
 
-	db.DBInstance.Instance.Raw(`
-	SELECT path,album,artist,SUM(duration) AS duration,COUNT(m.id) AS songs FROM music_files m
-	LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+	var filterSettings filterData
 
-	GROUP BY album
-	`).Scan(&result.Albums)
+	err := json.Unmarshal([]byte(filters), &filterSettings)
+	if err != nil {
+		return nil, err
+	}
+	// db.DBInstance.Instance.Raw(`
+	// SELECT path,album,artist,SUM(duration) AS duration,COUNT(m.id) AS songs FROM music_files m
+	// LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
 
-	db.DBInstance.Instance.Raw(`
-	SELECT COUNT(DISTINCT artist) AS artists,COUNT(DISTINCT album) AS albums FROM music_files m
-	LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
-	`).Scan(&result.Counts)
+	// GROUP BY album
+	// `)
 
-	// fmt.Println("this is it buddy", result[0].Path)
+	query := db.DBInstance.Instance.Table("music_files as m").Select("path, album, artist, SUM(duration) AS duration, COUNT(m.id) AS songs").Joins(`LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id`).Group("album")
 
-	// for idx, item := range result.Albums {
-	// 	img, err := fetchImage(item.Path)
-	// 	if err != nil {
-	// 		fmt.Println("error fetching image", err)
-	// 		result.Albums[idx].Image = fmt.Sprintf("%s/%s", item.Path, "cover.jpg")
-	// 		continue
-	// 	}
-	// 	result.Albums[idx].Image = img
-	// }
+	if filterSettings.Artist != "" {
+		query.Where("artist = ?", filterSettings.Artist)
+	}
 
-	// url := "/home/yuri/Data/projects/music-player-go/test-files/tst.m4a"
-	// metaData, _ := ffmpeg.FFmpegInstance.GetMetadataFFProbe("/home/yuri/Data/projects/music-player-go/test-files/tst.m4a")
-	// fmt.Println("this is the metadata", metaData)
-	//
+	var count int64
+	query.Count(&count)
+	offset := filterSettings.Page * filterSettings.Limit
+	if filterSettings.Limit > 0 {
+		query = query.Limit(filterSettings.Limit)
+		query = query.Offset(offset)
+	}
 
-	// fmt.Println("i am returning the image bro", res)
+	query.Count(&count)
+	query.Scan(&result.Albums)
+
+	// db.DBInstance.Instance.Raw(`
+	// SELECT COUNT(DISTINCT artist) AS artists,COUNT(DISTINCT album) AS albums FROM music_files m
+	// LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+	// `)
+	query2 := db.DBInstance.Instance.Table("music_files as m").Select("COUNT(DISTINCT mm.artist) AS artists, COUNT(DISTINCT mm.album) AS albums").Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id")
+	if filterSettings.Artist != "" {
+		query2.Where("artist = ?", filterSettings.Artist)
+	}
+	query2.Scan(&result.Counts)
+
 	return &ReturnType{
 		Data: struct {
-			Albums []Album `json:"albums"`
-			Counts counts  `json:"counts"`
-		}{Albums: result.Albums, Counts: result.Counts},
+			Albums  []Album `json:"albums"`
+			Counts  counts  `json:"counts"`
+			HasMore bool    `json:"hasMore"`
+		}{Albums: result.Albums, Counts: result.Counts, HasMore: offset+filterSettings.Limit < int(result.Counts.Albums)},
 	}, nil
+}
+
+func (m *Media) GetAlbumData(album string) (*ReturnType, error) {
+	var result Album
+	db.DBInstance.Instance.Raw(`
+		SELECT album,artist,SUM(duration) AS duration,COUNT(m.id) AS songs FROM music_files m
+		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+		WHERE album = ?
+	`, album).Scan(&result)
+
+	return &ReturnType{
+		Data: struct {
+			AlbumInfo Album `json:"albumInfo"`
+		}{AlbumInfo: result},
+	}, nil
+
 }
 
 func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {

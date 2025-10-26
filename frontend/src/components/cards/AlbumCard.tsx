@@ -34,6 +34,7 @@ export const AlbumCard = ({ item }: { item: Item }) => {
       boxShadow={"0px 0px 12px rgba(0, 0, 0, 0.2)"}
       my={"2"}
       p={2}
+      _hover={{ cursor: "pointer" }}
       onClick={() => {
         console.log("routing to", item.album);
         navigate(`/albums/${encodeURIComponent(item.album)}`);
@@ -48,7 +49,10 @@ export const AlbumCard = ({ item }: { item: Item }) => {
         p={"0"}
         borderRadius={"lg"}
         overflow={"hidden"}
-        bg={"gray"}
+        bg={getNeutral("light", 600)}
+        _dark={{
+          bg: getNeutral("dark", 600),
+        }}
         pos={"relative"}
       >
         <Image
@@ -57,6 +61,10 @@ export const AlbumCard = ({ item }: { item: Item }) => {
           objectFit={"cover"}
           width={"100%"}
           height={"100%"}
+          border={"none"}
+          onError={(e) => {
+            e.currentTarget.style.border = "none";
+          }}
         />
         <Box
           pos={"absolute"}

@@ -3,9 +3,11 @@
 import {media} from '../models';
 import {context} from '../models';
 
+export function GetAlbumData(arg1:string):Promise<media.ReturnType>;
+
 export function GetAlbumImage(arg1:string):Promise<media.ReturnType>;
 
-export function GetAlbums():Promise<media.ReturnType>;
+export function GetAlbums(arg1:string):Promise<media.ReturnType>;
 
 export function GetAudio(arg1:string):Promise<media.ReturnType>;
 

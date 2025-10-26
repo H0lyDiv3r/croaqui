@@ -28,14 +28,3 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
   }));
   return response.data.files;
 };
-
-export const getAlbums = async () => {
-  const albums = await GetAlbums();
-  if (!albums) {
-    console.log("failed to fetch albums", albums);
-    return;
-  }
-  console.log("albums", albums);
-
-  return albums.data;
-};

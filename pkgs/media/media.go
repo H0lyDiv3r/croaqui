@@ -28,8 +28,6 @@ func NewMedia() *Media {
 
 func (m *Media) StartUp(ctx context.Context) {
 	m.ctx = ctx
-	m.GetAlbums()
-	// m.GetAlbumsWithRoutines()
 }
 
 func isAudioFile(path string) bool {

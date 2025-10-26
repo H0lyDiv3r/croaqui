@@ -81,9 +81,10 @@ export const MusicList = () => {
 
   useEffect(() => {
     // getAudio();
-    useQueryStore.setState((state) => {
-      return { ...state, page: 0 };
-    });
+    // useQueryStore.setState((state) => {
+    //   return { ...state, page: 0 };
+    // });
+    useQueryStore.getState().clearQuery();
     getAudioFiles();
   }, [currentPath]);
   return (
@@ -153,10 +154,8 @@ export const MusicList = () => {
               gap={4}
               p={"2"}
               key={item.id}
-              bg={idx % 2 === 0 ? getNeutral("light", 800) : "none"}
               color={getNeutral("light", 200)}
               _dark={{
-                bg: idx % 2 === 0 ? getNeutral("dark", 800) : "none",
                 color: getNeutral("dark", 200),
               }}
               _hover={{

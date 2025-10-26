@@ -1,4 +1,4 @@
-import { getNeutral } from "@/utils";
+import { getAlbumData, getNeutral } from "@/utils";
 import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -15,6 +15,12 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   // const params = useParams();
 
   const [banner, setBanner] = useState("");
+  const [albumInfo, setAlbumInfo] = useState({
+    album: "",
+    artist: "",
+    duration: "",
+    songs: "",
+  });
   const audioFiles = useDataStore((state) => state.musicFiles);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
@@ -36,6 +42,17 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
       ...state,
       musicFiles: [...audioFiles],
     }));
+  };
+
+  const getAlbumInfo = async () => {
+    const res = await getAlbumData(decodeURIComponent(params.id));
+    if (!res) {
+      console.error("Album not found");
+      return;
+    }
+    console.log("i am here", res);
+    setAlbumInfo(res.albumInfo);
+    // setAll(audioFiles);
   };
   const loadAudio = (item: any) => {
     LoadMusic(item.path)
@@ -70,6 +87,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchData = async function fetchData() {
       await getAudioFiles();
+      await getAlbumInfo();
       setBanner(await getBanner());
     };
     fetchData();
@@ -90,6 +108,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
         gap={8}
       >
         <Box
+          pos={"relative"}
           width={"80%"}
           height={"18rem"}
           bg={getNeutral("light", 800)}
@@ -107,6 +126,44 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
             //   e.currentTarget.style.display = "none"; // hides the broken image entirely
             // }}
           />
+          <Box
+            pos={"absolute"}
+            top={"0"}
+            left={"0"}
+            h={"100%"}
+            w={"100%"}
+            bg={"rgba(0,0,0,0.6)"}
+            p={"6"}
+            textAlign={"left"}
+          >
+            <Box
+              display={"flex"}
+              flexDir={"column"}
+              justifyContent={"space-between"}
+              height={"100%"}
+              color={getNeutral("light", 700)}
+            >
+              <Box>
+                <Text fontSize="2xl" fontWeight="600" lineHeight="short">
+                  {albumInfo.album}
+                </Text>
+
+                <Text
+                  fontSize="xl"
+                  fontWeight="medium"
+                  color={getNeutral("light", 600)}
+                >
+                  By {albumInfo.artist}
+                </Text>
+              </Box>
+              <Box>
+                <Text fontSize="lg">{albumInfo.songs} Songs</Text>
+                <Text fontSize="md" color={getNeutral("light", 600)}>
+                  {toHMS(Number(albumInfo.duration))}
+                </Text>
+              </Box>
+            </Box>
+          </Box>
         </Box>
         <Box flex={1} minH={0} overflow={"auto"} width={"80%"}>
           {audioFiles.map((item, idx) => (

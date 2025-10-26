@@ -1,8 +1,8 @@
 import { AlbumCard } from "@/components/cards";
-import { getNeutral } from "@/utils";
-import { getAlbums } from "@/utils/data/audioData";
+import { useDataStore, useQueryStore } from "@/store";
+import { getAlbums, getNeutral } from "@/utils";
 import { Box, Text, SimpleGrid } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Albums = () => {
   const [albums, setAlbums] = useState<any[]>([]);
@@ -11,8 +11,34 @@ export const Albums = () => {
     albums: 0,
   });
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = async () => {
+    const current = scrollRef.current;
+    if (!current) return;
+    if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
+      // getAudios(currentPath);
+      const newPage = await getAlbums({
+        page: useQueryStore.getState().page + 1,
+      });
+      useQueryStore.setState((state) => ({
+        ...state,
+        page: state.hasMore ? state.page + 1 : state.page,
+      }));
+      if (!newPage) {
+        return;
+      }
+      console.log("she way out", newPage);
+      setAlbums((prevAlbums) => [...prevAlbums, ...newPage.albums]);
+      // useDataStore.setState((state) => ({
+      //   ...state,
+      //   musicFiles: [...state.musicFiles, ...newPage],
+      // }));
+    }
+  };
   useEffect(() => {
     async function fetchAlbums() {
+      useQueryStore.getState().clearQuery();
       const fetchedAlbums = await getAlbums();
       setAlbums(fetchedAlbums.albums);
       setCounts({
@@ -49,7 +75,13 @@ export const Albums = () => {
             {counts.albums} albums from {counts.artists} artists
           </Text>
         </Box>
-        <Box width={"100%"}>
+        <Box
+          width={"100%"}
+          overflow={"auto"}
+          mt={"4"}
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           <SimpleGrid minChildWidth={"14rem"} gap={2}>
             {albums &&
               albums.map((item, idx) => {
