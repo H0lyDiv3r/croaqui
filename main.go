@@ -8,6 +8,7 @@ import (
 	"myproject/pkgs/media"
 	"myproject/pkgs/player"
 	"myproject/pkgs/playlist"
+	"myproject/pkgs/queue"
 	"myproject/pkgs/taglib"
 
 	"github.com/wailsapp/wails/v2"
@@ -27,11 +28,12 @@ func main() {
 	ffmpeg := ffmpeg.NewFFmpeg()
 	playlists := playlist.NewPlaylist()
 	taglib := taglib.NewTaglib()
+	queue := queue.NewQueue()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "Croaky",
-		Width:     1024,
-		Height:    1024,
+		Width:     10,
+		Height:    10,
 		MinWidth:  10,
 		MinHeight: 10,
 		AssetServer: &assetserver.Options{
@@ -46,6 +48,7 @@ func main() {
 			player.StartUp(ctx)
 			playlists.StartUp(ctx)
 			taglib.Startup(ctx)
+			queue.StartUp(ctx)
 
 		},
 		Bind: []interface{}{
