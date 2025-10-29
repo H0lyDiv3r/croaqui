@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"myproject/pkgs/db"
+	customErr "myproject/pkgs/error"
 )
 
 type Queue struct {
@@ -61,6 +62,12 @@ func (q *Queue) GetQueue(filters string) error {
 
 	if filterSetting.Type == "playlist" {
 		query.Joins("LEFT JOIN playlist_musics pm ON m.id = pm.music_id ").Where("playlist_id = ?", filterSetting.Args)
+	}
+
+	if query.Error != nil {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to create queue:%w", query.Error).Error())
+		emitter.Emit(q.ctx)
+		return query.Error
 	}
 
 	query.Scan(&res)

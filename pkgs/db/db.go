@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	customErr "myproject/pkgs/error"
 	"myproject/pkgs/taglib"
 	"path/filepath"
 
@@ -27,7 +28,9 @@ func (d *DB) StartUp(ctx context.Context) {
 	d.ctx = ctx
 	dataBase, err := gorm.Open(sqlite.Open("/home/yuri/Data/projects/music-player-go/test-files/test.db"), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		emitter := customErr.New("db_error", err.Error())
+		emitter.Emit(ctx)
+		return
 	}
 	d.Instance = dataBase
 	dataBase.AutoMigrate(&MusicMetaData{})
@@ -45,7 +48,7 @@ func (d *DB) WriteAudioData(path string) error {
 	var exists bool
 	metadata, err := taglib.TaglibInstance.GetMetadataTaglib(path)
 	if err != nil {
-		fmt.Println("Error getting metadata:", err)
+
 		return err
 	}
 	format := metadata.Format
@@ -61,13 +64,11 @@ func (d *DB) WriteAudioData(path string) error {
 	SELECT EXISTS(SELECT 1 FROM music_files m WHERE m.path = ? )
 	`, path).Scan(&exists)
 	if exists {
-		log.Print("file already exists")
-		return nil
+		return fmt.Errorf("file already exists")
 	}
 	result := d.Instance.Create(&MusicFile{Name: filepath.Base(path), Path: path, ParentPath: filepath.Dir(path), MetaData: musicMetadata})
 
 	if result.Error != nil {
-		fmt.Println("Error writing to database:", result.Error)
 		return result.Error
 	}
 	return nil
@@ -79,12 +80,10 @@ func (d *DB) WriteDirData(data Directory) error {
 		SELECT EXISTS(SELECT 1 FROM directories WHERE path = ?)
 	`, data.Path).Scan(&exists)
 	if exists {
-		log.Print("dir already exists")
-		return nil
+		return fmt.Errorf("dir already exists")
 	}
 	result := d.Instance.Create(&data)
 	if result.Error != nil {
-		fmt.Println("Error writing to database:", result.Error)
 		return result.Error
 	}
 	return nil

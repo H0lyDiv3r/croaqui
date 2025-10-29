@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"myproject/pkgs/db"
+	customErr "myproject/pkgs/error"
 )
 
 type Album struct {
@@ -39,12 +40,6 @@ func (m *Media) GetAlbums(filters string) (*ReturnType, error) {
 	if err != nil {
 		return nil, err
 	}
-	// db.DBInstance.Instance.Raw(`
-	// SELECT path,album,artist,SUM(duration) AS duration,COUNT(m.id) AS songs FROM music_files m
-	// LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
-
-	// GROUP BY album
-	// `)
 
 	query := db.DBInstance.Instance.Table("music_files as m").Select("path, album, artist, SUM(duration) AS duration, COUNT(m.id) AS songs").Joins(`LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id`).Group("album")
 
@@ -60,16 +55,22 @@ func (m *Media) GetAlbums(filters string) (*ReturnType, error) {
 		query = query.Offset(offset)
 	}
 
+	if query.Error != nil {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to get albums,%w", query.Error).Error())
+		emitter.Emit(m.ctx)
+		return nil, query.Error
+	}
 	query.Count(&count)
 	query.Scan(&result.Albums)
 
-	// db.DBInstance.Instance.Raw(`
-	// SELECT COUNT(DISTINCT artist) AS artists,COUNT(DISTINCT album) AS albums FROM music_files m
-	// LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
-	// `)
 	query2 := db.DBInstance.Instance.Table("music_files as m").Select("COUNT(DISTINCT mm.artist) AS artists, COUNT(DISTINCT mm.album) AS albums").Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id")
 	if filterSettings.Artist != "" {
 		query2.Where("artist = ?", filterSettings.Artist)
+	}
+	if query2.Error != nil {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to get albums,%w", query.Error).Error())
+		emitter.Emit(m.ctx)
+		return nil, query.Error
 	}
 	query2.Scan(&result.Counts)
 
@@ -109,20 +110,11 @@ func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {
 
 	for _, item := range result {
 
-		// img, err := fetchImage(item.Path)
-		// if err != nil {
-		// 	fmt.Println("error fetching image", err)
-		// 	result[idx].Image = fmt.Sprintf("%s/%s", item.Path, "cover.jpg")
-		// 	continue
-		// }
-		// result[idx].Image = img
 		if item.Album == "unknown" {
-			fmt.Println("album is unknown")
 			continue
 		}
 		img, err := FetchImage(item.Path)
 		if err != nil {
-			fmt.Println("error fetching image", err)
 			continue
 		}
 

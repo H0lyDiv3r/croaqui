@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"myproject/pkgs/db"
+	customErr "myproject/pkgs/error"
 	"path/filepath"
 	"strings"
 )
@@ -68,9 +69,14 @@ func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 	}
 
 	var count int64
+
+	if query.Error != nil {
+		emitter := customErr.New("db_error", fmt.Errorf("fetching audio failed:%w", query.Error).Error())
+		emitter.Emit(m.ctx)
+		return &ReturnType{}, err
+	}
 	query.Count(&count)
 	offset := filterSettings.Page * filterSettings.Limit
-	fmt.Println("this is the new offset:", filterSettings)
 	if filterSettings.Limit > 0 {
 		query = query.Limit(filterSettings.Limit)
 		query = query.Offset(offset)
@@ -105,14 +111,15 @@ func (m *Media) ScanForAudio(path string) error {
 		if isAudioFile(path) {
 			err := db.DBInstance.WriteAudioData(path)
 			if err != nil {
-				return err
+				log.Print(fmt.Errorf("failed to write audio to db:%w", err))
 			}
 		}
 		return nil
 	})
 
 	if err != nil {
-		log.Println(err)
+		emitter := customErr.New("db_error", fmt.Errorf("failed to write files to db:%w", err).Error())
+		emitter.Emit(m.ctx)
 		return err
 	}
 	return nil

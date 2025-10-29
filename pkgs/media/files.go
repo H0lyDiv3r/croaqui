@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"myproject/pkgs/db"
+	customErr "myproject/pkgs/error"
 	"myproject/pkgs/player"
 	"os"
 	"time"
@@ -14,6 +15,8 @@ import (
 func (m *Media) GetContents(path string) (*ReturnType, error) {
 	contents, err := os.ReadDir(path)
 	if err != nil {
+		emitter := customErr.New("file_error", fmt.Errorf("failed to read directory:%w", err).Error())
+		emitter.Emit(m.ctx)
 		return nil, err
 	}
 	var dirs []string
@@ -43,13 +46,9 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 		)
 		`, path+"%", path+"%").Scan(&result)
 
-	fmt.Println("this is it", result, path)
-
-	// res := db.DBInstance.Instance.Raw(`
-	// 	SELECT name,path,depth FROM directories d
-	//  	WHERE path LIKE ? AND depth > ?
-	// 	`, path+"%", len(parts)+0).Scan(&result)
 	if res.Error != nil {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to fetch directories:%w", res.Error).Error())
+		emitter.Emit(m.ctx)
 		return nil, res.Error
 	}
 	return &ReturnType{Data: struct {

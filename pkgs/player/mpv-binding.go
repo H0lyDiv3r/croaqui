@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	customErr "myproject/pkgs/error"
 	"os"
 	"time"
 
@@ -41,7 +42,6 @@ func (p *Player) StartUp(ctx context.Context) {
 
 	p.mpv = mpvInstance
 	if err := p.mpv.Initialize(); err != nil {
-		log.Fatal("failed to initialize player")
 		return
 	}
 	// defer p.mpv.TerminateDestroy()
@@ -80,8 +80,8 @@ func (p *Player) LoadMusic(url string) error {
 	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
 	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
-		fmt.Println("unable to load")
-		log.Fatal("unable to load music", err)
+		emitter := customErr.New("player_error", fmt.Errorf("failed to load audio:%w", err).Error())
+		emitter.Emit(p.ctx)
 		return err
 	}
 	return nil
@@ -90,14 +90,12 @@ func (p *Player) LoadMusic(url string) error {
 func (p *Player) GetMetadata() (*ReturnType, error) {
 	data, err := p.mpv.GetProperty("metadata", mpv.FormatString)
 	if err != nil {
-		log.Fatal("unable to get metadata", err)
 		return nil, err
 	}
 	var result interface{}
 
 	err = json.Unmarshal([]byte(data.(string)), &result)
 	if err != nil {
-		log.Fatal("unable to unmarshal metadata", err)
 		return nil, err
 	}
 	return &ReturnType{Data: struct {
@@ -107,7 +105,8 @@ func (p *Player) GetMetadata() (*ReturnType, error) {
 
 func (p *Player) TogglePlay() (*ReturnType, error) {
 	if err := p.mpv.Command([]string{"cycle", "pause"}); err != nil {
-		log.Fatal("unable to play music", err)
+		emitter := customErr.New("player_error", fmt.Errorf("failed to pause/play:%w", err).Error())
+		emitter.Emit(p.ctx)
 		return nil, err
 	}
 	paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
@@ -122,7 +121,8 @@ func (p *Player) TogglePlay() (*ReturnType, error) {
 
 func (p *Player) ToggleMute() (*ReturnType, error) {
 	if err := p.mpv.Command([]string{"cycle", "mute"}); err != nil {
-		log.Fatal("unable to toggle mute", err)
+		emitter := customErr.New("player_error", fmt.Errorf("failed to mute/unmute:%w", err).Error())
+		emitter.Emit(p.ctx)
 		return nil, err
 	}
 	isMuted, _ := p.mpv.GetProperty("mute", mpv.FormatFlag)
@@ -134,7 +134,8 @@ func (p *Player) ToggleMute() (*ReturnType, error) {
 // set speed
 func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 	if err := p.mpv.SetProperty("speed", mpv.FormatDouble, speed); err != nil {
-		log.Fatal("unable to set speed", err)
+		emitter := customErr.New("player_error", fmt.Errorf("failed to set playback speed:%w", err).Error())
+		emitter.Emit(p.ctx)
 		return nil, err
 	}
 	val, _ := p.mpv.GetProperty("speed", mpv.FormatDouble)
@@ -146,7 +147,8 @@ func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 // set position
 func (p *Player) SetPosition(position float64) error {
 	if err := p.mpv.SetProperty("time-pos", mpv.FormatDouble, position); err != nil {
-		log.Fatal("unable to set position", err)
+		emitter := customErr.New("player_error", fmt.Errorf("failed to set playback position:%w", err).Error())
+		emitter.Emit(p.ctx)
 		return err
 	}
 	return nil
@@ -162,7 +164,6 @@ func (p *Player) GetPosition() (*ReturnType, error) {
 // set volume
 func (p *Player) SetVolume(volume int) (*ReturnType, error) {
 	if err := p.mpv.SetProperty("volume", mpv.FormatInt64, int64(volume)); err != nil {
-		log.Fatal("unable to set volume", err)
 		return nil, err
 	}
 	val, _ := p.mpv.GetProperty("volume", mpv.FormatInt64)
@@ -197,6 +198,7 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 func (p *Player) GetImage() (*ReturnType, error) {
 	b64, err := GetImageFromAudio(p.mpv)
 	if err != nil {
+		log.Print(fmt.Errorf("failed to load image:%w", err).Error())
 		return nil, err
 	}
 	return &ReturnType{Data: struct {
