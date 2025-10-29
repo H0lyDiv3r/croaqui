@@ -8,6 +8,7 @@ import {
 import { getNeutral } from "@/utils";
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
+import { EventsOn } from "../../../wailsjs/runtime/runtime";
 
 export const MusicList = () => {
   const audioFiles = useDataStore((state) => state.musicFiles);
@@ -53,21 +54,26 @@ export const MusicList = () => {
   };
 
   const loadAudio = (item: any) => {
-    LoadMusic(item.path)
-      .then((res) => {
-        setLoaded(res.data.loaded);
-        setTrack(item);
-        GetImage().then((res) => {
-          setCurrentTrackImage(res.data.image);
-        });
-        GetStatus().then((res) => {
-          setAll(res.data);
-        });
-        // setAll(JSON.parse(res));
-      })
-      .catch((error) => {
-        console.error("Error loading music:", error);
-      });
+    console.log("loading file");
+    setLoaded(false);
+    setTrack(item);
+
+    LoadMusic(item.path);
+    // .then((res) => {
+    //   console.log("loaded");
+    //   setLoaded(res.data.loaded);
+    //   setTrack(item);
+    //   GetImage().then((res) => {
+    //     setCurrentTrackImage(res.data.image);
+    //   });
+    //   GetStatus().then((res) => {
+    //     setAll(res.data);
+    //   });
+    //   // setAll(JSON.parse(res));
+    // })
+    // .catch((error) => {
+    //   console.error("Error loading music:", error);
+    // });
   };
   function toHMS(totalSeconds: number): string {
     const hours = Math.floor(totalSeconds / 3600);
@@ -87,6 +93,19 @@ export const MusicList = () => {
     useQueryStore.getState().clearQuery();
     getAudioFiles();
   }, [currentPath]);
+
+  useEffect(() => {
+    EventsOn("MPV:FILE_LOADED", () => {
+      setLoaded(true);
+      // setTrack(item);
+      GetImage().then((res) => {
+        setCurrentTrackImage(res.data.image);
+      });
+      GetStatus().then((res) => {
+        setAll(res.data);
+      });
+    });
+  }, []);
   return (
     <Box height={"100%"}>
       <Box

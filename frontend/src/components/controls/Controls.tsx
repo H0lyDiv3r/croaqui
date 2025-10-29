@@ -78,6 +78,9 @@ const Controls: React.FC = () => {
       if (time.current) {
         console.log("i am here clearing the interval");
         clearInterval(time.current);
+        usePlayerStore.setState((state) => {
+          return { ...state, paused: true };
+        });
       }
     });
   }, []);

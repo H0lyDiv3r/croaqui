@@ -44,7 +44,7 @@ func (p *Player) StartUp(ctx context.Context) {
 		log.Fatal("failed to initialize player")
 		return
 	}
-	defer p.mpv.TerminateDestroy()
+	// defer p.mpv.TerminateDestroy()
 
 	go func() {
 		for {
@@ -55,43 +55,36 @@ func (p *Player) StartUp(ctx context.Context) {
 				if end.Reason == mpv.EndFileEOF {
 					fmt.Println("ended because of eof")
 					runtime.EventsEmit(ctx, "MPV:END", struct {
-						Reason string `json:"reason"`
+						Message string `json:"reason"`
 					}{
-						Reason: "end of file reached",
+						Message: "end of file reached",
 					})
 				} else {
 					fmt.Println("ended for some stupid reason")
 					runtime.EventsEmit(ctx, "MPV:END", struct {
-						Reason string `json:"reason"`
+						Message string `json:"reason"`
 					}{
-						Reason: "unknown",
+						Message: "unknown",
 					})
 				}
+			case mpv.EventFileLoaded:
+				fmt.Println("the file is loaded")
+				runtime.EventsEmit(ctx, "MPV:FILE_LOADED")
 			}
 		}
 	}()
 	log.Print("player initialized successfuly")
 }
 
-func (p *Player) LoadMusic(url string) (*ReturnType, error) {
+func (p *Player) LoadMusic(url string) error {
 	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
 	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
 		fmt.Println("unable to load")
 		log.Fatal("unable to load music", err)
-		return nil, err
+		return err
 	}
-
-	for {
-		ev := p.mpv.WaitEvent(-1)
-		if ev.EventID == mpv.EventFileLoaded {
-			fmt.Println("the file is loaded")
-			return &ReturnType{Data: struct {
-				Loaded bool `json:"loaded"`
-			}{Loaded: true}}, nil
-		}
-	}
-
+	return nil
 }
 
 func (p *Player) GetMetadata() (*ReturnType, error) {
