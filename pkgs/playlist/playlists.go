@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"myproject/pkgs/db"
+	customErr "myproject/pkgs/error"
 )
 
 type Playlist struct {
@@ -37,7 +38,6 @@ func (p *Playlist) GetPlaylists() *ReturnType {
 		SELECT * from playlists
 		`).Scan(&playlists)
 
-	fmt.Println("this is it. this is", playlists)
 	return &ReturnType{Data: struct {
 		Playlists []playlist `json:"playlists"`
 	}{Playlists: playlists}}
@@ -53,6 +53,8 @@ func (p *Playlist) AddToPlaylist(musicId, playlistId uint) error {
 	result := db.DBInstance.Instance.Create(&db.PlaylistMusic{PlaylistID: playlistId, Position: res + 1, MusicID: musicId})
 	if result.Error != nil {
 		log.Print("Error adding to playlist:", result.Error)
+		emitter := customErr.New("db_error", fmt.Errorf("failed to add to playlist:%w", result.Error).Error())
+		emitter.Emit(p.ctx)
 		return result.Error
 	}
 	return nil
@@ -63,6 +65,8 @@ func (p *Playlist) RemoveFromPlaylist(musicId, playlistId uint) error {
 	result := db.DBInstance.Instance.Delete(&db.PlaylistMusic{PlaylistID: playlistId, MusicID: musicId})
 	if result.Error != nil {
 		log.Print("Error removing from playlist:", result.Error)
+		emitter := customErr.New("db_error", fmt.Errorf("failed to Remove from playlist:%w", result.Error).Error())
+		emitter.Emit(p.ctx)
 		return result.Error
 	}
 	return nil
@@ -77,6 +81,8 @@ func (p *Playlist) CreatePlaylist(name string) error {
 	result := db.DBInstance.Instance.Create(&db.Playlist{Name: name})
 	if result.Error != nil {
 		log.Print("Error creating playlist:", result.Error)
+		emitter := customErr.New("db_error", fmt.Errorf("failed to create playlist:%w", result.Error).Error())
+		emitter.Emit(p.ctx)
 		return result.Error
 	}
 	return nil
@@ -121,7 +127,6 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 		WHERE p.id = ?
 		`, id).Scan(&songs)
 
-	fmt.Println("im here im weir", songs)
 	return &ReturnType{Data: struct {
 		Songs []song `json:"songs"`
 	}{Songs: songs}}
@@ -131,7 +136,8 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 func (p *Playlist) DeletePlaylist(id uint) error {
 	result := db.DBInstance.Instance.Delete(&db.Playlist{}, id)
 	if result.Error != nil {
-		fmt.Println("error deleting playlist", result.Error)
+		emitter := customErr.New("db_error", fmt.Errorf("failed to delete playlist:%w", result.Error).Error())
+		emitter.Emit(p.ctx)
 		return result.Error
 	}
 	return nil

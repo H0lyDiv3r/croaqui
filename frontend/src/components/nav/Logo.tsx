@@ -4,7 +4,7 @@ export const Logo = () => {
   return (
     <Box display={"flex"} className="logo">
       <Text fontSize={"2xl"} fontWeight={"bold"}>
-        Croaky
+        Croaqui
       </Text>
     </Box>
   );

@@ -31,9 +31,9 @@ func main() {
 	queue := queue.NewQueue()
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "Croaky",
-		Width:     10,
-		Height:    10,
+		Title:     "Croaqui",
+		Width:     512,
+		Height:    512,
 		MinWidth:  10,
 		MinHeight: 10,
 		AssetServer: &assetserver.Options{

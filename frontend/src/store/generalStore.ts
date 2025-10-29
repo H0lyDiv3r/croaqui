@@ -1,22 +1,27 @@
-//@ts-nocheck
-import { colors } from "@/themes/colors";
 import { create } from "zustand";
 
+export type ToastStatus = "success" | "error" | "warning" | "info";
+type Toast = {
+  status: ToastStatus;
+  message: string;
+  delay: number;
+};
 type GeneralStore = {
-  theme: "DARK" | "LIGHT";
-  getNeutral: (val: number) => any;
-  toggleTheme: () => void;
+  toasts: Toast[];
+  addToast: (toast: Toast) => void;
+  clearToasts: () => void;
 };
 
 export const useGeneralStore = create<GeneralStore>((set, get) => ({
-  theme: "DARK",
-  getNeutral: (val: number, theme: string) => {
-    // const theme = get().theme.toLowerCase();
-    return `neutral.${theme}.${val}`;
-    // return colors.neutral[theme][val as keyof typeof colors.neutral.dark];
+  toasts: [],
+  addToast: (toast: Toast) => {
+    set((state) => ({
+      toasts: [...state.toasts, toast],
+    }));
   },
-  toggleTheme: () =>
-    set((state) => {
-      return { theme: state.theme === "DARK" ? "LIGHT" : "DARK" };
-    }),
+  clearToasts: () => {
+    set((state) => ({
+      toasts: [],
+    }));
+  },
 }));
