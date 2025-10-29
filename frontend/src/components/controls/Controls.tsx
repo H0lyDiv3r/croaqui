@@ -16,6 +16,7 @@ import { TogglePlay } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
 import { getNeutral } from "@/utils";
+import { EventsOn } from "../../../wailsjs/runtime";
 // import { PlayerContext } from "./PlayerContextProvider";
 // import { GlobalContext } from "../../store/GlobalContextProvider";
 
@@ -71,6 +72,15 @@ const Controls: React.FC = () => {
   };
 
   const loopVals = [TbRepeatOff, TbRepeat, TbRepeatOnce];
+
+  useEffect(() => {
+    EventsOn("MPV:END", (msg) => {
+      if (time.current) {
+        console.log("i am here clearing the interval");
+        clearInterval(time.current);
+      }
+    });
+  }, []);
   return (
     <Box
       width={"100%"}

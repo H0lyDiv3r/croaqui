@@ -11,7 +11,7 @@ import {
   GetAlbumsWithRoutines,
   ScanForAudio,
 } from "../wailsjs/go/media/Media";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Router, Switch } from "wouter";
 import { AlbumDetail, Albums, Library } from "./pages";
@@ -24,6 +24,7 @@ function App() {
     });
   };
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
+
   return (
     <Box
       display={"flex"}
