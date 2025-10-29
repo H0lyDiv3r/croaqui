@@ -1,10 +1,8 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 import App from "./App";
-import { ChakraProvider } from "@chakra-ui/react";
-import { system } from "./themes";
 import { Provider } from "./components/ui/provider";
+import { ToastProvider } from "./components/providers";
 
 const container = document.getElementById("root");
 
@@ -12,6 +10,8 @@ const root = createRoot(container!);
 
 root.render(
   <Provider>
-    <App />
+    <ToastProvider>
+      <App />
+    </ToastProvider>
   </Provider>,
 );

@@ -55,21 +55,21 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     // setAll(audioFiles);
   };
   const loadAudio = (item: any) => {
-    LoadMusic(item.path)
-      .then((res) => {
-        setLoaded(res.data.loaded);
-        setTrack(item);
-        GetImage().then((res) => {
-          setCurrentTrackImage(res.data.image);
-        });
-        GetStatus().then((res) => {
-          setAll(res.data);
-        });
-        // setAll(JSON.parse(res));
-      })
-      .catch((error) => {
-        console.error("Error loading music:", error);
-      });
+    // LoadMusic(item.path)
+    //   .then((res) => {
+    //     setLoaded(res.data.loaded);
+    //     setTrack(item);
+    //     GetImage().then((res) => {
+    //       setCurrentTrackImage(res.data.image);
+    //     });
+    //     GetStatus().then((res) => {
+    //       setAll(res.data);
+    //     });
+    //     // setAll(JSON.parse(res));
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error loading music:", error);
+    //   });
   };
   const getBanner = async () => {
     const banner = await GetAlbumImage(decodeURIComponent(params.id));
