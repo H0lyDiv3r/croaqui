@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gen2brain/go-mpv"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Player struct {
@@ -36,14 +37,39 @@ func MPV() *Player {
 
 func (p *Player) StartUp(ctx context.Context) {
 	p.ctx = ctx
-	mpv := mpv.New()
+	mpvInstance := mpv.New()
 
-	p.mpv = mpv
+	p.mpv = mpvInstance
 	if err := p.mpv.Initialize(); err != nil {
 		log.Fatal("failed to initialize player")
 		return
 	}
-	// p.StartEventLoop()
+	defer p.mpv.TerminateDestroy()
+
+	go func() {
+		for {
+			ev := p.mpv.WaitEvent(100)
+			switch ev.EventID {
+			case mpv.EventEnd:
+				end := ev.EndFile()
+				if end.Reason == mpv.EndFileEOF {
+					fmt.Println("ended because of eof")
+					runtime.EventsEmit(ctx, "MPV:END", struct {
+						Reason string `json:"reason"`
+					}{
+						Reason: "end of file reached",
+					})
+				} else {
+					fmt.Println("ended for some stupid reason")
+					runtime.EventsEmit(ctx, "MPV:END", struct {
+						Reason string `json:"reason"`
+					}{
+						Reason: "unknown",
+					})
+				}
+			}
+		}
+	}()
 	log.Print("player initialized successfuly")
 }
 
@@ -93,6 +119,7 @@ func (p *Player) TogglePlay() (*ReturnType, error) {
 	}
 	paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
 	val, _ := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
+
 	return &ReturnType{Data: struct {
 		Paused   bool    `json:"paused"`
 		Position float64 `json:"position"`
