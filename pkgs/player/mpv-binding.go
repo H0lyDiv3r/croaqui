@@ -48,7 +48,7 @@ func (p *Player) StartUp(ctx context.Context) {
 
 	go func() {
 		for {
-			ev := p.mpv.WaitEvent(100)
+			ev := p.mpv.WaitEvent(10)
 			switch ev.EventID {
 			case mpv.EventEnd:
 				end := ev.EndFile()
