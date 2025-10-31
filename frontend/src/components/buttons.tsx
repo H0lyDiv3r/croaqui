@@ -33,9 +33,9 @@ export const DefaultButton = ({ children, action, ...other }: any) => {
     <Button
       onClick={action}
       bg={"brand.500"}
-      color={getNeutral("light", 800)}
-      _dark={{ color: getNeutral("dark", 800) }}
-      _hover={{ background: "brand.600" }}
+      color={getNeutral("light", 900)}
+      _dark={{ color: getNeutral("dark", 900) }}
+      _hover={{ background: "brand.400" }}
       width={"100%"}
       fontSize={"14px"}
       fontWeight={400}

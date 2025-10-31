@@ -3,9 +3,9 @@
 import {playlist} from '../models';
 import {context} from '../models';
 
-export function AddToPlaylist(arg1:number,arg2:number):Promise<void>;
+export function AddToPlaylist(arg1:number,arg2:number):Promise<playlist.ReturnType>;
 
-export function CreatePlaylist(arg1:string):Promise<void>;
+export function CreatePlaylist(arg1:string):Promise<playlist.ReturnType>;
 
 export function DeletePlaylist(arg1:number):Promise<void>;
 
@@ -13,7 +13,7 @@ export function GetPlaylist(arg1:number):Promise<playlist.ReturnType>;
 
 export function GetPlaylists():Promise<playlist.ReturnType>;
 
-export function RemoveFromPlaylist(arg1:number,arg2:number):Promise<void>;
+export function RemoveFromPlaylist(arg1:number,arg2:number):Promise<playlist.ReturnType>;
 
 export function StartUp(arg1:context.Context):Promise<void>;
 
