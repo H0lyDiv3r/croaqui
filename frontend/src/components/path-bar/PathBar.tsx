@@ -54,7 +54,7 @@ export const PathBar = () => {
           onWheel={handleWheel}
           css={{
             scrollbarWidth: "none", // Firefox
-            "-ms-overflow-style": "none", // IE 10+
+            msOverflowStyle: "none", // IE 10+
             "&::-webkit-scrollbar": {
               display: "none", // Chrome, Safari, Edge (WebKit/Blink)
               height: "0px",
