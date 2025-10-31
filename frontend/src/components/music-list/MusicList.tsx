@@ -9,6 +9,8 @@ import { getNeutral } from "@/utils";
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
+import { Empty } from "../empty";
+import { MusicDropdown } from "../music-actions";
 
 export const MusicList = () => {
   const audioFiles = useDataStore((state) => state.musicFiles);
@@ -17,6 +19,8 @@ export const MusicList = () => {
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
   const currentPath = useDataStore((state) => state.currentPath);
+
+  const [hovered, setHovered] = useState<number | null>(null);
 
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
@@ -167,61 +171,69 @@ export const MusicList = () => {
           onScroll={handleScroll}
           ref={scrollRef}
         >
-          {audioFiles.map((item, idx) => (
-            <Grid
-              alignItems={"center"}
-              templateColumns="repeat(24, 1fr)"
-              fontSize={"sm"}
-              whiteSpace={"nowrap"}
-              gap={4}
-              p={"2"}
-              key={item.id}
-              color={getNeutral("light", 200)}
-              _dark={{
-                color: getNeutral("dark", 200),
-              }}
-              _hover={{
-                bg: getNeutral("light", 700),
-                cursor: "pointer",
-                _dark: {
-                  bg: getNeutral("dark", 700),
-                },
-              }}
-              onClick={() => {
-                loadAudio(item);
-              }}
-            >
-              <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>
-                {idx + 1}
-              </GridItem>
-              <GridItem colSpan={{ base: 6, lg: 8 }} overflow={"hidden"}>
-                <Text whiteSpace={"nowrap"}>{item.title}</Text>
-                <Text
-                  whiteSpace={"nowrap"}
-                  fontSize={"xs"}
-                  color={getNeutral("light", 400)}
-                  _dark={{
-                    color: getNeutral("dark", 400),
-                  }}
-                >
-                  {item.artist}
-                </Text>
-              </GridItem>
+          {audioFiles.length > 0 ? (
+            audioFiles.map((item, idx) => (
+              <Grid
+                onMouseEnter={() => {
+                  setHovered(idx);
+                }}
+                onMouseLeave={() => setHovered(null)}
+                alignItems={"center"}
+                templateColumns="repeat(24, 1fr)"
+                fontSize={"sm"}
+                whiteSpace={"nowrap"}
+                gap={4}
+                p={"2"}
+                key={idx}
+                color={getNeutral("light", 200)}
+                _dark={{
+                  color: getNeutral("dark", 200),
+                }}
+                _hover={{
+                  bg: getNeutral("light", 700),
+                  cursor: "pointer",
+                  _dark: {
+                    bg: getNeutral("dark", 700),
+                  },
+                }}
+                onClick={() => {
+                  loadAudio(item);
+                }}
+              >
+                <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>
+                  {idx}
+                </GridItem>
+                <GridItem colSpan={{ base: 6, lg: 8 }} overflow={"hidden"}>
+                  <Text whiteSpace={"nowrap"}>{item.title}</Text>
+                  <Text
+                    whiteSpace={"nowrap"}
+                    fontSize={"xs"}
+                    color={getNeutral("light", 400)}
+                    _dark={{
+                      color: getNeutral("dark", 400),
+                    }}
+                  >
+                    {item.artist}
+                  </Text>
+                </GridItem>
 
-              <GridItem colSpan={{ base: 5, lg: 6 }} overflow={"hidden"}>
-                {item.album ? item.album : "-"}
-              </GridItem>
-              <GridItem colSpan={{ base: 4, lg: 6 }} overflow={"hidden"}>
-                {item.genre ? item.genre : "-"}
-              </GridItem>
-              <GridItem colSpan={{ base: 4, lg: 2 }} overflow={"hidden"}>
-                {toHMS(item.duration)}
-              </GridItem>
-              <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
-                ...
-              </GridItem>
-            </Grid>
-          ))}
+                <GridItem colSpan={{ base: 5, lg: 6 }} overflow={"hidden"}>
+                  {item.album ? item.album : "-"}
+                </GridItem>
+                <GridItem colSpan={{ base: 4, lg: 6 }} overflow={"hidden"}>
+                  {item.genre ? item.genre : "-"}
+                </GridItem>
+                <GridItem colSpan={{ base: 4, lg: 2 }} overflow={"hidden"}>
+                  {toHMS(item.duration)}
+                </GridItem>
+                <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
+                  {hovered === idx && <MusicDropdown songId={item.id} />}
+                </GridItem>
+              </Grid>
+            ))
+          ) : (
+            <Empty.Music />
+          )}
         </Box>
       </Box>
     </Box>

@@ -12,6 +12,7 @@ import { FaFolder } from "react-icons/fa6";
 import { getNeutral } from "@/utils";
 import { QueryParams, useDataStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
+import { Empty } from "../empty";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);
@@ -52,7 +53,7 @@ export const DirTree = () => {
       _dark={{ color: getNeutral("dark", 200) }}
     >
       <>
-        {dirs &&
+        {dirs.length > 0 ? (
           dirs.map(
             (dir: { id: string; name: string; path: string }): JSX.Element => (
               <Box
@@ -82,7 +83,10 @@ export const DirTree = () => {
                 </Box>
               </Box>
             ),
-          )}
+          )
+        ) : (
+          <Empty.Directory />
+        )}
       </>
     </Box>
   );

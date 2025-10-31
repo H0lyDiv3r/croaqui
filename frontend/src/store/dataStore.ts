@@ -8,19 +8,25 @@ type dir = {
 };
 
 type DataStore = {
+  currentPlaylist: null | number;
   currentPath: string;
   dirs: dir[];
   musicFiles: any[];
   setMusicFiles: (musicFiles: any[]) => void;
   setDirs: (dirs: dir[]) => void;
   setCurrentPath: (dir: string) => void;
+  setCurrentPlaylist: (playlistId: number | null) => void;
 };
 
 export const useDataStore = create<DataStore>((set) => ({
+  currentPlaylist: null,
   currentPath: "/",
   dirs: [],
   musicFiles: [],
-  setMusicFiles: (musicFiles: any[]) => set({ musicFiles }),
+  setCurrentPlaylist: (playlistId: number | null) =>
+    set({ currentPlaylist: playlistId }),
+  setMusicFiles: (musicFiles: any[]) =>
+    set({ musicFiles }),
   setDirs: (dirs: dir[]) => set({ dirs }),
   setCurrentPath: (path: string) =>
     set((state) => {

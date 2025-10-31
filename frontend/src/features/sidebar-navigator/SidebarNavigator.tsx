@@ -3,15 +3,31 @@ import { DirTree } from "@/components/dir-tree";
 import { PathBar } from "@/components/path-bar";
 import { useScreenSize } from "@/hooks";
 import { getNeutral } from "@/utils";
-import { Box } from "@chakra-ui/react";
+import { Box, Tabs, useTabs } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useSidebarDisclosure } from "@/store/sidebarDisclosure";
+import { SideBarActionTabs } from "@/components/controls/SideBarActionTabs";
+
 import { RiExpandLeftFill } from "react-icons/ri";
 import { RiExpandRightFill } from "react-icons/ri";
-import { useSidebarDisclosure } from "@/store/sidebarDisclosure";
+import { VscFolderLibrary } from "react-icons/vsc";
+import { BiSolidPlaylist } from "react-icons/bi";
+import { Playlists } from "@/components/playlist";
+
+const TabsContent: any = Tabs.Content;
+
 export const SidebarNavigator = () => {
   const isOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const switchSide = useSidebarDisclosure((state) => state.switch);
   const { isSmall, isLarge } = useScreenSize();
+  const tabs = useTabs({
+    defaultValue: "dir",
+  });
+
+  const tabList = [
+    { value: "dir", label: "Dir", icon: VscFolderLibrary },
+    { value: "playlist", label: "Playlist", icon: BiSolidPlaylist },
+  ];
 
   const handleHide = (target: boolean) => {
     if (isLarge) {
@@ -40,38 +56,45 @@ export const SidebarNavigator = () => {
           flexDirection={"column"}
           width={"350px"}
         >
-          <Box
-            as={"button"}
-            onClick={() => handleHide(false)}
-            p={2}
-            width={"fit"}
-            borderRadius={"md"}
-            bg={"brand.400"}
-            border={"1px solid"}
-            color={"brand.800"}
-            borderColor={getNeutral("light", 600)}
-            _dark={{
-              borderColor: getNeutral("dark", 600),
-            }}
-            _hover={{
-              cursor: "pointer",
-              bg: "brand.500",
-            }}
+          <Tabs.RootProvider
+            size={"sm"}
+            value={tabs}
+            defaultValue="members"
+            variant="plain"
+            lazyMount
+            unmountOnExit
+            height={"100%"}
+            w={"100%"}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={2}
           >
-            <ChakraIcon icon={RiExpandLeftFill} />
-          </Box>
-          <PathBar />
-          <Box
-            my={2}
-            p={2}
-            flex={1}
-            borderRadius={"md"}
-            bg={getNeutral("light", 800)}
-            _dark={{ bg: getNeutral("dark", 800) }}
-            overflowY={"auto"}
-          >
-            <DirTree />
-          </Box>
+            <SideBarActionTabs
+              tabs={tabs}
+              tabList={tabList}
+              handleHide={handleHide}
+            />
+
+            <PathBar />
+            <Box
+              mb={2}
+              p={2}
+              flex={1}
+              minH={0}
+              borderRadius={"md"}
+              bg={getNeutral("light", 800)}
+              _dark={{ bg: getNeutral("dark", 800) }}
+            >
+              <Box height={"100%"} overflowY={"auto"}>
+                <TabsContent value="dir" p={0} m={0}>
+                  <DirTree />
+                </TabsContent>
+                <TabsContent value="playlist" p={0} m={0}>
+                  <Playlists />
+                </TabsContent>
+              </Box>
+            </Box>
+          </Tabs.RootProvider>
         </Box>
       ) : (
         <SidebarNavigatorMobile onExpand={() => handleHide(true)} />
