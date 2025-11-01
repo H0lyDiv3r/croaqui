@@ -2,7 +2,7 @@ import { ChakraIcon } from "@/components/ChackraIcon";
 import { DirTree } from "@/components/dir-tree";
 import { PathBar } from "@/components/path-bar";
 import { useScreenSize } from "@/hooks";
-import { getNeutral } from "@/utils";
+import { createPlaylist, getNeutral } from "@/utils";
 import { Box, Tabs, useTabs } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useSidebarDisclosure } from "@/store/sidebarDisclosure";
@@ -13,12 +13,15 @@ import { RiExpandRightFill } from "react-icons/ri";
 import { VscFolderLibrary } from "react-icons/vsc";
 import { BiSolidPlaylist } from "react-icons/bi";
 import { Playlists } from "@/components/playlist";
+import { usePlaylistStore } from "@/store";
 
 const TabsContent: any = Tabs.Content;
 
 export const SidebarNavigator = () => {
   const isOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const switchSide = useSidebarDisclosure((state) => state.switch);
+  const [showCreatePlaylistForm, setShowCreatePlaylistForm] = useState(false);
+
   const { isSmall, isLarge } = useScreenSize();
   const tabs = useTabs({
     defaultValue: "dir",
@@ -38,6 +41,16 @@ export const SidebarNavigator = () => {
       ...state,
       leftBarOpen: target,
     }));
+  };
+
+  const handlePlaylistFormSubmission = async (value: string) => {
+    const data = await createPlaylist(value);
+
+    usePlaylistStore.setState((state) => ({
+      ...state,
+      playlists: [...state.playlists, { id: data.ID, name: data.Name }],
+    }));
+    setShowCreatePlaylistForm(false);
   };
 
   useEffect(() => {
@@ -73,6 +86,11 @@ export const SidebarNavigator = () => {
               tabs={tabs}
               tabList={tabList}
               handleHide={handleHide}
+              showPlaylistForm={showCreatePlaylistForm}
+              handleOpenForm={(target) => {
+                setShowCreatePlaylistForm(target);
+              }}
+              handlePlaylistFormSubmission={handlePlaylistFormSubmission}
             />
 
             <PathBar />

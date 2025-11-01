@@ -22,9 +22,14 @@ function App() {
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
 
   useLayoutEffect(() => {
-    EventsOn("ERR", (err) => {
+    EventsOn("toast:err", (err) => {
       console.log("error emitted");
       showToast("error", err.message);
+    });
+
+    EventsOn("toast:success", (msg) => {
+      console.log("success emitted");
+      showToast("success", msg);
     });
   }, []);
 

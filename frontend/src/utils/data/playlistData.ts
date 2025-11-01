@@ -4,6 +4,7 @@ import {
   CreatePlaylist,
   AddToPlaylist,
   RemoveFromPlaylist,
+  DeletePlaylist,
 } from "../../../wailsjs/go/playlist/Playlist";
 
 export const getPlaylists = async () => {
@@ -51,4 +52,16 @@ export const removeFromPlaylist = async (
     return null;
   }
   console.log("song removed from playlist", songId, playlistId);
+  return playlist.data.songId;
+};
+
+export const deletePlaylist = async (id: number) => {
+  const playlist = await DeletePlaylist(id);
+  if (!playlist) {
+    console.log("playlist not found");
+    return null;
+  }
+
+  console.log("playlist deleted", playlist);
+  return playlist.data.playlist;
 };

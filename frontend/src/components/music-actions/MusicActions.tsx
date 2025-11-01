@@ -10,7 +10,13 @@ const MenuContent: any = Menu.Content;
 const MenuItem: any = Menu.Item;
 const MenuTriggerItem: any = Menu.TriggerItem;
 
-export const PlaylistsMenu = ({ songId }: { songId: number }) => {
+export const PlaylistsMenu = ({
+  songId,
+  handleClose,
+}: {
+  songId: number;
+  handleClose: () => void;
+}) => {
   const [playlists, setPlaylists] = useState([]);
   useEffect(() => {
     getPlaylists().then(setPlaylists);
@@ -21,6 +27,11 @@ export const PlaylistsMenu = ({ songId }: { songId: number }) => {
       <Menu.Root
         lazyMount
         positioning={{ placement: "left-start", gutter: 18 }}
+        onSelect={(value: any) => {
+          console.log("adding", songId, Number(value["value"]));
+          addToPlaylist(songId, Number(value["value"]));
+          handleClose();
+        }}
       >
         <MenuTrigger
           border={"none"}
@@ -57,6 +68,7 @@ export const PlaylistsMenu = ({ songId }: { songId: number }) => {
                   playlists.map((playlist: { id: string; name: string }) => {
                     return (
                       <MenuItem
+                        value={playlist.id}
                         key={playlist.id}
                         fontSize={"sm"}
                         p={2}
@@ -72,9 +84,6 @@ export const PlaylistsMenu = ({ songId }: { songId: number }) => {
                           },
                         }}
                         borderRadius={"md"}
-                        onClick={() => {
-                          addToPlaylist(songId, Number(playlist.id));
-                        }}
                         textAlign={"left"}
                       >
                         {playlist.name}

@@ -16,17 +16,22 @@ export const SideBarActionTabs = ({
   tabs,
   tabList,
   handleHide,
+  showPlaylistForm,
+  handleOpenForm,
+  handlePlaylistFormSubmission,
 }: {
   tabs: Tabs.UseTabsReturn;
   tabList: TabListItem[];
   handleHide: (target: boolean) => void;
+  showPlaylistForm: boolean;
+  handleOpenForm: (target: boolean) => void;
+  handlePlaylistFormSubmission: (value: string) => void;
 }) => {
-  const [showCreatePlaylistForm, setShowCreatePlaylistForm] = useState(false);
   const MotionBox = motion(Box);
 
   useEffect(() => {
     // Add your effect logic here
-    setShowCreatePlaylistForm(false);
+    handleOpenForm(false);
   }, [tabs.value]);
   return (
     <Box display={"flex"} flexDir={"column"} gap={2} mb={2}>
@@ -88,7 +93,9 @@ export const SideBarActionTabs = ({
           <Box
             as={"button"}
             px={2}
-            onClick={() => setShowCreatePlaylistForm(!showCreatePlaylistForm)}
+            onClick={() =>
+              handleOpenForm(tabs.value === "dir" ? false : !showPlaylistForm)
+            }
             width={"100%"}
             height={"100%"}
             borderRadius={"md"}
@@ -108,9 +115,9 @@ export const SideBarActionTabs = ({
         </Box>
       </Box>
       <AnimatePresence>
-        {showCreatePlaylistForm ? (
+        {showPlaylistForm ? (
           <MotionBox>
-            <CreatePlaylistForm />
+            <CreatePlaylistForm handleSubmit={handlePlaylistFormSubmission} />
           </MotionBox>
         ) : null}
       </AnimatePresence>
