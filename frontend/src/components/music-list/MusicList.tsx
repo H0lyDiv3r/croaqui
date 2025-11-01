@@ -10,7 +10,7 @@ import {
   GetStatus,
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
-import { getNeutral, removeFromPlaylist } from "@/utils";
+import { getNeutral, removeFromPlaylist, toHMS } from "@/utils";
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
@@ -33,16 +33,16 @@ export const MusicList = () => {
     (state) => state.setCurrentTrackImage,
   );
 
-  const getAudioFiles = async () => {
-    const audioFiles = await getAudio({ hasMore: true, page: 0 });
-    // setAll(audioFiles);
-    console.log("files giles mailes");
-    useDataStore.setState((state) => ({
-      ...state,
-      currentPlaylist: null,
-      musicFiles: [...audioFiles],
-    }));
-  };
+  // const getAudioFiles = async () => {
+  //   const audioFiles = await getAudio({ hasMore: true, page: 0 });
+  //   // setAll(audioFiles);
+  //   console.log("files giles mailes");
+  //   useDataStore.setState((state) => ({
+  //     ...state,
+  //     currentPlaylist: null,
+  //     musicFiles: [...audioFiles],
+  //   }));
+  // };
 
   const handleScroll = async () => {
     const current = scrollRef.current;
@@ -67,17 +67,6 @@ export const MusicList = () => {
     }
   };
 
-  const handleRemoveFromPlaylist = async (
-    songId: number,
-    currentPlaylistId: number,
-  ) => {
-    const data = await removeFromPlaylist(songId, currentPlaylistId);
-    useDataStore.setState((state) => ({
-      ...state,
-      musicFiles: state.musicFiles.filter((file) => file.id !== data),
-    }));
-  };
-
   const loadAudio = (item: any) => {
     console.log("loading file");
     setLoaded(false);
@@ -100,44 +89,28 @@ export const MusicList = () => {
     //   console.error("Error loading music:", error);
     // });
   };
-  function toHMS(totalSeconds: number): string {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = Math.floor(totalSeconds % 60);
 
-    return [hours, minutes, seconds]
-      .map((v) => String(v).padStart(2, "0"))
-      .join(":");
-  }
+  // useEffect(() => {
+  //   // getAudio();
+  //   // useQueryStore.setState((state) => {
+  //   //   return { ...state, page: 0 };
+  //   // });
+  //   useQueryStore.getState().clearQuery();
+  //   getAudioFiles();
+  // }, [currentPath]);
 
-  useEffect(() => {
-    // getAudio();
-    // useQueryStore.setState((state) => {
-    //   return { ...state, page: 0 };
-    // });
-    useQueryStore.getState().clearQuery();
-    getAudioFiles();
-  }, [currentPath]);
-
-  useEffect(() => {
-    // getAudio();
-    // useQueryStore.setState((state) => {
-    //   return { ...state, page: 0 };
-    // });
-  }, [audioFiles]);
-
-  useEffect(() => {
-    EventsOn("MPV:FILE_LOADED", () => {
-      setLoaded(true);
-      // setTrack(item);
-      GetImage().then((res) => {
-        setCurrentTrackImage(res.data.image);
-      });
-      GetStatus().then((res) => {
-        setAll(res.data);
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   EventsOn("MPV:FILE_LOADED", () => {
+  //     setLoaded(true);
+  //     // setTrack(item);
+  //     GetImage().then((res) => {
+  //       setCurrentTrackImage(res.data.image);
+  //     });
+  //     GetStatus().then((res) => {
+  //       setAll(res.data);
+  //     });
+  //   });
+  // }, []);
   return (
     <Box height={"100%"}>
       <Box
@@ -161,14 +134,13 @@ export const MusicList = () => {
           borderColor={getNeutral("light", 600)}
           _dark={{
             borderColor: getNeutral("dark", 600),
-            bg: getNeutral("dark", 700),
           }}
           borderStyle={"solid"}
           borderWidth={"1px"}
           borderRight={"none"}
           borderLeft={"none"}
+          borderTop={"none"}
           fontWeight={500}
-          bg={getNeutral("light", 700)}
         >
           <GridItem whiteSpace={"nowrap"} colSpan={{ base: 3, lg: 1 }}>
             #
@@ -199,7 +171,7 @@ export const MusicList = () => {
           onScroll={handleScroll}
           ref={scrollRef}
         >
-          {audioFiles.length > 0 ? (
+          {audioFiles && audioFiles.length > 0 ? (
             audioFiles.map((item, idx) => (
               <Grid
                 onMouseEnter={() => {
@@ -256,10 +228,7 @@ export const MusicList = () => {
                 </GridItem>
                 <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
                   {hovered === idx && (
-                    <MusicDropdown
-                      songId={item.id}
-                      handleRemoveFromPlaylist={handleRemoveFromPlaylist}
-                    />
+                    <MusicDropdown id={item.ipl || null} songId={item.id} />
                   )}
                 </GridItem>
               </Grid>

@@ -1,4 +1,4 @@
-import { getAlbumData, getNeutral } from "@/utils";
+import { getAlbumData, getNeutral, toHMS } from "@/utils";
 import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -75,15 +75,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     const banner = await GetAlbumImage(decodeURIComponent(params.id));
     return banner.data.image;
   };
-  function toHMS(totalSeconds: number): string {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = Math.floor(totalSeconds % 60);
 
-    return [hours, minutes, seconds]
-      .map((v) => String(v).padStart(2, "0"))
-      .join(":");
-  }
   useEffect(() => {
     const fetchData = async function fetchData() {
       await getAudioFiles();

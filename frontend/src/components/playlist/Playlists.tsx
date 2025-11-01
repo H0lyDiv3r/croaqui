@@ -16,11 +16,17 @@ export const Playlists = () => {
   const setPlaylists = usePlaylistStore((state) => state.setPlaylists);
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const setCurrentPlaylist = useDataStore((state) => state.setCurrentPlaylist);
+  const setPlaylistMetaData = usePlaylistStore(
+    (state) => state.setPlaylistMetaData,
+  );
 
-  const openPlaylist = (playlistId: number) => {
+  const openPlaylist = async (playlistId: number) => {
     setAudioFiles([]);
     setCurrentPlaylist(playlistId);
-    getPlaylistContent(playlistId).then(setAudioFiles);
+    const data = await getPlaylistContent(playlistId);
+    if (!data) return;
+    setAudioFiles(data.playlist.songs);
+    setPlaylistMetaData({ ...data.playlist.counts });
   };
 
   const handleDeletePlaylist = async (playlistId: number) => {
@@ -45,7 +51,8 @@ export const Playlists = () => {
       _dark={{ color: getNeutral("dark", 200) }}
     >
       <>
-        {playlists.length > 0 &&
+        {playlists &&
+          playlists.length > 0 &&
           playlists.map(
             (playlist: { id: string; name: string }): JSX.Element => (
               <Box

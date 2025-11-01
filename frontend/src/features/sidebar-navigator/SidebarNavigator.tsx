@@ -45,6 +45,7 @@ export const SidebarNavigator = () => {
 
   const handlePlaylistFormSubmission = async (value: string) => {
     const data = await createPlaylist(value);
+    console.log("i am here i am here bro", data);
 
     usePlaylistStore.setState((state) => ({
       ...state,

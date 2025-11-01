@@ -26,8 +26,8 @@ export function GetPlaylists() {
   return window['go']['playlist']['Playlist']['GetPlaylists']();
 }
 
-export function RemoveFromPlaylist(arg1, arg2) {
-  return window['go']['playlist']['Playlist']['RemoveFromPlaylist'](arg1, arg2);
+export function RemoveFromPlaylist(arg1, arg2, arg3) {
+  return window['go']['playlist']['Playlist']['RemoveFromPlaylist'](arg1, arg2, arg3);
 }
 
 export function StartUp(arg1) {

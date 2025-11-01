@@ -21,6 +21,7 @@ type ReturnType struct {
 type song struct {
 	// Id       int    `json:"id"`
 	Pname    string `json:"pname"`
+	Ipl      uint   `json:"ipl"`
 	Id       uint   `json:"id"`
 	Name     string `json:"name"`
 	Path     string `json:"path"`
@@ -35,6 +36,14 @@ type song struct {
 type playlist struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type counts struct {
+	Title    string `json:"title"`
+	Albums   int    `json:"albums"`
+	Artists  int    `json:"artists"`
+	Songs    int    `json:"songs"`
+	Duration int    `json:"duration"`
 }
 
 func NewPlaylist() *Playlist {
@@ -106,7 +115,7 @@ func (p *Playlist) AddToPlaylist(musicId, playlistId uint) (*ReturnType, error) 
 }
 
 // remove from playlist
-func (p *Playlist) RemoveFromPlaylist(musicId, playlistId uint) (*ReturnType, error) {
+func (p *Playlist) RemoveFromPlaylist(musicId, playlistId, id uint) (*ReturnType, error) {
 	var playListExists int
 	db.DBInstance.Instance.Raw(`
 		SELECT EXISTS(SELECT 1 FROM playlists p
@@ -132,7 +141,7 @@ func (p *Playlist) RemoveFromPlaylist(musicId, playlistId uint) (*ReturnType, er
 	}
 
 	log.Print("song removed from playlist", playlistId, musicId)
-	result := db.DBInstance.Instance.Where("playlist_id = ? AND music_id = ?", playlistId, musicId).Delete(&db.PlaylistMusic{})
+	result := db.DBInstance.Instance.Where("playlist_id = ? AND music_id = ? AND id = ?", playlistId, musicId, id).Delete(&db.PlaylistMusic{})
 	if result.Error != nil {
 		log.Print("Error removing from playlist:", result.Error)
 		emitter := customErr.New("db_error", fmt.Errorf("failed to Remove from playlist:%w", result.Error).Error())
@@ -143,7 +152,7 @@ func (p *Playlist) RemoveFromPlaylist(musicId, playlistId uint) (*ReturnType, er
 	p.Emit("Removed from Playlist")
 	return &ReturnType{Data: struct {
 		SongId uint `json:"songId"`
-	}{SongId: musicId}}, nil
+	}{SongId: id}}, nil
 }
 
 // create playlist
@@ -193,19 +202,32 @@ func (p *Playlist) UpdatePlaylistName(id uint, newName string) error {
 // read playlist
 func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 
-	var songs []song
+	type playlist struct {
+		Songs  []song `json:"songs"`
+		Counts counts `json:"counts"`
+	}
+	var playlistData playlist
 	db.DBInstance.Instance.Raw(`
-		SELECT pm.*,p.name as pname,m.id, m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre FROM playlist_musics pm
+		SELECT pm.playlist_id,pm.music_id,p.name as pname,pm.id AS ipl,m.id , m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre FROM playlist_musics pm
 		LEFT JOIN playlists p ON pm.playlist_id = p.id
 		LEFT JOIN music_files m ON pm.music_id = m.id
 		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
 		WHERE p.id = ?
 		AND pm.deleted_at IS NULL
-		`, id).Scan(&songs)
+		`, id).Scan(&playlistData.Songs)
+
+	db.DBInstance.Instance.Raw(`
+		SELECT COUNT(DISTINCT mm.album) AS albums, COUNT(DISTINCT mm.artist) AS artists, COUNT(m.id) AS songs, SUM(mm.duration) AS duration, p.name AS title FROM playlist_musics pm
+		LEFT JOIN playlists p ON pm.playlist_id = p.id
+		LEFT JOIN music_files m ON pm.music_id = m.id
+		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+		WHERE p.id = ?
+		AND pm.deleted_at IS NULL
+		`, id).Scan(&playlistData.Counts)
 
 	return &ReturnType{Data: struct {
-		Songs []song `json:"songs"`
-	}{Songs: songs}}
+		Playlist playlist `json:"playlist"`
+	}{Playlist: playlistData}}
 }
 
 // delete playlist
