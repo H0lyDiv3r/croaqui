@@ -21,8 +21,8 @@ export const getPlaylistContent = async (id: number) => {
   if (!playlist) {
     return [];
   }
-  console.log("playlist content got", playlist.data.songs);
-  return playlist.data.songs ? playlist.data.songs : [];
+  console.log("playlist content got", playlist);
+  return playlist.data;
 };
 
 export const createPlaylist = async (name: string) => {
@@ -45,8 +45,9 @@ export const addToPlaylist = async (songId: number, playlistId: number) => {
 export const removeFromPlaylist = async (
   songId: number,
   playlistId: number,
+  id: number,
 ) => {
-  const playlist = await RemoveFromPlaylist(songId, playlistId);
+  const playlist = await RemoveFromPlaylist(songId, playlistId, id);
   if (!playlist) {
     console.log("playlist not found");
     return null;

@@ -15,7 +15,7 @@ export function GetPlaylist(arg1:number):Promise<playlist.ReturnType>;
 
 export function GetPlaylists():Promise<playlist.ReturnType>;
 
-export function RemoveFromPlaylist(arg1:number,arg2:number):Promise<playlist.ReturnType>;
+export function RemoveFromPlaylist(arg1:number,arg2:number,arg3:number):Promise<playlist.ReturnType>;
 
 export function StartUp(arg1:context.Context):Promise<void>;
 
