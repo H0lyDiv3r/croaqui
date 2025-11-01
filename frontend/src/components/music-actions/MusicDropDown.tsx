@@ -33,19 +33,26 @@ const DialogTrigger: any = Dialog.Trigger;
 const DialogBody: any = Dialog.Body;
 export const MusicDropdown = ({
   songId,
-  handleRemoveFromPlaylist,
+  id,
 }: {
   songId: number;
-  handleRemoveFromPlaylist: (
-    songId: number,
-    playlistId: number,
-  ) => Promise<void>;
+  id: number | null;
 }) => {
   const { open, setOpen } = useDisclosure();
   const currentPlaylistId = useDataStore((state) => state.currentPlaylist);
 
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
-
+  const handleRemoveFromPlaylist = async (
+    songId: number,
+    currentPlaylistId: number,
+    id: number,
+  ) => {
+    const data = await removeFromPlaylist(songId, currentPlaylistId, id);
+    useDataStore.setState((state) => ({
+      ...state,
+      musicFiles: state.musicFiles.filter((file) => file.ipl !== data) || [],
+    }));
+  };
   return (
     <>
       <Box
@@ -101,14 +108,12 @@ export const MusicDropdown = ({
                   />
                 </ItemsWrapper>
 
-                {currentPlaylistId && (
+                {currentPlaylistId && id && (
                   <ItemsWrapper>
                     <Box
                       as={"button"}
-                      onClick={
-                        () =>
-                          handleRemoveFromPlaylist(songId, currentPlaylistId)
-                        // removeFromPlaylist(songId, currentPlaylistId)
+                      onClick={() =>
+                        handleRemoveFromPlaylist(songId, currentPlaylistId, id)
                       }
                     >
                       Remove from Playlist

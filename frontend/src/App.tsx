@@ -11,8 +11,15 @@ import { Route, Router, Switch } from "wouter";
 import { AlbumDetail, Albums, Library } from "./pages";
 import { useScreenSize, useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
+import { usePlayerStore } from "./store";
+import { GetImage, GetStatus } from "wailsjs/go/player/Player";
 
 function App() {
+  const setAll = usePlayerStore((state) => state.setPlayerStatus);
+  const setLoaded = usePlayerStore((state) => state.setLoaded);
+  const setCurrentTrackImage = usePlayerStore(
+    (state) => state.setCurrentTrackImage,
+  );
   const handleScan = () => {
     ScanForAudio("/home/yuri/Data").then((res) => {
       console.log("res", res);
@@ -30,6 +37,17 @@ function App() {
     EventsOn("toast:success", (msg) => {
       console.log("success emitted");
       showToast("success", msg);
+    });
+
+    EventsOn("MPV:FILE_LOADED", () => {
+      setLoaded(true);
+      // setTrack(item);
+      GetImage().then((res) => {
+        setCurrentTrackImage(res.data.image);
+      });
+      GetStatus().then((res) => {
+        setAll(res.data);
+      });
     });
   }, []);
 
