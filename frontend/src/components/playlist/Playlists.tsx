@@ -1,19 +1,35 @@
-import { getNeutral, getPlaylistContent, getPlaylists } from "@/utils";
+import {
+  deletePlaylist,
+  getNeutral,
+  getPlaylistContent,
+  getPlaylists,
+} from "@/utils";
 import { Box, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ChakraIcon } from "../ChackraIcon";
-import { BsFillCassetteFill } from "react-icons/bs";
+import { BsFillCassetteFill, BsFillTrashFill } from "react-icons/bs";
 import { Empty } from "../empty";
-import { useDataStore } from "@/store";
+import { useDataStore, usePlaylistStore } from "@/store";
 
 export const Playlists = () => {
-  const [playlists, setPlaylists] = useState([]);
+  const playlists = usePlaylistStore((state) => state.playlists);
+  const setPlaylists = usePlaylistStore((state) => state.setPlaylists);
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const setCurrentPlaylist = useDataStore((state) => state.setCurrentPlaylist);
 
   const openPlaylist = (playlistId: number) => {
+    setAudioFiles([]);
     setCurrentPlaylist(playlistId);
     getPlaylistContent(playlistId).then(setAudioFiles);
+  };
+
+  const handleDeletePlaylist = async (playlistId: number) => {
+    const data = await deletePlaylist(playlistId);
+
+    if (!data) return;
+    setPlaylists(
+      playlists.filter((playlist) => Number(playlist.id) !== playlistId),
+    );
   };
 
   useEffect(() => {
@@ -31,12 +47,12 @@ export const Playlists = () => {
       <>
         {playlists.length > 0 &&
           playlists.map(
-            (playlist: {
-              id: string;
-              name: string;
-              path: string;
-            }): JSX.Element => (
+            (playlist: { id: string; name: string }): JSX.Element => (
               <Box
+                p={2}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
                 borderRadius={"sm"}
                 overflow={"hidden"}
                 _hover={{
@@ -51,9 +67,27 @@ export const Playlists = () => {
                   openPlaylist(Number(playlist.id));
                 }}
               >
-                <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>
+                <Box display={"flex"} alignItems={"center"} gap={"2"}>
                   <ChakraIcon icon={BsFillCassetteFill}></ChakraIcon>
                   <Text overflow={"hidden"}>{playlist.name}</Text>
+                </Box>
+                <Box
+                  as="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeletePlaylist(Number(playlist.id));
+                  }}
+                  _hover={{
+                    cursor: "pointer",
+                    bg: getNeutral("light", 900),
+                    _dark: {
+                      bg: getNeutral("dark", 900),
+                    },
+                  }}
+                  borderRadius={"sm"}
+                  p={2}
+                >
+                  <ChakraIcon icon={BsFillTrashFill} />
                 </Box>
               </Box>
             ),

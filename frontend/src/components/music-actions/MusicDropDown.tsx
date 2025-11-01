@@ -21,25 +21,31 @@ import {
 import { MdOutlineAddToQueue, MdOutlineQueue } from "react-icons/md";
 import { useShowToast } from "../../hooks/useShowToast";
 import { useCallback } from "react";
-import { getNeutral, removeFromPlaylist } from "@/utils";
+import { getNeutral, getPlaylistContent, removeFromPlaylist } from "@/utils";
 import { PlaylistsMenu } from "./MusicActions";
 import { ChakraIcon } from "../ChackraIcon";
-import { useDataStore } from "@/store";
+import { useDataStore, usePlaylistStore } from "@/store";
 
 const DialogOverlay: any = Dialog.Backdrop;
 const DialogContent: any = Dialog.Content;
 const DialogPositioner: any = Dialog.Positioner;
 const DialogTrigger: any = Dialog.Trigger;
 const DialogBody: any = Dialog.Body;
-export const MusicDropdown = ({ songId }: { songId: number }) => {
+export const MusicDropdown = ({
+  songId,
+  handleRemoveFromPlaylist,
+}: {
+  songId: number;
+  handleRemoveFromPlaylist: (
+    songId: number,
+    playlistId: number,
+  ) => Promise<void>;
+}) => {
   const { open, setOpen } = useDisclosure();
   const currentPlaylistId = useDataStore((state) => state.currentPlaylist);
 
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    console.log("heeeey", currentPlaylistId);
-  }, [currentPlaylistId]);
   return (
     <>
       <Box
@@ -87,15 +93,22 @@ export const MusicDropdown = ({ songId }: { songId: number }) => {
                   <Text fontSize={"lg"}>Music Actions</Text>
                 </Box>
                 <ItemsWrapper>
-                  <PlaylistsMenu songId={songId} />
+                  <PlaylistsMenu
+                    songId={songId}
+                    handleClose={() => {
+                      setOpen(false);
+                    }}
+                  />
                 </ItemsWrapper>
 
                 {currentPlaylistId && (
                   <ItemsWrapper>
                     <Box
                       as={"button"}
-                      onClick={() =>
-                        removeFromPlaylist(songId, currentPlaylistId)
+                      onClick={
+                        () =>
+                          handleRemoveFromPlaylist(songId, currentPlaylistId)
+                        // removeFromPlaylist(songId, currentPlaylistId)
                       }
                     >
                       Remove from Playlist

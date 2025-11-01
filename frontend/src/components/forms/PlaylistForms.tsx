@@ -5,11 +5,12 @@ import { DefaultButton } from "../buttons";
 import { AnimatePresence, motion } from "framer-motion";
 
 const FieldLabel: any = Field.Label;
-export const CreatePlaylistForm = () => {
+export const CreatePlaylistForm = ({
+  handleSubmit,
+}: {
+  handleSubmit: (value: string) => void;
+}) => {
   const [name, setName] = useState("");
-  const handleSubmit = (value: string) => {
-    createPlaylist(value);
-  };
 
   return (
     <Box

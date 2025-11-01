@@ -1,11 +1,16 @@
-import { useDataStore, usePlayerStore, useQueryStore } from "@/store";
+import {
+  useDataStore,
+  usePlayerStore,
+  usePlaylistStore,
+  useQueryStore,
+} from "@/store";
 import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
 import {
   GetImage,
   GetStatus,
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
-import { getNeutral } from "@/utils";
+import { getNeutral, removeFromPlaylist } from "@/utils";
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
@@ -19,6 +24,8 @@ export const MusicList = () => {
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
   const currentPath = useDataStore((state) => state.currentPath);
+  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
+  const playlist = usePlaylistStore((state) => state.playlists);
 
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -29,8 +36,10 @@ export const MusicList = () => {
   const getAudioFiles = async () => {
     const audioFiles = await getAudio({ hasMore: true, page: 0 });
     // setAll(audioFiles);
+    console.log("files giles mailes");
     useDataStore.setState((state) => ({
       ...state,
+      currentPlaylist: null,
       musicFiles: [...audioFiles],
     }));
   };
@@ -38,6 +47,7 @@ export const MusicList = () => {
   const handleScroll = async () => {
     const current = scrollRef.current;
     if (!current) return;
+    if (currentPlaylist) return;
     if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
       // getAudios(currentPath);
       const newPage = await getAudio({
@@ -55,6 +65,17 @@ export const MusicList = () => {
         musicFiles: [...state.musicFiles, ...newPage],
       }));
     }
+  };
+
+  const handleRemoveFromPlaylist = async (
+    songId: number,
+    currentPlaylistId: number,
+  ) => {
+    const data = await removeFromPlaylist(songId, currentPlaylistId);
+    useDataStore.setState((state) => ({
+      ...state,
+      musicFiles: state.musicFiles.filter((file) => file.id !== data),
+    }));
   };
 
   const loadAudio = (item: any) => {
@@ -97,6 +118,13 @@ export const MusicList = () => {
     useQueryStore.getState().clearQuery();
     getAudioFiles();
   }, [currentPath]);
+
+  useEffect(() => {
+    // getAudio();
+    // useQueryStore.setState((state) => {
+    //   return { ...state, page: 0 };
+    // });
+  }, [audioFiles]);
 
   useEffect(() => {
     EventsOn("MPV:FILE_LOADED", () => {
@@ -227,7 +255,12 @@ export const MusicList = () => {
                   {toHMS(item.duration)}
                 </GridItem>
                 <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
-                  {hovered === idx && <MusicDropdown songId={item.id} />}
+                  {hovered === idx && (
+                    <MusicDropdown
+                      songId={item.id}
+                      handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+                    />
+                  )}
                 </GridItem>
               </Grid>
             ))

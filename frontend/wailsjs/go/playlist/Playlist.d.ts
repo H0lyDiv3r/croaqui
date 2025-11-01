@@ -7,7 +7,9 @@ export function AddToPlaylist(arg1:number,arg2:number):Promise<playlist.ReturnTy
 
 export function CreatePlaylist(arg1:string):Promise<playlist.ReturnType>;
 
-export function DeletePlaylist(arg1:number):Promise<void>;
+export function DeletePlaylist(arg1:number):Promise<playlist.ReturnType>;
+
+export function Emit(arg1:string):Promise<void>;
 
 export function GetPlaylist(arg1:number):Promise<playlist.ReturnType>;
 

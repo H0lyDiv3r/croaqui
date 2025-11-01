@@ -14,6 +14,10 @@ export function DeletePlaylist(arg1) {
   return window['go']['playlist']['Playlist']['DeletePlaylist'](arg1);
 }
 
+export function Emit(arg1) {
+  return window['go']['playlist']['Playlist']['Emit'](arg1);
+}
+
 export function GetPlaylist(arg1) {
   return window['go']['playlist']['Playlist']['GetPlaylist'](arg1);
 }

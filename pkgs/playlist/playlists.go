@@ -7,6 +7,8 @@ import (
 	"log"
 	"myproject/pkgs/db"
 	customErr "myproject/pkgs/error"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Playlist struct {
@@ -14,6 +16,25 @@ type Playlist struct {
 }
 type ReturnType struct {
 	Data interface{} `json:"data"`
+}
+
+type song struct {
+	// Id       int    `json:"id"`
+	Pname    string `json:"pname"`
+	Id       uint   `json:"id"`
+	Name     string `json:"name"`
+	Path     string `json:"path"`
+	Title    string `json:"title"`
+	Artist   string `json:"artist"`
+	Album    string `json:"album"`
+	Duration string `json:"duration"`
+	Genre    string `json:"genre"`
+	Position int    `json:"position"`
+}
+
+type playlist struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func NewPlaylist() *Playlist {
@@ -29,13 +50,9 @@ func (p *Playlist) StartUp(ctx context.Context) {
 // read all playlists
 func (p *Playlist) GetPlaylists() *ReturnType {
 
-	type playlist struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	var playlists []playlist
 	db.DBInstance.Instance.Raw(`
-		SELECT * from playlists
+		SELECT * from playlists WHERE deleted_at IS NULL
 		`).Scan(&playlists)
 
 	return &ReturnType{Data: struct {
@@ -82,6 +99,7 @@ func (p *Playlist) AddToPlaylist(musicId, playlistId uint) (*ReturnType, error) 
 		emitter.Emit(p.ctx)
 		return nil, result.Error
 	}
+	p.Emit("Added to Playlist")
 	return &ReturnType{Data: struct {
 		PlaylistId uint `json:"playlistId"`
 	}{PlaylistId: playlistId}}, nil
@@ -122,11 +140,10 @@ func (p *Playlist) RemoveFromPlaylist(musicId, playlistId uint) (*ReturnType, er
 		return nil, result.Error
 	}
 
-	log.Print("song removed from playlist")
-
+	p.Emit("Removed from Playlist")
 	return &ReturnType{Data: struct {
-		PlaylistId uint `json:"playlistId"`
-	}{PlaylistId: playlistId}}, nil
+		SongId uint `json:"songId"`
+	}{SongId: musicId}}, nil
 }
 
 // create playlist
@@ -136,18 +153,24 @@ func (p *Playlist) CreatePlaylist(name string) (*ReturnType, error) {
 		emitter.Emit(p.ctx)
 		return nil, errors.New("name cannot be empty")
 	}
-	result := db.DBInstance.Instance.Create(&db.Playlist{Name: name})
+
+	pl := db.Playlist{
+		Name: name,
+	}
+	result := db.DBInstance.Instance.Create(&pl)
 	if result.Error != nil {
 		log.Print("Error creating playlist:", result.Error)
 		emitter := customErr.New("db_error", fmt.Errorf("failed to create playlist:%w", result.Error).Error())
 		emitter.Emit(p.ctx)
 		return nil, result.Error
 	}
+
+	p.Emit("Playlist created")
 	return &ReturnType{
 		Data: struct {
-			Name string `json:"name"`
+			Playlist db.Playlist `json:"playlist"`
 		}{
-			Name: name,
+			Playlist: pl,
 		},
 	}, nil
 }
@@ -170,19 +193,6 @@ func (p *Playlist) UpdatePlaylistName(id uint, newName string) error {
 // read playlist
 func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 
-	type song struct {
-		// Id       int    `json:"id"`
-		Pname    string `json:"pname"`
-		Id       uint   `json:"id"`
-		Name     string `json:"name"`
-		Path     string `json:"path"`
-		Title    string `json:"title"`
-		Artist   string `json:"artist"`
-		Album    string `json:"album"`
-		Duration string `json:"duration"`
-		Genre    string `json:"genre"`
-		Position int    `json:"position"`
-	}
 	var songs []song
 	db.DBInstance.Instance.Raw(`
 		SELECT pm.*,p.name as pname,m.id, m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre FROM playlist_musics pm
@@ -199,12 +209,21 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 }
 
 // delete playlist
-func (p *Playlist) DeletePlaylist(id uint) error {
+func (p *Playlist) DeletePlaylist(id uint) (*ReturnType, error) {
+
 	result := db.DBInstance.Instance.Delete(&db.Playlist{}, id)
 	if result.Error != nil {
 		emitter := customErr.New("db_error", fmt.Errorf("failed to delete playlist:%w", result.Error).Error())
 		emitter.Emit(p.ctx)
-		return result.Error
+		return nil, result.Error
 	}
-	return nil
+
+	p.Emit("Playlist deleted")
+	return &ReturnType{Data: struct {
+		Playlist uint `json:"playlist"`
+	}{Playlist: id}}, nil
+}
+
+func (p *Playlist) Emit(msg string) {
+	runtime.EventsEmit(p.ctx, "toast:success", msg)
 }

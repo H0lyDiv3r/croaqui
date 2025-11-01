@@ -24,5 +24,5 @@ func New(typ ErrorType, message string) CustomError {
 }
 
 func (e CustomError) Emit(ctx context.Context) {
-	runtime.EventsEmit(ctx, "ERR", e)
+	runtime.EventsEmit(ctx, "toast:err", e)
 }
