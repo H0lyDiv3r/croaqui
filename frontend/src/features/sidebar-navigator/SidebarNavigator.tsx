@@ -13,7 +13,7 @@ import { RiExpandRightFill } from "react-icons/ri";
 import { VscFolderLibrary } from "react-icons/vsc";
 import { BiSolidPlaylist } from "react-icons/bi";
 import { Playlists } from "@/components/playlist";
-import { usePlaylistStore } from "@/store";
+import { useDataStore, usePlaylistStore } from "@/store";
 
 const TabsContent: any = Tabs.Content;
 
@@ -21,6 +21,8 @@ export const SidebarNavigator = () => {
   const isOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const switchSide = useSidebarDisclosure((state) => state.switch);
   const [showCreatePlaylistForm, setShowCreatePlaylistForm] = useState(false);
+  const currentPath = useDataStore((state) => state.currentPath);
+  const setCurrentPath = useDataStore((state) => state.setCurrentPath);
 
   const { isSmall, isLarge } = useScreenSize();
   const tabs = useTabs({
@@ -94,7 +96,10 @@ export const SidebarNavigator = () => {
               handlePlaylistFormSubmission={handlePlaylistFormSubmission}
             />
 
-            <PathBar />
+            <PathBar
+              currentPath={currentPath}
+              setCurrentPath={setCurrentPath}
+            />
             <Box
               mb={2}
               p={2}

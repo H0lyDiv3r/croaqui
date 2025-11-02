@@ -20,11 +20,7 @@ function App() {
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
-  const handleScan = () => {
-    ScanForAudio("/home/yuri/Data").then((res) => {
-      console.log("res", res);
-    });
-  };
+
   const { showToast } = useShowToast();
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
 

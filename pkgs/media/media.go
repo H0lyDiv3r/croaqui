@@ -4,6 +4,8 @@ import (
 	"context"
 	"path/filepath"
 	"slices"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type DirectoryContents struct {
@@ -28,6 +30,7 @@ func NewMedia() *Media {
 
 func (m *Media) StartUp(ctx context.Context) {
 	m.ctx = ctx
+	m.GetStandardDirs()
 }
 
 func isAudioFile(path string) bool {
@@ -62,4 +65,8 @@ func isAudioFile(path string) bool {
 	ext := filepath.Ext(path)
 	// return ext == ".mp3" || ext == ".wav" || ext == ".flac"
 	return slices.Contains(MPVSupportedFormats, ext)
+}
+
+func (m *Media) Emit(msg string) {
+	runtime.EventsEmit(m.ctx, "toast:success", msg)
 }
