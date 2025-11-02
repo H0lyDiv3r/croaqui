@@ -122,6 +122,7 @@ func (m *Media) ScanForAudio(path string) error {
 		emitter.Emit(m.ctx)
 		return err
 	}
+	m.Emit("scan successful")
 	return nil
 }
 

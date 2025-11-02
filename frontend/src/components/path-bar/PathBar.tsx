@@ -6,9 +6,13 @@ import { ChakraIcon } from "../ChackraIcon";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
 import { useDataStore } from "@/store";
 
-export const PathBar = () => {
-  const currentPath = useDataStore((state) => state.currentPath);
-  const setCurrentPath = useDataStore((state) => state.setCurrentPath);
+export const PathBar = ({
+  currentPath,
+  setCurrentPath,
+}: {
+  currentPath: string;
+  setCurrentPath: (path: string) => void;
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -35,7 +39,8 @@ export const PathBar = () => {
         gap={2}
       >
         <ChakraIcon
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setCurrentPath("");
           }}
           icon={FaHouse}
@@ -70,7 +75,8 @@ export const PathBar = () => {
               }}
               whiteSpace={"nowrap"}
               key={index}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setCurrentPath(
                   currentPath
                     .split("/")
