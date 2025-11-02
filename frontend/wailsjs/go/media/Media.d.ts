@@ -3,6 +3,8 @@
 import {media} from '../models';
 import {context} from '../models';
 
+export function Emit(arg1:string):Promise<void>;
+
 export function GetAlbumData(arg1:string):Promise<media.ReturnType>;
 
 export function GetAlbumImage(arg1:string):Promise<media.ReturnType>;
@@ -14,6 +16,8 @@ export function GetAudio(arg1:string):Promise<media.ReturnType>;
 export function GetContents(arg1:string):Promise<media.ReturnType>;
 
 export function GetDirs(arg1:string):Promise<media.ReturnType>;
+
+export function GetStandardDirs():Promise<media.ReturnType>;
 
 export function ScanForAudio(arg1:string):Promise<void>;
 

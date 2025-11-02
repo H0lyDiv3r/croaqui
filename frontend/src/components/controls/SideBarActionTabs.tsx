@@ -1,16 +1,18 @@
 import { TabListItem } from "@/types";
 import { getNeutral } from "@/utils";
-import { Box, Field, Input, Tabs, Text } from "@chakra-ui/react";
+import { Box, Field, Input, Tabs, Text, useDisclosure } from "@chakra-ui/react";
 import { ChakraIcon } from "../ChackraIcon";
 import { RiExpandLeftFill } from "react-icons/ri";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { CreatePlaylistForm } from "../forms";
 import { AnimatePresence, motion } from "framer-motion";
 
 const TabsList: any = Tabs.List;
 const TabsTrigger: any = Tabs.Trigger;
 const TabsIndicator: any = Tabs.Indicator;
+
+const DirScanner = React.lazy(() => import("../dir-tree/DirScanner"));
 
 export const SideBarActionTabs = ({
   tabs,
@@ -28,6 +30,8 @@ export const SideBarActionTabs = ({
   handlePlaylistFormSubmission: (value: string) => void;
 }) => {
   const MotionBox = motion(Box);
+
+  const { open, setOpen } = useDisclosure();
 
   useEffect(() => {
     // Add your effect logic here
@@ -93,9 +97,14 @@ export const SideBarActionTabs = ({
           <Box
             as={"button"}
             px={2}
-            onClick={() =>
-              handleOpenForm(tabs.value === "dir" ? false : !showPlaylistForm)
-            }
+            onClick={() => {
+              if (tabs.value === "dir") {
+                handleOpenForm(false);
+                setOpen(true);
+              } else {
+                handleOpenForm(!showPlaylistForm);
+              }
+            }}
             width={"100%"}
             height={"100%"}
             borderRadius={"md"}
@@ -112,6 +121,14 @@ export const SideBarActionTabs = ({
           >
             <ChakraIcon icon={MdOutlinePlaylistAdd} boxSize={5} />
           </Box>
+          <Suspense>
+            <DirScanner
+              open={open}
+              setOpen={(target: boolean) => {
+                setOpen(target);
+              }}
+            />
+          </Suspense>
         </Box>
       </Box>
       <AnimatePresence>

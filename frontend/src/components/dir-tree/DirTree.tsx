@@ -53,7 +53,7 @@ export const DirTree = () => {
       _dark={{ color: getNeutral("dark", 200) }}
     >
       <>
-        {dirs.length > 0 ? (
+        {dirs && dirs.length > 0 ? (
           dirs.map(
             (dir: { id: string; name: string; path: string }): JSX.Element => (
               <Box

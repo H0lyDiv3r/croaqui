@@ -1,12 +1,15 @@
 package media
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"myproject/pkgs/db"
 	customErr "myproject/pkgs/error"
 	"myproject/pkgs/player"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gen2brain/go-mpv"
@@ -22,10 +25,67 @@ func (m *Media) GetContents(path string) (*ReturnType, error) {
 	var dirs []string
 	for _, content := range contents {
 		if content.IsDir() {
+			fmt.Println("heeey", content)
 			dirs = append(dirs, content.Name())
 		}
 	}
 	return &ReturnType{Data: DirectoryContents{Content: dirs}}, nil
+}
+
+func (m *Media) GetStandardDirs() *ReturnType {
+
+	type dir struct {
+		Name string `json:"name"`
+		Path string `json:"path"`
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return &ReturnType{
+			Data: struct {
+				Dirs []dir `json:"dirs"`
+			}{
+				Dirs: []dir{},
+			},
+		}
+	}
+	xdgfile := filepath.Join(home, ".config", "user-dirs.dirs")
+
+	file, err := os.Open(xdgfile)
+	if err != nil {
+		return &ReturnType{
+			Data: struct {
+				Dirs []dir `json:"dirs"`
+			}{
+				Dirs: []dir{},
+			},
+		}
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	var StandardDirs []dir
+	for scanner.Scan() {
+		if strings.HasPrefix(scanner.Text(), "#") {
+			continue
+		}
+		if strings.HasPrefix(scanner.Text(), "XDG") {
+			path := strings.TrimSpace(strings.Split(scanner.Text(), "=")[1])
+			if len(path) < 2 {
+				continue
+			}
+			pathName := strings.Trim(strings.Split(path, "/")[len(strings.Split(path, "/"))-1], "\"")
+			StandardDirs = append(StandardDirs, dir{Name: pathName, Path: strings.Trim(strings.Replace(path, "$HOME", home, 1), "\"")})
+		}
+	}
+
+	return &ReturnType{
+		Data: struct {
+			Dirs []dir `json:"dirs"`
+		}{
+			Dirs: StandardDirs,
+		},
+	}
 }
 
 func (m *Media) GetDirs(path string) (*ReturnType, error) {
