@@ -44,42 +44,58 @@ func (p *Player) StartUp(ctx context.Context) {
 	if err := p.mpv.Initialize(); err != nil {
 		return
 	}
-	// defer p.mpv.TerminateDestroy()
 
-	go func() {
-		for {
-			ev := p.mpv.WaitEvent(10)
+	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
+
+	go p.EventLoop()
+
+}
+
+func (p *Player) EventLoop() {
+	for {
+
+		select {
+		case <-p.ctx.Done():
+			fmt.Print("terminating and destroying")
+			p.mpv.TerminateDestroy()
+			return
+		default:
+			ev := p.mpv.WaitEvent(-1)
+			if ev.EventID == mpv.EventQueueOverflow {
+				log.Println("Event queue overflow detected! Clearing or slowing down event processing.")
+			}
 			switch ev.EventID {
 			case mpv.EventEnd:
 				end := ev.EndFile()
 				if end.Reason == mpv.EndFileEOF {
 					fmt.Println("ended because of eof")
-					runtime.EventsEmit(ctx, "MPV:END", struct {
+					runtime.EventsEmit(p.ctx, "MPV:END", struct {
 						Message string `json:"reason"`
 					}{
 						Message: "end of file reached",
 					})
 				} else {
 					fmt.Println("ended for some stupid reason")
-					runtime.EventsEmit(ctx, "MPV:END", struct {
+					runtime.EventsEmit(p.ctx, "MPV:END", struct {
 						Message string `json:"reason"`
 					}{
 						Message: "unknown",
 					})
 				}
-			case mpv.EventFileLoaded:
-				fmt.Println("the file is loaded")
-				runtime.EventsEmit(ctx, "MPV:FILE_LOADED")
+				// case mpv.EventFileLoaded, mpv.EventPlaybackRestart, mpv.EventAudioReconfig:
+				// 	fmt.Println("the file is loaded")
+				// 	runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
+
 			}
 		}
-	}()
-	log.Print("player initialized successfuly")
+	}
 }
 
 func (p *Player) LoadMusic(url string) error {
+
 	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
-	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
+		fmt.Println("failed to load audio")
 		emitter := customErr.New("player_error", fmt.Errorf("failed to load audio:%w", err).Error())
 		emitter.Emit(p.ctx)
 		return err
@@ -175,22 +191,40 @@ func (p *Player) SetVolume(volume int) (*ReturnType, error) {
 func (p *Player) GetStatus() (*ReturnType, error) {
 	var status PlayerStatus
 
-	paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
+	paused, err := p.mpv.GetProperty("pause", mpv.FormatFlag)
+	if err != nil {
+		fmt.Println("error from pause", paused)
+	}
 	status.Paused = paused
 
-	position, _ := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
+	position, err := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
+	if err != nil {
+		fmt.Println("error from position", err)
+	}
 	status.Position = position
 
-	duration, _ := p.mpv.GetProperty("duration", mpv.FormatDouble)
+	duration, err := p.mpv.GetProperty("duration", mpv.FormatDouble)
+	if err != nil {
+		fmt.Println("error from duration", err)
+	}
 	status.Duration = duration
 
-	volume, _ := p.mpv.GetProperty("volume", mpv.FormatInt64)
+	volume, err := p.mpv.GetProperty("volume", mpv.FormatInt64)
+	if err != nil {
+		fmt.Println("error from volume", err)
+	}
 	status.Volume = volume
 
-	isMuted, _ := p.mpv.GetProperty("mute", mpv.FormatFlag)
+	isMuted, err := p.mpv.GetProperty("mute", mpv.FormatFlag)
+	if err != nil {
+		fmt.Println("error from mute", err)
+	}
 	status.Muted = isMuted
 
-	speed, _ := p.mpv.GetProperty("speed", mpv.FormatInt64)
+	speed, err := p.mpv.GetProperty("speed", mpv.FormatInt64)
+	if err != nil {
+		fmt.Println("error from speed", err)
+	}
 	status.Speed = speed
 	return &ReturnType{Data: status}, nil
 }

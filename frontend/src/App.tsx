@@ -29,22 +29,28 @@ function App() {
       console.log("error emitted");
       showToast("error", err.message);
     });
-
+    EventsOn("player_error", (err) => {
+      console.log("error emitted");
+      showToast("error", err.message);
+    });
     EventsOn("toast:success", (msg) => {
       console.log("success emitted");
       showToast("success", msg);
     });
 
-    EventsOn("MPV:FILE_LOADED", () => {
-      setLoaded(true);
-      // setTrack(item);
-      GetImage().then((res) => {
-        setCurrentTrackImage(res.data.image);
-      });
-      GetStatus().then((res) => {
-        setAll(res.data);
-      });
-    });
+    // EventsOn("MPV:FILE_LOADED", () => {
+    //   // showToast("info", "loaded");
+    //   console.log("file loaded coming from thef fring");
+    //   setLoaded(true);
+    //   // setTrack(item);
+    //   // GetImage().then((res) => {
+    //   //   setCurrentTrackImage(res.data.image);
+    //   // });
+    //   GetStatus().then((res) => {
+    //     console.log("about to set all", res);
+    //     setAll(res.data);
+    //   });
+    // });
   }, []);
 
   return (

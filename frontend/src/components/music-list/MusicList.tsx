@@ -72,22 +72,22 @@ export const MusicList = () => {
     setLoaded(false);
     setTrack(item);
 
-    LoadMusic(item.path);
-    // .then((res) => {
-    //   console.log("loaded");
-    //   setLoaded(res.data.loaded);
-    //   setTrack(item);
-    //   GetImage().then((res) => {
-    //     setCurrentTrackImage(res.data.image);
-    //   });
-    //   GetStatus().then((res) => {
-    //     setAll(res.data);
-    //   });
-    //   // setAll(JSON.parse(res));
-    // })
-    // .catch((error) => {
-    //   console.error("Error loading music:", error);
-    // });
+    LoadMusic(item.path)
+      .then((res) => {
+        console.log("loaded");
+        setLoaded(true);
+        setTrack(item);
+        GetImage().then((res) => {
+          setCurrentTrackImage(res.data.image);
+        });
+        GetStatus().then((res) => {
+          setAll(res.data);
+        });
+        // setAll(JSON.parse(res));
+      })
+      .catch((error) => {
+        console.error("Error loading music:", error);
+      });
   };
 
   // useEffect(() => {
