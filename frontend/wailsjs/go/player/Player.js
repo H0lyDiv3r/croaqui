@@ -18,8 +18,8 @@ export function GetStatus() {
   return window['go']['player']['Player']['GetStatus']();
 }
 
-export function LoadMusic(arg1) {
-  return window['go']['player']['Player']['LoadMusic'](arg1);
+export function LoadMusic(arg1, arg2) {
+  return window['go']['player']['Player']['LoadMusic'](arg1, arg2);
 }
 
 export function SetPosition(arg1) {

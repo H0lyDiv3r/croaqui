@@ -25,7 +25,6 @@ func (m *Media) GetContents(path string) (*ReturnType, error) {
 	var dirs []string
 	for _, content := range contents {
 		if content.IsDir() {
-			fmt.Println("heeey", content)
 			dirs = append(dirs, content.Name())
 		}
 	}

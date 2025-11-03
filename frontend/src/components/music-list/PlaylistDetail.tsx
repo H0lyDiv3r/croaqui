@@ -20,29 +20,25 @@ export const PlaylistDetail = () => {
         py={1}
         my={6}
       >
-        {/* Title */}
         <Text fontSize="3xl" fontWeight="700" lineHeight="1.2">
           {playlistMetaData.title}
         </Text>
         <Box
-          color={getNeutral("light", 400)}
-          _dark={{ color: getNeutral("dark", 400) }}
+          color={getNeutral("light", 300)}
+          _dark={{ color: getNeutral("dark", 300) }}
         >
           <Text fontSize="lg" mt={2}>
             {playlistMetaData.albums} Albums • {playlistMetaData.artists}{" "}
             Artists
           </Text>
 
-          {/* Stats */}
           <Box mt="auto">
-            <Text fontSize="sm" mt={0.5}>
+            <Text fontSize="sm" fontWeight={600} mt={0.5}>
               {playlistMetaData.songs} Songs •{" "}
               {toHMS(Number(playlistMetaData.duration))}
             </Text>
           </Box>
         </Box>
-
-        {/* Meta */}
       </Box>
 
       <Box>

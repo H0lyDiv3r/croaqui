@@ -64,7 +64,7 @@ export const Albums = () => {
         textAlign={"left"}
       >
         <Box width={"100%"}>
-          <Text fontSize={"2xl"} fontWeight={"bold"} fontFamily={"rubik"}>
+          <Text fontSize={"2xl"} fontWeight={600}>
             YOUR ALBUMS
           </Text>
           <Text

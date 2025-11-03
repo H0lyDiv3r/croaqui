@@ -1,3 +1,3 @@
 export const fonts = {
-  body: { value: "Rubik" },
+  rubik: { value: "Rubik variable" },
 };

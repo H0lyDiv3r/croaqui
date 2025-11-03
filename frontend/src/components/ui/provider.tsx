@@ -1,4 +1,4 @@
-"use client";
+import "@fontsource/rubik";
 
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { ColorModeProvider, type ColorModeProviderProps } from "./color-mode";

@@ -26,6 +26,7 @@ export const MusicList = () => {
   const currentPath = useDataStore((state) => state.currentPath);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const playlist = usePlaylistStore((state) => state.playlists);
+  const paused = usePlayerStore((state) => state.paused);
 
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -68,49 +69,11 @@ export const MusicList = () => {
   };
 
   const loadAudio = (item: any) => {
-    console.log("loading file");
     setLoaded(false);
     setTrack(item);
-
-    LoadMusic(item.path);
-    // .then((res) => {
-    //   console.log("loaded");
-    //   setLoaded(res.data.loaded);
-    //   setTrack(item);
-    //   GetImage().then((res) => {
-    //     setCurrentTrackImage(res.data.image);
-    //   });
-    //   GetStatus().then((res) => {
-    //     setAll(res.data);
-    //   });
-    //   // setAll(JSON.parse(res));
-    // })
-    // .catch((error) => {
-    //   console.error("Error loading music:", error);
-    // });
+    LoadMusic(item.path, paused);
   };
 
-  // useEffect(() => {
-  //   // getAudio();
-  //   // useQueryStore.setState((state) => {
-  //   //   return { ...state, page: 0 };
-  //   // });
-  //   useQueryStore.getState().clearQuery();
-  //   getAudioFiles();
-  // }, [currentPath]);
-
-  // useEffect(() => {
-  //   EventsOn("MPV:FILE_LOADED", () => {
-  //     setLoaded(true);
-  //     // setTrack(item);
-  //     GetImage().then((res) => {
-  //       setCurrentTrackImage(res.data.image);
-  //     });
-  //     GetStatus().then((res) => {
-  //       setAll(res.data);
-  //     });
-  //   });
-  // }, []);
   return (
     <Box height={"100%"}>
       <Box

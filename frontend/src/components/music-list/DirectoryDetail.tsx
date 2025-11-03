@@ -17,6 +17,7 @@ export const DirectoryDetail = () => {
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
+  const paused = usePlayerStore((state) => state.paused);
   const currentPath = useDataStore((state) => state.currentPath);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const playlist = usePlaylistStore((state) => state.playlists);
@@ -75,7 +76,7 @@ export const DirectoryDetail = () => {
   const loadAudio = (item: any) => {
     setLoaded(false);
     setTrack(item);
-    LoadMusic(item.path);
+    LoadMusic(item.path, paused);
   };
 
   useEffect(() => {

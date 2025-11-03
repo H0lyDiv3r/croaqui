@@ -76,8 +76,8 @@ func (p *Player) StartUp(ctx context.Context) {
 	log.Print("player initialized successfuly")
 }
 
-func (p *Player) LoadMusic(url string) error {
-	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
+func (p *Player) LoadMusic(url string, paused bool) error {
+	p.mpv.SetProperty("pause", mpv.FormatFlag, paused)
 	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
 		emitter := customErr.New("player_error", fmt.Errorf("failed to load audio:%w", err).Error())

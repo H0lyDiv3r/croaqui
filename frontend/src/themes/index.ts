@@ -8,6 +8,12 @@ const config = defineConfig({
       colors: colors,
       fonts: fonts,
     },
+    semanticTokens: {
+      fonts: {
+        body: { value: "{fonts.rubik}" },
+        heading: { value: "{fonts.rubik}" },
+      },
+    },
   },
 });
 
