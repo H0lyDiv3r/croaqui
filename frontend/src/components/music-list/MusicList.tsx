@@ -3,6 +3,7 @@ import {
   usePlayerStore,
   usePlaylistStore,
   useQueryStore,
+  useQueueStore,
 } from "@/store";
 import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
 import {
@@ -10,12 +11,15 @@ import {
   GetStatus,
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
-import { getNeutral, removeFromPlaylist, toHMS } from "@/utils";
+import { getNeutral, getQueue, removeFromPlaylist, toHMS } from "@/utils";
+import { GetQueue } from "../../../wailsjs/go/queue/Queue";
+
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
 import { Empty } from "../empty";
 import { MusicDropdown } from "../music-actions";
+import { loadAudio } from "@/utils/action/playerActions";
 
 export const MusicList = () => {
   const audioFiles = useDataStore((state) => state.musicFiles);
@@ -26,7 +30,8 @@ export const MusicList = () => {
   const currentPath = useDataStore((state) => state.currentPath);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const playlist = usePlaylistStore((state) => state.playlists);
-
+  const setQueue = useQueueStore((state) => state.setQueue);
+  const setPlayingIndex = useQueueStore((state) => state.setPlayingIndex);
   const [hovered, setHovered] = useState<number | null>(null);
 
   const setCurrentTrackImage = usePlayerStore(
@@ -67,28 +72,50 @@ export const MusicList = () => {
     }
   };
 
-  const loadAudio = (item: any) => {
-    console.log("loading file");
-    setLoaded(false);
-    setTrack(item);
+  const handleLoadAudio = async (item: any) => {
+    setPlayingIndex(0);
+    await loadAudio(item);
+    const queue = await getQueue(item);
+    setQueue(queue);
 
-    LoadMusic(item.path)
-      .then((res) => {
-        console.log("loaded");
-        setLoaded(true);
-        setTrack(item);
-        GetImage().then((res) => {
-          setCurrentTrackImage(res.data.image);
-        });
-        GetStatus().then((res) => {
-          setAll(res.data);
-        });
-        // setAll(JSON.parse(res));
-      })
-      .catch((error) => {
-        console.error("Error loading music:", error);
-      });
+    console.log(
+      "wwwwwwaaaaaaaaaaaay",
+
+      useDataStore.getState().musicListPath,
+    );
   };
+  // const loadAudio = (item: any) => {
+  //   console.log("loading file");
+  //   setLoaded(false);
+  //   setTrack(item);
+
+  //   LoadMusic(item.path)
+  //     .then((res) => {
+  //       console.log("loaded");
+  //       setLoaded(true);
+  //       setTrack(item);
+
+  //       GetQueue({ type: "dir", args: item.parentPath, shuffle: false }).then(
+  //         (res: any) => {
+  //           setQueue(res.data.queue);
+  //           console.log("here we have the queue", res.data.queue);
+  //         },
+  //       );
+  //       setTimeout(() => {
+  //         GetImage().then((res) => {
+  //           setCurrentTrackImage(res.data.image);
+  //         });
+  //       }, 1000);
+  //       GetStatus().then((res) => {
+  //         console.log("statuses", res.data);
+  //         setAll({ ...res.data, position: res.data.position || 0 });
+  //       });
+  //       // setAll(JSON.parse(res));
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error loading music:", error);
+  //     });
+  // };
 
   // useEffect(() => {
   //   // getAudio();
@@ -197,7 +224,7 @@ export const MusicList = () => {
                   },
                 }}
                 onClick={() => {
-                  loadAudio(item);
+                  handleLoadAudio(item);
                 }}
               >
                 <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>

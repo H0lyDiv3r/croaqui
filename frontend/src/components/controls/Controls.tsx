@@ -13,10 +13,12 @@ import {
 } from "react-icons/tb";
 import { PlayerButton } from "../buttons";
 import { TogglePlay } from "../../../wailsjs/go/player/Player";
-import { usePlayerStore } from "@/store";
+import { usePlayerStore, useQueueStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
 import { getNeutral } from "@/utils";
 import { EventsOn } from "../../../wailsjs/runtime";
+
+import { handleNext, handlePrev } from "@/utils/action";
 // import { PlayerContext } from "./PlayerContextProvider";
 // import { GlobalContext } from "../../store/GlobalContextProvider";
 
@@ -28,6 +30,13 @@ const Controls: React.FC = () => {
   const setPosition = usePlayerStore((state) => state.setPosition);
   const position = usePlayerStore((state) => state.position);
   const playbackRate = usePlayerStore((state) => state.speed);
+  const queue = useQueueStore((state) => state.items);
+  const playingIndex = useQueueStore((state) => state.playingIndex);
+  const handleLoop = useQueueStore((state) => state.setLoop);
+  const loop = useQueueStore((state) => state.loop);
+
+  const shuffle = useQueueStore((state) => state.shuffle);
+  const toggleShuffle = useQueueStore((state) => state.toggleShuffle);
   const time = useRef<NodeJS.Timeout | null>(null);
   const handleTimeline = () => {
     if (time.current) {
@@ -62,14 +71,6 @@ const Controls: React.FC = () => {
   // useEffect(() => {
   //   handleTimeline();
   // }, [loaded]);
-  const { handleNextPrev, handleShuffle, shuffle, handleLoop, loop, queue } = {
-    handleLoop: () => {},
-    handleShuffle: () => {},
-    handleNextPrev: (val: string) => {},
-    shuffle: true,
-    loop: 0,
-    queue: { list: [] },
-  };
 
   const loopVals = [TbRepeatOff, TbRepeat, TbRepeatOnce];
 
@@ -103,7 +104,7 @@ const Controls: React.FC = () => {
         px={"18px"}
       >
         <PlayerButton
-          action={() => handleLoop()}
+          action={handleLoop}
           color={loop === 0 ? getNeutral("light", 300) : "brand.500"}
           _dark={{ color: loop === 0 ? getNeutral("dark", 300) : "brand.500" }}
           _hover={{ bg: "none" }}
@@ -111,8 +112,8 @@ const Controls: React.FC = () => {
           <ChakraIcon icon={loopVals[loop]} boxSize={4} />
         </PlayerButton>
         <PlayerButton
-          action={() => handleNextPrev("prev")}
-          disabled={queue.list.length < 1}
+          action={() => handlePrev()}
+          // disabled={playingIndex <= 0}
           color={getNeutral("light", 300)}
           _dark={{ color: getNeutral("dark", 300) }}
           _hover={{
@@ -150,8 +151,8 @@ const Controls: React.FC = () => {
         </PlayerButton>
 
         <PlayerButton
-          action={() => handleNextPrev("next")}
-          disabled={queue.list.length < 1}
+          action={() => handleNext()}
+          // disabled={playingIndex >= queue.length - 1}
           color={getNeutral("light", 300)}
           _dark={{
             color: getNeutral("dark", 300),
@@ -165,7 +166,7 @@ const Controls: React.FC = () => {
           <ChakraIcon icon={TbPlayerTrackNextFilled} boxSize={4} />
         </PlayerButton>
         <PlayerButton
-          action={async () => handleShuffle()}
+          action={async () => toggleShuffle()}
           _hover={{ bg: "none" }}
           color={shuffle ? "brand.500" : getNeutral("light", 300)}
           _dark={{

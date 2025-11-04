@@ -19,6 +19,7 @@ export const DirTree = () => {
   const setDirs = useDataStore((state) => state.setDirs);
   const currentPath = useDataStore((state) => state.currentPath);
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);
+  const setMusicListPath = useDataStore((state) => state.setMusicListPath);
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const getDir = () => {
     GetDirs(currentPath)
@@ -74,6 +75,7 @@ export const DirTree = () => {
                     } else {
                       getAudioFiles({ path: dir.path });
                     }
+                    setMusicListPath(dir.path);
                   });
                 }}
               >

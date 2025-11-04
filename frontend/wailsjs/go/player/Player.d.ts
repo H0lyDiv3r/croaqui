@@ -13,7 +13,7 @@ export function GetPosition():Promise<player.ReturnType>;
 
 export function GetStatus():Promise<player.ReturnType>;
 
-export function LoadMusic(arg1:string):Promise<void>;
+export function LoadMusic(arg1:string):Promise<player.ReturnType>;
 
 export function SetPosition(arg1:number):Promise<void>;
 

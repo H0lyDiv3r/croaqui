@@ -42,7 +42,7 @@ export const useQueryStore = create<QueryParams & QueryAction>((set, get) => ({
   genre: "",
   title: "",
   path: "/",
-  limit: 40,
+  limit: 0,
   sort: [],
   hasMore: true,
   page: 0,
