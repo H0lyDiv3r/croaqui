@@ -7,6 +7,7 @@ type currentTrack = {
   date: string;
   description: string;
   title: string;
+  path: string;
 };
 interface playerStore {
   audioPath: string;
@@ -48,6 +49,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
     date: "",
     description: "",
     title: "",
+    path: "",
   },
   setAudioPath: (audioPath: string) =>
     set((state) => {
@@ -64,6 +66,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
           date: trackInfo.date || "",
           description: trackInfo.description || "",
           title: trackInfo.title || "",
+          path: trackInfo.path || "",
         },
       };
     }),

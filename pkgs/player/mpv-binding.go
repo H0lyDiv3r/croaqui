@@ -91,16 +91,18 @@ func (p *Player) EventLoop() {
 	}
 }
 
-func (p *Player) LoadMusic(url string) error {
+func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 
-	p.mpv.SetProperty("pause", mpv.FormatFlag, true)
+	// p.mpv.SetProperty("pause", mpv.FormatFlag, true)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
 		fmt.Println("failed to load audio")
 		emitter := customErr.New("player_error", fmt.Errorf("failed to load audio:%w", err).Error())
 		emitter.Emit(p.ctx)
-		return err
+		return nil, err
 	}
-	return nil
+	return &ReturnType{Data: struct {
+		Loaded bool `json:"loaded"`
+	}{Loaded: true}}, nil
 }
 
 func (p *Player) GetMetadata() (*ReturnType, error) {

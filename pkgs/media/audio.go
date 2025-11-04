@@ -15,14 +15,15 @@ import (
 // getAudio
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 	type audio struct {
-		Id       int    `json:"id"`
-		Name     string `json:"name"`
-		Path     string `json:"path"`
-		Title    string `json:"title"`
-		Artist   string `json:"artist"`
-		Album    string `json:"album"`
-		Duration string `json:"duration"`
-		Genre    string `json:"genre"`
+		Id         int    `json:"id"`
+		Name       string `json:"name"`
+		Path       string `json:"path"`
+		Title      string `json:"title"`
+		Artist     string `json:"artist"`
+		Album      string `json:"album"`
+		Duration   string `json:"duration"`
+		ParentPath string `json:"parentPath"`
+		Genre      string `json:"genre"`
 	}
 
 	var result = []audio{}
