@@ -21,7 +21,6 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	app := NewApp()
 	player := player.MPV()
 	media := media.NewMedia()
 	data := db.NewDB()
@@ -31,17 +30,17 @@ func main() {
 	queue := queue.NewQueue()
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "Croaqui",
-		Width:     512,
-		Height:    512,
-		MinWidth:  10,
-		MinHeight: 10,
+		Title: "Croaqui",
+
+		Width:     768,
+		Height:    768,
+		MinWidth:  768,
+		MinHeight: 768,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup: func(ctx context.Context) {
-			app.startup(ctx)
 			data.StartUp(ctx)
 			media.StartUp(ctx)
 			ffmpeg.StartUp(ctx)
@@ -52,10 +51,10 @@ func main() {
 
 		},
 		Bind: []interface{}{
-			app,
 			media,
 			player,
 			playlists,
+			queue,
 			// ffmpeg,
 		},
 	})

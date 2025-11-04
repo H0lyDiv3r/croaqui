@@ -2,7 +2,7 @@ package queue
 
 import (
 	"context"
-	"encoding/json"
+
 	"fmt"
 	"math/rand"
 	"myproject/pkgs/db"
@@ -20,7 +20,8 @@ func NewQueue() *Queue {
 func (q *Queue) StartUp(ctx context.Context) {
 	q.ctx = ctx
 	// q.Shuffle()
-	q.GetQueue("{\"type\":\"playlist\",\"args\":\"1\"}")
+
+	q.GetQueue(filter{Type: "playlist", Args: "1", Shuffle: true})
 }
 
 type audio struct {
@@ -33,24 +34,29 @@ type audio struct {
 	Duration string `json:"duration"`
 }
 
-func (q *Queue) GetQueue(filters string) error {
+type ReturnType struct {
+	Data interface{} `json:"data"`
+}
+type filter struct {
+	Type    string `json:"type"`
+	Args    string `json:"args"`
+	Shuffle bool   `json:"shuffle"`
+}
 
-	type filter struct {
-		Type    string `json:"type"`
-		Args    string `json:"args"`
-		Shuffle bool   `json:"shuffle"`
-	}
+func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 
 	var res []audio
 
-	var filterSetting filter
+	// var filterSetting filter
 
-	query := db.DBInstance.Instance.Table("music_files as m").Select("name,path,title,album,artist,date,duration,music_id,playlist_id").Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id")
+	fmt.Println("filter setting", filterSetting)
 
-	err := json.Unmarshal([]byte(filters), &filterSetting)
-	if err != nil {
-		return err
-	}
+	query := db.DBInstance.Instance.Table("music_files as m").Select("name,path,title,album,artist,date,duration").Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id")
+
+	// err := json.Unmarshal([]byte(filters), &filterSetting)
+	// if err != nil {
+	// 	return err
+	// }
 
 	if filterSetting.Type == "dir" {
 		query.Where("path LIKE ?", filterSetting.Args+"%")
@@ -61,13 +67,15 @@ func (q *Queue) GetQueue(filters string) error {
 	}
 
 	if filterSetting.Type == "playlist" {
-		query.Joins("LEFT JOIN playlist_musics pm ON m.id = pm.music_id ").Where("playlist_id = ?", filterSetting.Args)
+
+		query.Joins("LEFT JOIN playlist_musics pm ON m.id = pm.music_id ").Where("pm.playlist_id = ?", filterSetting.Args)
 	}
 
 	if query.Error != nil {
 		emitter := customErr.New("db_error", fmt.Errorf("failed to create queue:%w", query.Error).Error())
 		emitter.Emit(q.ctx)
-		return query.Error
+
+		return nil, query.Error
 	}
 
 	query.Scan(&res)
@@ -77,7 +85,14 @@ func (q *Queue) GetQueue(filters string) error {
 	}
 
 	fmt.Println("this is by playlist", res)
-	return nil
+
+	return &ReturnType{
+		Data: struct {
+			Queue []audio `json:"queue"`
+		}{
+			Queue: res,
+		},
+	}, nil
 
 }
 func (q *Queue) shuffleQuery(a *[]audio) {

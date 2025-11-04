@@ -24,7 +24,7 @@ export const SidebarNavigator = () => {
   const currentPath = useDataStore((state) => state.currentPath);
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);
 
-  const { isSmall, isLarge } = useScreenSize();
+  const { isSmall, isLarge, isMedium } = useScreenSize();
   const tabs = useTabs({
     defaultValue: "dir",
   });
@@ -35,8 +35,11 @@ export const SidebarNavigator = () => {
   ];
 
   const handleHide = (target: boolean) => {
-    if (isLarge) {
-      switchSide();
+    if (isLarge || isMedium || isSmall) {
+      useSidebarDisclosure.setState((state) => ({
+        ...state,
+        rightBarOpen: !target,
+      }));
     }
 
     useSidebarDisclosure.setState((state) => ({

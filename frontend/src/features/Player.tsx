@@ -13,7 +13,7 @@ import VolumeControl from "@/components/controls/VolumeControl";
 import Controls from "@/components/controls/Controls";
 import TimeLine from "@/components/controls/TimeLine";
 
-import { usePlayerStore } from "@/store";
+import { usePlayerStore, useSidebarDisclosure } from "@/store";
 import { ChakraIcon } from "@/components/ChackraIcon";
 
 import { getNeutral } from "@/utils";
@@ -21,9 +21,22 @@ import { useScreenSize } from "@/hooks";
 import { FaGear } from "react-icons/fa6";
 const Player: React.FC = () => {
   const [favorite, setFavorite] = useState(true);
-  const { isMedium, isSmall } = useScreenSize();
+  const { isMedium, isSmall, isLarge } = useScreenSize();
+  const switchSide = useSidebarDisclosure((state) => state.switch);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const handleHide = (target: boolean) => {
+    if (isLarge || isMedium || isSmall) {
+      useSidebarDisclosure.setState((state) => ({
+        ...state,
+        leftBarOpen: !target,
+      }));
+    }
 
+    useSidebarDisclosure.setState((state) => ({
+      ...state,
+      rightBarOpen: target,
+    }));
+  };
   return (
     <Box
       bgImage={"./musicLiner.svg"}
@@ -68,6 +81,10 @@ const Player: React.FC = () => {
             mx={"6px"}
             borderRadius={"4px"}
             overflow={"hidden"}
+            onClick={() => {
+              handleHide(true);
+            }}
+            bg={"red"}
           >
             <Image
               src={
