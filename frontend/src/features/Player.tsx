@@ -84,7 +84,6 @@ const Player: React.FC = () => {
             onClick={() => {
               handleHide(true);
             }}
-            bg={"red"}
           >
             <Image
               src={

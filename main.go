@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+	"myproject/pkgs/app"
 	"myproject/pkgs/db"
 	"myproject/pkgs/ffmpeg"
 	"myproject/pkgs/media"
@@ -14,6 +15,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 )
 
 //go:embed all:frontend/dist
@@ -28,18 +30,26 @@ func main() {
 	playlists := playlist.NewPlaylist()
 	taglib := taglib.NewTaglib()
 	queue := queue.NewQueue()
+	app := app.New()
 	// Create application with options
+	//
+	//
+
 	err := wails.Run(&options.App{
 		Title: "Croaqui",
 
-		Width:     768,
-		Height:    768,
-		MinWidth:  768,
-		MinHeight: 768,
+		Width:            768,
+		Height:           768,
+		MinWidth:         768,
+		MinHeight:        768,
+		Frameless:        true,
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		Linux: &linux.Options{
+			WindowIsTranslucent: true,
+		},
 		OnStartup: func(ctx context.Context) {
 			data.StartUp(ctx)
 			media.StartUp(ctx)
@@ -48,6 +58,7 @@ func main() {
 			playlists.StartUp(ctx)
 			taglib.Startup(ctx)
 			queue.StartUp(ctx)
+			app.StartUp(ctx)
 
 		},
 		Bind: []interface{}{
@@ -55,6 +66,7 @@ func main() {
 			player,
 			playlists,
 			queue,
+			app,
 			// ffmpeg,
 		},
 	})

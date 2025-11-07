@@ -23,6 +23,7 @@
 
 .timeline input[type="range"]::-webkit-slider-runnable-track {
     height: 15px;
+    width: "100%";
     background: rgba(0, 0, 0, 0);
 }
 
@@ -37,9 +38,9 @@
     -webkit-appearance: none;
     appearance: none;
     /* creating a custom design */
-    height: 15px;
-    width: 5px;
-    background-color: #abc265;
+    height: 16px;
+    width: 16px;
+    background-color: green;
     border-radius: 0%;
     border: 0px solid rgba(244, 63, 94, 1);
 }
@@ -47,15 +48,15 @@
 .timeline input[type="range"]::-moz-range-thumb {
     height: 15px;
     width: 5px;
-    background-color: #abc265;
+    background-color: red;
     border-radius: 50%;
-    border: 0px solid rgba(244, 63, 94, 1);
+    border: 2px solid rgba(244, 63, 94, 1);
 }
 
 .timeline input[type="range"]::-webkit-slider-thumb {
     /*  ...  */
     /*  slider progress trick  */
-    box-shadow: -4000px 0 0 4000px #abc265;
+    box-shadow: -4000px 0 0 4000px red;
     border-radius: 0%;
 }
 
@@ -63,7 +64,7 @@
 .timeline input[type="range"]::-moz-range-thumb {
     /*  ...  */
     /*  slider progress trick  */
-    box-shadow: -4000px 0 0 4000px #abc265;
+    box-shadow: -4000px 0 0 4000px red;
     border-radius: 0%;
 }
 .timeline eprogress::-webkit-progress-bar {
