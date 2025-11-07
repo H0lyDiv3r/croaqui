@@ -5,13 +5,14 @@
 }
 
 html {
-    background-color: #121721;
+    background-color: rgba(255, 255, 255, 0);
     text-align: center;
     color: white;
 }
 
 body {
     margin: 0;
+
     color: white;
     font-size: 16px;
     font-family:
@@ -41,4 +42,13 @@ body {
 #app {
     height: 100vh;
     text-align: center;
+}
+
+.dragRegion {
+    --wails-draggable: drag;
+}
+.mini-audio {
+    background-color: green;
+    /*clip-path: polygon(0 0, 0 100%, 30% 100%, 30% 60%, 100% 60%, 100% 0);*/
+    clip-path: url(/frontend/public/Subtract.svg);
 }

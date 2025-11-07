@@ -1,28 +1,23 @@
 import "./App.css";
 import Player from "./features/Player";
-import { Box, Button, Image, Text } from "@chakra-ui/react";
-import { MusicList } from "./components/music-list";
+import { Box } from "@chakra-ui/react";
 import { getNeutral } from "./utils";
-import { SidebarNavigator } from "./features/sidebar-navigator";
-import { ScanForAudio } from "../wailsjs/go/media/Media";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
-import { Route, Router, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import { AlbumDetail, Albums, Library } from "./pages";
-import { useScreenSize, useShowToast } from "./hooks";
+import { useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
-import { usePlayerStore } from "./store";
-import { GetImage, GetStatus } from "wailsjs/go/player/Player";
+import { WindowBar } from "./components/WindowBar";
+import { useGeneralStore } from "./store";
+import { ChakraIcon } from "./components/ChackraIcon";
+import { BsGripVertical } from "react-icons/bs";
+import { MiniPlayer } from "./features/miniPlayer";
 
 function App() {
-  const setAll = usePlayerStore((state) => state.setPlayerStatus);
-  const setLoaded = usePlayerStore((state) => state.setLoaded);
-  const setCurrentTrackImage = usePlayerStore(
-    (state) => state.setCurrentTrackImage,
-  );
-
   const { showToast } = useShowToast();
-  const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
+
+  const miniPlayerOpen = useGeneralStore((state) => state.miniPlayerOpen);
 
   useLayoutEffect(() => {
     EventsOn("toast:err", (err) => {
@@ -57,28 +52,35 @@ function App() {
     <Box
       display={"flex"}
       flexDir={"column"}
-      bg={getNeutral("light", 900)}
-      _dark={{ bg: getNeutral("dark", 900), color: getNeutral("dark", 200) }}
+      bg={miniPlayerOpen ? "rgba(255,255,255,0.5)" : getNeutral("light", 900)}
+      _dark={{
+        bg: miniPlayerOpen ? "rgba(0,0,0,0.5)" : getNeutral("dark", 900),
+        color: getNeutral("dark", 200),
+      }}
       color={getNeutral("light", 200)}
       h={"100vh"}
       id="App"
+      borderRadius={"md"}
     >
-      {/*{isSmall ? "small" : ""}
-      {isMedium ? "medium" : ""}
-      {isLarge ? "large" : ""}
-      {isExtraLarge ? "extraLarge" : ""}*/}
-      {/*<Box h={"5rem"}>aa</Box>*/}
-      <NavBar />
-      {/*<Button onClick={() => showToast("success", "Scan started")}>scan</Button>*/}
-      <Switch>
-        <Box display={"flex"} flex={1} minH={0}>
-          <Route path="/library" component={Library} />
-          <Route path="/albums" component={Albums} />
-          <Route path="/albums/:id" component={AlbumDetail} />
+      {miniPlayerOpen ? (
+        <Box height={"100%"}>
+          <MiniPlayer />
         </Box>
-      </Switch>
+      ) : (
+        <>
+          <WindowBar />
+          <NavBar />
+          <Switch>
+            <Box display={"flex"} flex={1} minH={0}>
+              <Route path="/library" component={Library} />
+              <Route path="/albums" component={Albums} />
+              <Route path="/albums/:id" component={AlbumDetail} />
+            </Box>
+          </Switch>
 
-      <Player />
+          <Player />
+        </>
+      )}
     </Box>
   );
 }

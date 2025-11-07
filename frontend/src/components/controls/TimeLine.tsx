@@ -1,4 +1,4 @@
-import { Box, Text, Input } from "@chakra-ui/react";
+import { Box, Text, Input, Slider } from "@chakra-ui/react";
 import { GetPosition, SetPosition } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { getNeutral } from "@/utils";
@@ -9,23 +9,28 @@ const TimeLine: React.FC = () => {
   const setPositionState = usePlayerStore((state) => state.setPosition);
   const position = usePlayerStore((state) => state.position);
   const { handlePosition } = {
-    handlePosition: (e: React.ChangeEvent<HTMLInputElement>) => {
-      SetPosition(Number(e.target.value)).then(() => {
-        GetPosition().then((res) => {
-          setPositionState(Math.round(res.data.position));
+    handlePosition: (e: any) => {
+      if (e.value < 99) {
+        SetPosition(Number(e.value * length) / 100).then(() => {
+          GetPosition().then((res) => {
+            setPositionState(Math.round(res.data.position));
+          });
         });
-      });
+      }
     },
   };
+
+  const SliderControl: any = Slider.Control;
+  const SliderTrack: any = Slider.Track;
+  const SliderThumb: any = Slider.Thumb;
+  const SliderMarkerGroup: any = Slider.MarkerGroup;
+  const SliderRange: any = Slider.Range;
   return (
     <Box
       width={"100%"}
       display={"flex"}
       justifyContent={"center"}
       alignItems={"center"}
-      color={getNeutral("light", 200)}
-      _dark={{ color: getNeutral("dark", 200) }}
-      my={"4px"}
       fontSize={"sm"}
     >
       <Box display={"flex"} fontWeight={300}>
@@ -38,31 +43,28 @@ const TimeLine: React.FC = () => {
         {Math.floor(position) % 60 < 10 && <Text>0</Text>}
         <Text>{Math.floor(position % 60) ?? 0}</Text>
       </Box>
-      <Box
-        className="timeline"
-        bg={getNeutral("light", 800)}
-        _dark={{ bg: getNeutral("dark", 800) }}
-        height={"1"}
-        _hover={{ height: "4px" }}
-        mx={"4px"}
-        display={"flex"}
-        overflow={"hidden"}
-        flexGrow={1}
-        position={"relative"}
-      >
-        <Input
-          type="range"
-          onChange={(e) => {
+      <Box flex={1} mx={2}>
+        <Slider.Root
+          size={"sm"}
+          value={[(position / length) * 100]}
+          onValueChange={(e: any) => {
             handlePosition(e);
           }}
-          // value={50}
-          value={position}
-          // max={currentEpisode.audioLength}
-          max={length}
-          min={0}
-          disabled={!loaded}
-          position={"absolute"}
-        />
+        >
+          <SliderControl>
+            <SliderTrack
+              bg={getNeutral("dark", 700)}
+              borderRadius={"1px"}
+              height={"4px"}
+            >
+              <SliderRange bg={"brand.300"} />
+            </SliderTrack>
+            <SliderThumb
+              bg={"brand.700"}
+              borderColor={"brand.200"}
+            ></SliderThumb>
+          </SliderControl>
+        </Slider.Root>
       </Box>
       <Box display={"flex"} fontWeight={300} minW={"40px"}>
         {Math.floor(length) / 3600 < 10 && <Text>0</Text>}

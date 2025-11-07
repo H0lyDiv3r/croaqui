@@ -10,6 +10,8 @@ type GeneralStore = {
   toasts: Toast[];
   addToast: (toast: Toast) => void;
   clearToasts: () => void;
+  miniPlayerOpen: boolean;
+  openMiniPlayer: (target: boolean) => void;
 };
 
 export const useGeneralStore = create<GeneralStore>((set, get) => ({
@@ -22,6 +24,13 @@ export const useGeneralStore = create<GeneralStore>((set, get) => ({
   clearToasts: () => {
     set((state) => ({
       toasts: [],
+    }));
+  },
+  miniPlayerOpen: false,
+  openMiniPlayer: (target: boolean) => {
+    set((state) => ({
+      ...state,
+      miniPlayerOpen: target,
     }));
   },
 }));

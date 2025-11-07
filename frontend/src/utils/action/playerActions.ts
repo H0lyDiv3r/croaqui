@@ -43,7 +43,11 @@ export const loadAudio = async (item: any) => {
   });
   const status = await GetStatus();
   if (!status.data) return;
-  setAll({ ...status.data, position: status.data.position || 0 });
+  setAll({
+    ...status.data,
+    position: status.data.position || 0,
+    duration: item.duration,
+  });
   // })
   // .then((res) => {
   //   console.log("loaded");
