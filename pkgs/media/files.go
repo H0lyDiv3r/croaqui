@@ -116,7 +116,7 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 	}{Dirs: result}}, nil
 }
 
-func FetchImage(url string) (string, error) {
+func (m *Media) FetchImage(url string) (string, error) {
 	p := mpv.New()
 	p.Initialize()
 	defer p.TerminateDestroy()

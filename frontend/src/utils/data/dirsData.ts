@@ -9,7 +9,6 @@ export const getStandardDirs = async () => {
   if (!res) {
     return;
   }
-  console.log("i am here i am here", res);
 
   return res.data.dirs;
 };
@@ -19,7 +18,6 @@ export const getDirContents = async (path: string) => {
   if (!res) {
     return;
   }
-  console.log("i am here i am here", res);
 
   return res.data;
 };

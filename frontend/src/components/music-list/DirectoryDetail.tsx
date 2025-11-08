@@ -5,8 +5,9 @@ import {
   usePlayerStore,
   usePlaylistStore,
   useQueryStore,
+  useQueueStore,
 } from "@/store";
-import { getAudio, removeFromPlaylist } from "@/utils";
+import { getAudio, getQueue, removeFromPlaylist } from "@/utils";
 import { GetImage, GetStatus, LoadMusic } from "wailsjs/go/player/Player";
 import { useEffect, useRef, useState } from "react";
 import { EventsOn } from "wailsjs/runtime/runtime";
@@ -20,7 +21,8 @@ export const DirectoryDetail = () => {
   const currentPath = useDataStore((state) => state.currentPath);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const playlist = usePlaylistStore((state) => state.playlists);
-
+  const musicListPath = useDataStore((state) => state.musicListPath);
+  const shuffle = useQueueStore((state) => state.shuffle);
   const [hovered, setHovered] = useState<number | null>(null);
 
   const setCurrentTrackImage = usePlayerStore(
@@ -30,7 +32,6 @@ export const DirectoryDetail = () => {
   const getAudioFiles = async () => {
     const audioFiles = await getAudio({ hasMore: true, page: 0 });
     // setAll(audioFiles);
-    console.log("files giles mailes");
     useDataStore.setState((state) => ({
       ...state,
       currentPlaylist: null,
@@ -78,6 +79,14 @@ export const DirectoryDetail = () => {
     LoadMusic(item.path);
   };
 
+  const handleGetQueue = async () => {
+    return await getQueue({
+      type: "dir",
+      args: musicListPath,
+      shuffle: shuffle,
+    });
+  };
+
   useEffect(() => {
     // getAudio();
     // useQueryStore.setState((state) => {
@@ -101,7 +110,7 @@ export const DirectoryDetail = () => {
   }, []);
   return (
     <Box height={"100%"}>
-      <MusicList />
+      <MusicList handleGetQueue={handleGetQueue} />
     </Box>
   );
 };

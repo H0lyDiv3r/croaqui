@@ -28,7 +28,6 @@ export const Albums = () => {
       if (!newPage) {
         return;
       }
-      console.log("she way out", newPage);
       setAlbums((prevAlbums) => [...prevAlbums, ...newPage.albums]);
       // useDataStore.setState((state) => ({
       //   ...state,

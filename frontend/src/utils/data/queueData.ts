@@ -6,16 +6,16 @@ import {
 } from "@/store";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
 
-export const getQueue = async (item: any) => {
+type QueueInfo = {
+  type: "dir" | "album" | "playlist";
+  args: string;
+  shuffle: boolean;
+};
+export const getQueue = async (queueInfo: QueueInfo) => {
   const musicListPath = useDataStore.getState().musicListPath;
   const shuffle = useQueueStore.getState().shuffle;
   const currentTrack = usePlayerStore.getState().currentTrack;
-  console.log("Queue retrieved successfully", musicListPath);
-  const res = await GetQueue({
-    type: "dir",
-    args: musicListPath,
-    shuffle: shuffle,
-  });
+  const res = await GetQueue(queueInfo);
   if (!res) {
     return;
   }

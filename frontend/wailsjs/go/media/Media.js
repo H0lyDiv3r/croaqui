@@ -6,6 +6,10 @@ export function Emit(arg1) {
   return window['go']['media']['Media']['Emit'](arg1);
 }
 
+export function FetchImage(arg1) {
+  return window['go']['media']['Media']['FetchImage'](arg1);
+}
+
 export function GetAlbumData(arg1) {
   return window['go']['media']['Media']['GetAlbumData'](arg1);
 }

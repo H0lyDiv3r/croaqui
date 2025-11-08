@@ -14,14 +14,21 @@ import {
 import { getNeutral, getQueue, removeFromPlaylist, toHMS } from "@/utils";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
 
-import { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
 import { Empty } from "../empty";
-import { MusicDropdown } from "../music-actions";
 import { loadAudio } from "@/utils/action/playerActions";
+import MusicDropdown from "../music-actions/MusicDropDown";
 
-export const MusicList = () => {
+import { FixedSizeList } from "react-window";
+
+const List: any = FixedSizeList;
+export const MusicList = ({
+  handleGetQueue,
+}: {
+  handleGetQueue: () => Promise<any>;
+}) => {
   const audioFiles = useDataStore((state) => state.musicFiles);
   const scrollRef = useRef<HTMLDivElement>(null);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
@@ -37,6 +44,8 @@ export const MusicList = () => {
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
+
+  const heightRef = useRef<HTMLElement>(null);
 
   // const getAudioFiles = async () => {
   //   const audioFiles = await getAudio({ hasMore: true, page: 0 });
@@ -75,14 +84,8 @@ export const MusicList = () => {
   const handleLoadAudio = async (item: any) => {
     setPlayingIndex(0);
     await loadAudio(item);
-    const queue = await getQueue(item);
+    const queue = await handleGetQueue();
     setQueue(queue);
-
-    console.log(
-      "wwwwwwaaaaaaaaaaaay",
-
-      useDataStore.getState().musicListPath,
-    );
   };
   // const loadAudio = (item: any) => {
   //   console.log("loading file");
@@ -196,70 +199,89 @@ export const MusicList = () => {
           minH={0}
           overflow={"auto"}
           onScroll={handleScroll}
-          ref={scrollRef}
+          ref={heightRef}
         >
           {audioFiles && audioFiles.length > 0 ? (
-            audioFiles.map((item, idx) => (
-              <Grid
-                onMouseEnter={() => {
-                  setHovered(idx);
-                }}
-                onMouseLeave={() => setHovered(null)}
-                alignItems={"center"}
-                templateColumns="repeat(24, 1fr)"
-                fontSize={"sm"}
-                whiteSpace={"nowrap"}
-                gap={4}
-                p={"2"}
-                key={idx}
-                color={getNeutral("light", 200)}
-                _dark={{
-                  color: getNeutral("dark", 200),
-                }}
-                _hover={{
-                  bg: getNeutral("light", 700),
-                  cursor: "pointer",
-                  _dark: {
-                    bg: getNeutral("dark", 700),
-                  },
-                }}
-                onClick={() => {
-                  handleLoadAudio(item);
-                }}
-              >
-                <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>
-                  {idx}
-                </GridItem>
-                <GridItem colSpan={{ base: 6, lg: 8 }} overflow={"hidden"}>
-                  <Text whiteSpace={"nowrap"}>{item.title}</Text>
-                  <Text
+            <List
+              className="scroll"
+              itemCount={audioFiles.length}
+              itemSize={60}
+              height={heightRef.current ? heightRef.current.offsetHeight : 200}
+              width={"100%"}
+            >
+              {({ index, style }: { index: any; style: any }) => {
+                return (
+                  <Grid
+                    style={style}
+                    onMouseEnter={() => {
+                      setHovered(index);
+                    }}
+                    onMouseLeave={() => setHovered(null)}
+                    alignItems={"center"}
+                    templateColumns="repeat(24, 1fr)"
+                    fontSize={"sm"}
                     whiteSpace={"nowrap"}
-                    fontSize={"xs"}
-                    color={getNeutral("light", 400)}
+                    gap={4}
+                    p={"2"}
+                    key={index}
+                    color={getNeutral("light", 200)}
                     _dark={{
-                      color: getNeutral("dark", 400),
+                      color: getNeutral("dark", 200),
+                    }}
+                    _hover={{
+                      bg: getNeutral("light", 700),
+                      cursor: "pointer",
+                      _dark: {
+                        bg: getNeutral("dark", 700),
+                      },
+                    }}
+                    onClick={() => {
+                      handleLoadAudio(audioFiles[index]);
                     }}
                   >
-                    {item.artist}
-                  </Text>
-                </GridItem>
+                    <GridItem colSpan={{ base: 3, lg: 1 }} overflow={"hidden"}>
+                      {index}
+                    </GridItem>
+                    <GridItem colSpan={{ base: 6, lg: 8 }} overflow={"hidden"}>
+                      <Text whiteSpace={"nowrap"}>
+                        {audioFiles[index].title}
+                      </Text>
+                      <Text
+                        whiteSpace={"nowrap"}
+                        fontSize={"xs"}
+                        color={getNeutral("light", 400)}
+                        _dark={{
+                          color: getNeutral("dark", 400),
+                        }}
+                      >
+                        {audioFiles[index].artist}
+                      </Text>
+                    </GridItem>
 
-                <GridItem colSpan={{ base: 5, lg: 6 }} overflow={"hidden"}>
-                  {item.album ? item.album : "-"}
-                </GridItem>
-                <GridItem colSpan={{ base: 4, lg: 6 }} overflow={"hidden"}>
-                  {item.genre ? item.genre : "-"}
-                </GridItem>
-                <GridItem colSpan={{ base: 4, lg: 2 }} overflow={"hidden"}>
-                  {toHMS(item.duration)}
-                </GridItem>
-                <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
-                  {hovered === idx && (
-                    <MusicDropdown id={item.ipl || null} songId={item.id} />
-                  )}
-                </GridItem>
-              </Grid>
-            ))
+                    <GridItem colSpan={{ base: 5, lg: 6 }} overflow={"hidden"}>
+                      {audioFiles[index].album ? audioFiles[index].album : "-"}
+                    </GridItem>
+                    <GridItem colSpan={{ base: 4, lg: 6 }} overflow={"hidden"}>
+                      {audioFiles[index].genre ? audioFiles[index].genre : "-"}
+                    </GridItem>
+                    <GridItem colSpan={{ base: 4, lg: 2 }} overflow={"hidden"}>
+                      {toHMS(audioFiles[index].duration)}
+                    </GridItem>
+                    <GridItem colSpan={{ base: 2, lg: 1 }} overflow={"hidden"}>
+                      {hovered === index && (
+                        <Suspense fallback={null}>
+                          <MusicDropdown
+                            id={audioFiles[index].ipl || null}
+                            songId={audioFiles[index].id}
+                            hovered={hovered == index}
+                          />
+                        </Suspense>
+                      )}
+                    </GridItem>
+                  </Grid>
+                );
+              }}
+            </List>
           ) : (
             <Empty.Music />
           )}

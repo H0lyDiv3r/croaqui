@@ -45,7 +45,6 @@ const DirScanner = ({
   useEffect(() => {
     const fetchDir = async () => {
       const data = await getDirContents(navPath === "" ? "/" : navPath);
-      console.log("why am i here just to suffer", data);
       setDirList(data.content);
     };
 

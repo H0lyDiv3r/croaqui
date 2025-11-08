@@ -1,5 +1,10 @@
 import { useScreenSize } from "@/hooks";
-import { usePlayerStore, useQueueStore, useSidebarDisclosure } from "@/store";
+import {
+  useDataStore,
+  usePlayerStore,
+  useQueueStore,
+  useSidebarDisclosure,
+} from "@/store";
 import { getNeutral, getQueue } from "@/utils";
 import { Box, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -11,6 +16,9 @@ export const QueueBar = () => {
   const queue = useQueueStore((state) => state.items);
   const shuffle = useQueueStore((state) => state.shuffle);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
+
+  const musicListPath = useDataStore((state) => state.musicListPath);
   const { isLarge, isMedium, isSmall } = useScreenSize();
   const handleHide = (target: boolean) => {
     if (isLarge) {
@@ -33,10 +41,13 @@ export const QueueBar = () => {
 
   useEffect(() => {
     const fetchQueue = async () => {
-      const queue = await getQueue(currentTrack);
+      const queue = await getQueue({
+        type: currentPlaylist ? "playlist" : "dir",
+        args: currentPlaylist ? String(currentPlaylist || 0) : musicListPath,
+        shuffle: shuffle,
+      });
       useQueueStore.setState({ items: queue, playingIndex: 0 });
     };
-
     if (currentTrack.path) {
       fetchQueue();
     }

@@ -33,7 +33,8 @@ export const useDataStore = create<DataStore>((set) => ({
   setCurrentPath: (path: string) =>
     set((state) => {
       useQueryStore.setState({ path: path });
-      return { ...state, currentPlaylist: null, currentPath: path };
+      return { ...state, currentPath: path, currentPlaylist: null };
     }),
-  setMusicListPath: (path: string) => set({ musicListPath: path }),
+  setMusicListPath: (path: string) =>
+    set({ musicListPath: path, currentPlaylist: null }),
 }));

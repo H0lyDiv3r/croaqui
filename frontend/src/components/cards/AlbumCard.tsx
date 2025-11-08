@@ -20,7 +20,6 @@ export const AlbumCard = ({ item }: { item: Item }) => {
   const [image, setImage] = useState<string | null>(null);
   const getImage = async (albumName: string) => {
     const res = await GetAlbumImage(albumName);
-    console.log("image fetched", res.data.image);
     setImage(res.data.image);
   };
   useEffect(() => {
@@ -36,7 +35,6 @@ export const AlbumCard = ({ item }: { item: Item }) => {
       p={2}
       _hover={{ cursor: "pointer" }}
       onClick={() => {
-        console.log("routing to", item.album);
         navigate(`/albums/${encodeURIComponent(item.album)}`);
       }}
       borderRadius={"xl"}
