@@ -113,7 +113,7 @@ func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {
 		if item.Album == "unknown" {
 			continue
 		}
-		img, err := FetchImage(item.Path)
+		img, err := m.FetchImage(item.Path)
 		if err != nil {
 			continue
 		}

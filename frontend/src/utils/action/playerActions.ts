@@ -5,6 +5,7 @@ import {
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
+import { FetchImage } from "wailsjs/go/media/Media";
 
 // const audioFiles = useDataStore((state) => state.musicFiles);
 // const scrollRef = useRef<HTMLDivElement>(null);
@@ -25,23 +26,22 @@ const setCurrentTrackImage = usePlayerStore.getState().setCurrentTrackImage;
 //   (state) => state.setCurrentTrackImage,
 // );
 export const loadAudio = async (item: any) => {
-  console.log("loading file");
   setLoaded(false);
   setTrack(item);
 
   const loaded = await LoadMusic(item.path);
 
   if (!loaded) {
-    console.log("failed to load music");
     return;
   }
 
   setLoaded(true);
   setTrack(item);
-  GetImage().then((res) => {
-    setCurrentTrackImage(res.data.image);
-  });
+  GetImage().then((res) => {});
   const status = await GetStatus();
+  const img = await FetchImage(item.path);
+  setCurrentTrackImage(img || "");
+
   if (!status.data) return;
   setAll({
     ...status.data,

@@ -28,7 +28,6 @@ export const PlaylistsMenu = ({
         lazyMount
         positioning={{ placement: "left-start", gutter: 18 }}
         onSelect={(value: any) => {
-          console.log("adding", songId, Number(value["value"]));
           addToPlaylist(songId, Number(value["value"]));
           handleClose();
         }}

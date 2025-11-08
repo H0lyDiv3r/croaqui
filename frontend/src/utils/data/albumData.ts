@@ -16,7 +16,6 @@ export const getAlbums = async (params?: Partial<QueryParams> | null) => {
     }),
   );
   if (!albums) {
-    console.log("failed to fetch albums", albums);
     return;
   }
   useQueryStore.setState((state) => ({
@@ -24,17 +23,14 @@ export const getAlbums = async (params?: Partial<QueryParams> | null) => {
     hasMore: albums.data.hasMore,
   }));
 
-  console.log("showing albums", albums.data);
   return albums.data;
 };
 
 export const getAlbumData = async (id: string) => {
   const album = await GetAlbumData(id);
   if (!album) {
-    console.log("failed to fetch album", album);
     return;
   }
-  console.log("album", album);
 
   return album.data;
 };

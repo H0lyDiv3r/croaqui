@@ -1,17 +1,26 @@
 import { Box, Text } from "@chakra-ui/react";
 import { MusicList } from "./MusicList";
-import { getNeutral, toHMS } from "@/utils";
-import { usePlaylistStore } from "@/store";
+import { getNeutral, getQueue, toHMS } from "@/utils";
+import { useDataStore, usePlaylistStore, useQueueStore } from "@/store";
 
 export const PlaylistDetail = () => {
   const playlistMetaData = usePlaylistStore((state) => state.playlistMetaData);
+  const shuffle = useQueueStore((state) => state.shuffle);
+  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
+
+  const handleGetQueue = async () => {
+    return await getQueue({
+      type: "playlist",
+      args: String(currentPlaylist || 0),
+      shuffle: shuffle,
+    });
+  };
   return (
-    <Box px={8}>
+    <Box px={8} height={"100%"} display={"flex"} flexDirection={"column"}>
       <Box
         display="flex"
         flexDir="column"
         justifyContent="space-between"
-        height="100%"
         textAlign="left"
         color={getNeutral("light", 200)}
         _dark={{
@@ -20,9 +29,8 @@ export const PlaylistDetail = () => {
         py={1}
         my={6}
       >
-        {/* Title */}
         <Text fontSize="3xl" fontWeight="700" lineHeight="1.2">
-          {playlistMetaData.title}
+          {playlistMetaData.title || "unknown"}
         </Text>
         <Box
           color={getNeutral("light", 400)}
@@ -32,8 +40,6 @@ export const PlaylistDetail = () => {
             {playlistMetaData.albums} Albums • {playlistMetaData.artists}{" "}
             Artists
           </Text>
-
-          {/* Stats */}
           <Box mt="auto">
             <Text fontSize="sm" mt={0.5}>
               {playlistMetaData.songs} Songs •{" "}
@@ -41,12 +47,10 @@ export const PlaylistDetail = () => {
             </Text>
           </Box>
         </Box>
-
-        {/* Meta */}
       </Box>
 
-      <Box>
-        <MusicList />
+      <Box flex={1} minH={0}>
+        <MusicList handleGetQueue={handleGetQueue} />
       </Box>
     </Box>
   );

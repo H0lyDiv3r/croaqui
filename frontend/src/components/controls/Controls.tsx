@@ -78,11 +78,15 @@ const Controls: React.FC = () => {
   useEffect(() => {
     EventsOn("MPV:END", (msg) => {
       if (time.current) {
-        console.log("i am here clearing the interval");
         clearInterval(time.current);
         usePlayerStore.setState((state) => {
           return { ...state, paused: true };
         });
+      }
+      console.log("ended bro ended", msg);
+
+      if (msg.reason === "eof") {
+        handleNext();
       }
     });
   }, []);

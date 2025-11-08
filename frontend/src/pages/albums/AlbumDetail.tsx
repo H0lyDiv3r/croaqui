@@ -1,4 +1,4 @@
-import { getAlbumData, getNeutral, toHMS } from "@/utils";
+import { getAlbumData, getNeutral, getQueue, toHMS } from "@/utils";
 import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -50,7 +50,6 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
       console.error("Album not found");
       return;
     }
-    console.log("i am here", res);
     setAlbumInfo(res.albumInfo);
     // setAll(audioFiles);
   };
@@ -71,6 +70,13 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     //     console.error("Error loading music:", error);
     //   });
   };
+  // const handleGetQueue = async () => {
+  //   return await getQueue({
+  //     type: "album",
+  //     args: String(currentPlaylist || 0),
+  //     shuffle: shuffle,
+  //   });
+  // };
   const getBanner = async () => {
     const banner = await GetAlbumImage(decodeURIComponent(params.id));
     return banner.data.image;

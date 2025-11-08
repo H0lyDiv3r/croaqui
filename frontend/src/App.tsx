@@ -21,15 +21,12 @@ function App() {
 
   useLayoutEffect(() => {
     EventsOn("toast:err", (err) => {
-      console.log("error emitted");
       showToast("error", err.message);
     });
     EventsOn("player_error", (err) => {
-      console.log("error emitted");
       showToast("error", err.message);
     });
     EventsOn("toast:success", (msg) => {
-      console.log("success emitted");
       showToast("success", msg);
     });
 

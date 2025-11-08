@@ -70,14 +70,17 @@ func (p *Player) EventLoop() {
 				if end.Reason == mpv.EndFileEOF {
 					fmt.Println("ended because of eof")
 					runtime.EventsEmit(p.ctx, "MPV:END", struct {
-						Message string `json:"reason"`
+						Reason  string `json:"reason"`
+						Message string `json:"message"`
 					}{
+						Reason:  "eof",
 						Message: "end of file reached",
 					})
 				} else {
 					fmt.Println("ended for some stupid reason")
 					runtime.EventsEmit(p.ctx, "MPV:END", struct {
-						Message string `json:"reason"`
+						Reason  string `json:"reason"`
+						Message string `json:"message"`
 					}{
 						Message: "unknown",
 					})
