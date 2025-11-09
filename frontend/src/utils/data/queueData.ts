@@ -5,17 +5,13 @@ import {
   useQueueStore,
 } from "@/store";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
+import { QueueInfo } from "@/types";
 
-type QueueInfo = {
-  type: "dir" | "album" | "playlist";
-  args: string;
-  shuffle: boolean;
-};
 export const getQueue = async (queueInfo: QueueInfo) => {
   const musicListPath = useDataStore.getState().musicListPath;
   const shuffle = useQueueStore.getState().shuffle;
   const currentTrack = usePlayerStore.getState().currentTrack;
-  const res = await GetQueue(queueInfo);
+  const res = await GetQueue({ ...queueInfo, args: queueInfo.args || "" });
   if (!res) {
     return;
   }
@@ -23,18 +19,24 @@ export const getQueue = async (queueInfo: QueueInfo) => {
     (track: any) => track.path === currentTrack.path,
   );
 
+  console.log();
+
   if (currentTrack.path) {
     const newQueue = res.data.queue.filter(
       (track: any) => track.path !== currentTrack.path,
     );
 
-    console.log("Queue retrieved successfully", res.data.queue, [
-      res.data.queue[idx],
-      ...newQueue,
-    ]);
+    console.log(
+      "Queue retrieved successfully",
+      res.data.queue,
+      [res.data.queue[idx], ...newQueue],
+      idx,
+    );
 
-    return [res.data.queue[idx], ...newQueue];
+    return idx ? [res.data.queue[idx], ...newQueue] : res.data.queue;
+    // return [];
   }
 
   return res.data.queue;
+  // return [];
 };

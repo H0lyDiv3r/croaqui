@@ -13,6 +13,7 @@ import { useGeneralStore } from "./store";
 import { ChakraIcon } from "./components/ChackraIcon";
 import { BsGripVertical } from "react-icons/bs";
 import { MiniPlayer } from "./features/miniPlayer";
+import { AlbumsLayout } from "./pages/albums/AlbumsLayout";
 
 function App() {
   const { showToast } = useShowToast();
@@ -70,8 +71,10 @@ function App() {
           <Switch>
             <Box display={"flex"} flex={1} minH={0}>
               <Route path="/library" component={Library} />
-              <Route path="/albums" component={Albums} />
-              <Route path="/albums/:id" component={AlbumDetail} />
+              <Route path="/albums" nest>
+                <AlbumsLayout />
+              </Route>
+              {/*<Route path="/albums/:id" component={AlbumDetail} />*/}
             </Box>
           </Switch>
 

@@ -2,12 +2,14 @@ import { MusicList, PlaylistDetail } from "@/components/music-list";
 import { DirectoryDetail } from "@/components/music-list/DirectoryDetail";
 import { QueueBar } from "@/features/queue-bar/QueueBar";
 import { SidebarNavigator } from "@/features/sidebar-navigator";
-import { useDataStore } from "@/store";
+import { useDataStore, useQueueStore } from "@/store";
 import { getNeutral } from "@/utils";
 import { Box } from "@chakra-ui/react";
 
 export const Library = () => {
-  const currentPlaylistId = useDataStore((state) => state.currentPlaylist);
+  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
+  const musicListPath = useDataStore((state) => state.musicListPath);
+  const shuffle = useQueueStore((state) => state.shuffle);
   return (
     <Box display={"flex"} height={"100%"} width={"100%"}>
       <Box
@@ -18,10 +20,18 @@ export const Library = () => {
         <SidebarNavigator />
       </Box>
       <Box flex={1} height={"100%"}>
-        {currentPlaylistId ? <PlaylistDetail /> : <DirectoryDetail />}
+        {currentPlaylist ? <PlaylistDetail /> : <DirectoryDetail />}
       </Box>
       <Box height={"100%"}>
-        <QueueBar />
+        <QueueBar
+          queueInfo={{
+            type: currentPlaylist ? "playlist" : "dir",
+            args: currentPlaylist
+              ? String(currentPlaylist || 0)
+              : musicListPath,
+            shuffle: shuffle,
+          }}
+        />
       </Box>
     </Box>
   );

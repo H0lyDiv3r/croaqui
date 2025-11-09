@@ -5,11 +5,12 @@ import {
   useQueueStore,
   useSidebarDisclosure,
 } from "@/store";
+import { QueueInfo } from "@/types";
 import { getNeutral, getQueue } from "@/utils";
 import { Box, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-export const QueueBar = () => {
+export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
   const isOpen = useSidebarDisclosure((state) => state.rightBarOpen);
   const isLeftOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const switchSide = useSidebarDisclosure((state) => state.switch);
@@ -40,15 +41,12 @@ export const QueueBar = () => {
   }, [isLarge, isMedium, isSmall]);
 
   useEffect(() => {
+    console.log("rerendering", queueInfo);
     const fetchQueue = async () => {
-      const queue = await getQueue({
-        type: currentPlaylist ? "playlist" : "dir",
-        args: currentPlaylist ? String(currentPlaylist || 0) : musicListPath,
-        shuffle: shuffle,
-      });
+      const queue = await getQueue(queueInfo);
       useQueueStore.setState({ items: queue, playingIndex: 0 });
     };
-    if (currentTrack.path) {
+    if (currentTrack.path && queueInfo.args) {
       fetchQueue();
     }
   }, [shuffle]);
