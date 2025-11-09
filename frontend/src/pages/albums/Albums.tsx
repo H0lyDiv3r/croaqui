@@ -1,8 +1,11 @@
 import { AlbumCard } from "@/components/cards";
-import { useDataStore, useQueryStore } from "@/store";
+import { QueueBar } from "@/features/queue-bar";
+import { useDataStore, useQueryStore, useQueueStore } from "@/store";
 import { getAlbums, getNeutral } from "@/utils";
 import { Box, Text, SimpleGrid } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
+import { Route } from "wouter";
+import { AlbumDetail } from "./AlbumDetail";
 
 export const Albums = () => {
   const [albums, setAlbums] = useState<any[]>([]);
@@ -12,29 +15,30 @@ export const Albums = () => {
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const shuffle = useQueueStore((state) => state.shuffle);
 
-  const handleScroll = async () => {
-    const current = scrollRef.current;
-    if (!current) return;
-    if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
-      // getAudios(currentPath);
-      const newPage = await getAlbums({
-        page: useQueryStore.getState().page + 1,
-      });
-      useQueryStore.setState((state) => ({
-        ...state,
-        page: state.hasMore ? state.page + 1 : state.page,
-      }));
-      if (!newPage) {
-        return;
-      }
-      setAlbums((prevAlbums) => [...prevAlbums, ...newPage.albums]);
-      // useDataStore.setState((state) => ({
-      //   ...state,
-      //   musicFiles: [...state.musicFiles, ...newPage],
-      // }));
-    }
-  };
+  // const handleScroll = async () => {
+  //   const current = scrollRef.current;
+  //   if (!current) return;
+  //   if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
+  //     // getAudios(currentPath);
+  //     const newPage = await getAlbums({
+  //       page: useQueryStore.getState().page + 1,
+  //     });
+  //     useQueryStore.setState((state) => ({
+  //       ...state,
+  //       page: state.hasMore ? state.page + 1 : state.page,
+  //     }));
+  //     if (!newPage) {
+  //       return;
+  //     }
+  //     setAlbums((prevAlbums) => [...prevAlbums, ...newPage.albums]);
+  //     // useDataStore.setState((state) => ({
+  //     //   ...state,
+  //     //   musicFiles: [...state.musicFiles, ...newPage],
+  //     // }));
+  //   }
+  // };
   useEffect(() => {
     async function fetchAlbums() {
       useQueryStore.getState().clearQuery();
@@ -48,17 +52,11 @@ export const Albums = () => {
     fetchAlbums();
   }, []);
   return (
-    <Box
-      display={"flex"}
-      justifyContent={"center"}
-      flex={1}
-      p={6}
-      overflowY="auto"
-    >
+    <Box display={"flex"} flex={1} p={6} overflowY="auto" width={"100%"}>
       <Box
         display={"flex"}
         flexDir={"column"}
-        width={"80%"}
+        width={"100%"}
         justifyContent={"start"}
         textAlign={"left"}
       >
@@ -79,7 +77,7 @@ export const Albums = () => {
           overflow={"auto"}
           mt={"4"}
           ref={scrollRef}
-          onScroll={handleScroll}
+          // onScroll={handleScroll}
         >
           <SimpleGrid minChildWidth={"14rem"} gap={2}>
             {albums &&
@@ -89,6 +87,13 @@ export const Albums = () => {
           </SimpleGrid>
         </Box>
       </Box>
+      {/*<QueueBar
+        queueInfo={{
+          type: "album",
+          args: String(params.id || 0),
+          shuffle: shuffle,
+        }}
+      />*/}
     </Box>
   );
 };

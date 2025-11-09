@@ -5,3 +5,8 @@ export type TabListItem = {
   label: string;
   icon?: IconType;
 };
+export type QueueInfo = {
+  type: "dir" | "album" | "playlist";
+  args: string | null;
+  shuffle: boolean;
+};

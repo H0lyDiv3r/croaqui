@@ -1,4 +1,11 @@
-import { getAlbumData, getNeutral, getQueue, toHMS } from "@/utils";
+import {
+  getAlbumData,
+  getComplementaryColor,
+  getNeutral,
+  getQueue,
+  rgbToHsl,
+  toHMS,
+} from "@/utils";
 import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -6,15 +13,21 @@ import {
   GetStatus,
   LoadMusic,
 } from "../../../wailsjs/go/player/Player";
-import { useDataStore, usePlayerStore } from "@/store";
+import { useDataStore, usePlayerStore, useQueueStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
 import { GetAlbumImage } from "../../../wailsjs/go/media/Media";
+import analyze from "rgbaster";
+import { MusicList } from "@/components/music-list";
+import { color } from "framer-motion";
+import { QueueBar } from "@/features/queue-bar";
 // import { useParams } from "wouter";
 
 export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   // const params = useParams();
 
   const [banner, setBanner] = useState("");
+  const [dominantColor, setDominantColor] = useState("");
+  const [complementColor, setComplementColor] = useState("");
   const [albumInfo, setAlbumInfo] = useState({
     album: "",
     artist: "",
@@ -22,6 +35,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     songs: "",
   });
   const audioFiles = useDataStore((state) => state.musicFiles);
+  const shuffle = useQueueStore((state) => state.shuffle);
   const setAll = usePlayerStore((state) => state.setPlayerStatus);
   const setLoaded = usePlayerStore((state) => state.setLoaded);
   const setTrack = usePlayerStore((state) => state.setCurrentTrack);
@@ -38,6 +52,8 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
       limit: 0,
     });
     // setAll(audioFiles);
+    //
+    console.log("these are the audio files", audioFiles);
     useDataStore.setState((state) => ({
       ...state,
       musicFiles: [...audioFiles],
@@ -70,13 +86,23 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     //     console.error("Error loading music:", error);
     //   });
   };
-  // const handleGetQueue = async () => {
-  //   return await getQueue({
-  //     type: "album",
-  //     args: String(currentPlaylist || 0),
-  //     shuffle: shuffle,
-  //   });
-  // };
+  const handleGetQueue = async () => {
+    return await getQueue({
+      type: "album",
+      args: String(decodeURIComponent(params.id) || 0),
+
+      shuffle: shuffle,
+    });
+  };
+  //
+  const getDominantColor = async (img: string) => {
+    const colors = await analyze(`data:image/jpeg;base64,${img}`);
+    console.log(
+      "colors go brr",
+      colors ? colors[0].color : "rgba(255,255,255,1)",
+    );
+    return colors ? colors[0].color : "rgba(255,255,255,1)";
+  };
   const getBanner = async () => {
     const banner = await GetAlbumImage(decodeURIComponent(params.id));
     return banner.data.image;
@@ -86,85 +112,115 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     const fetchData = async function fetchData() {
       await getAudioFiles();
       await getAlbumInfo();
-      setBanner(await getBanner());
+      const img = await getBanner();
+      setBanner(img);
+      const dominant = await getDominantColor(img);
+      setComplementColor(() => getComplementaryColor(dominant));
+      setDominantColor(() => dominant);
     };
     fetchData();
   }, []);
   return (
-    <Box
-      display={"flex"}
-      justifyContent={"center"}
-      flex={1}
-      p={6}
-      overflowY="auto"
-    >
+    <Box display={"flex"} flex={1} p={6} overflowY="auto">
       <Box
         display={"flex"}
         flexDir={"column"}
         alignItems={"center"}
-        width={"80%"}
+        flex={1}
         gap={8}
       >
         <Box
           pos={"relative"}
-          width={"80%"}
-          height={"18rem"}
           bg={getNeutral("light", 800)}
-          borderRadius={"xl"}
+          borderTopRadius={"xl"}
           overflow={"hidden"}
+          width={"100%"}
         >
-          <Image
-            src={`data:image/jpeg;base64,${banner}`}
-            alt="Album Cover"
-            width="100%"
-            height="100%"
-            objectFit="cover"
-            objectPosition={"center"}
-            // onError={(e) => {
-            //   e.currentTarget.style.display = "none"; // hides the broken image entirely
-            // }}
-          />
           <Box
-            pos={"absolute"}
-            top={"0"}
-            left={"0"}
             h={"100%"}
             w={"100%"}
-            bg={"rgba(0,0,0,0.6)"}
-            p={"6"}
             textAlign={"left"}
+            bg={dominantColor}
+            display={"flex"}
+            alignItems={"center"}
+            p={6}
+            gap={5}
           >
+            <Box
+              width={"16rem"}
+              height={"16rem"}
+              border={"1px solid"}
+              borderColor={complementColor}
+              borderRadius={"lg"}
+              overflow={"hidden"}
+              zIndex={2}
+            >
+              <Image
+                src={`data:image/jpeg;base64,${banner}`}
+                alt="Album Cover"
+                height="100%"
+                width={"100%"}
+                objectFit="cover"
+                objectPosition={"center"}
+              />
+            </Box>
+
+            <Box
+              pos="absolute"
+              top={0}
+              left={0}
+              width="100%"
+              height="100%"
+              zIndex={1}
+              opacity={0.1}
+              whiteSpace="normal" // allow wrapping
+              overflowWrap="break-word" // break mid-word if necessary
+              wordBreak={"break-all"}
+              color={complementColor}
+            >
+              <Text
+                fontSize="5rem"
+                fontFamily="sans-serif"
+                fontStyle={"italic"}
+                fontWeight={700}
+                lineHeight={1} // optional: reduce spacing between lines
+              >
+                {(albumInfo.artist + " ").repeat(100)}
+              </Text>
+            </Box>
+
             <Box
               display={"flex"}
               flexDir={"column"}
               justifyContent={"space-between"}
-              height={"100%"}
-              color={getNeutral("light", 700)}
+              height={"90%"}
+              width={"100%"}
+              color={complementColor}
+              zIndex={2}
+              fontFamily={"sans-serif"}
             >
               <Box>
-                <Text fontSize="2xl" fontWeight="600" lineHeight="short">
+                <Text fontSize="3xl" fontWeight={"bolder"} lineHeight="short">
                   {albumInfo.album}
                 </Text>
 
-                <Text
-                  fontSize="xl"
-                  fontWeight="medium"
-                  color={getNeutral("light", 600)}
-                >
+                <Text fontSize="2xl" fontWeight="semibold" opacity={0.8}>
                   By {albumInfo.artist}
                 </Text>
               </Box>
               <Box>
-                <Text fontSize="lg">{albumInfo.songs} Songs</Text>
-                <Text fontSize="md" color={getNeutral("light", 600)}>
+                <Text fontSize="2xl" fontWeight={"semibold"} opacity={0.8}>
+                  {albumInfo.songs} Songs
+                </Text>
+                <Text fontSize="xl" fontWeight={"medium"}>
                   {toHMS(Number(albumInfo.duration))}
                 </Text>
               </Box>
             </Box>
           </Box>
         </Box>
-        <Box flex={1} minH={0} overflow={"auto"} width={"80%"}>
-          {audioFiles.map((item, idx) => (
+        <Box flex={1} minH={0} width={"100%"} overflow={"auto"}>
+          {/*{audioFiles.map((item, idx) => (
             <Grid
               alignItems={"center"}
               templateColumns="repeat(24, 1fr)"
@@ -221,7 +277,8 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
                 ...
               </GridItem>
             </Grid>
-          ))}
+          ))}*/}
+          <MusicList handleGetQueue={handleGetQueue} />
         </Box>
       </Box>
     </Box>
