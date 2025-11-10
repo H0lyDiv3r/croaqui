@@ -109,17 +109,28 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    const fetchData = async function fetchData() {
+    const fetchData = async () => {
       await getAudioFiles();
       await getAlbumInfo();
       const img = await getBanner();
       setBanner(img);
-      const dominant = await getDominantColor(img);
+      return img;
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const getColors = async () => {
+      const dominant = await getDominantColor(banner);
       setComplementColor(() => getComplementaryColor(dominant));
       setDominantColor(() => dominant);
     };
-    fetchData();
-  }, []);
+
+    if (banner) {
+      getColors();
+    }
+  }, [banner]);
   return (
     <Box display={"flex"} flex={1} p={6} overflowY="auto">
       <Box
