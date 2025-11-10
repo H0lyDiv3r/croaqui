@@ -68,10 +68,10 @@ const Controls: React.FC = () => {
     if (!paused && loaded) {
       handleTimeline();
     }
+    return () => {
+      if (time.current) clearInterval(time.current);
+    };
   }, [playbackRate, paused, loaded]);
-  // useEffect(() => {
-  //   handleTimeline();
-  // }, [loaded]);
 
   const loopVals = [TbRepeatOff, TbRepeat, TbRepeatOnce];
 
