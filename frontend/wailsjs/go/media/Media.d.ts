@@ -23,4 +23,6 @@ export function GetStandardDirs():Promise<media.ReturnType>;
 
 export function ScanForAudio(arg1:string):Promise<void>;
 
+export function SearchAudio(arg1:string,arg2:Array<string>):Promise<media.ReturnType>;
+
 export function StartUp(arg1:context.Context):Promise<void>;

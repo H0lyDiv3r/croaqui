@@ -42,6 +42,10 @@ export function ScanForAudio(arg1) {
   return window['go']['media']['Media']['ScanForAudio'](arg1);
 }
 
+export function SearchAudio(arg1, arg2) {
+  return window['go']['media']['Media']['SearchAudio'](arg1, arg2);
+}
+
 export function StartUp(arg1) {
   return window['go']['media']['Media']['StartUp'](arg1);
 }

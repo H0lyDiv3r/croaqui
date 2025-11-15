@@ -67,6 +67,7 @@ function App() {
       ) : (
         <>
           <WindowBar />
+
           <NavBar />
           <Switch>
             <Box display={"flex"} flex={1} minH={0}>
