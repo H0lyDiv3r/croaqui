@@ -13,18 +13,19 @@ import (
 )
 
 // getAudio
+type audio struct {
+	Id         int    `json:"id"`
+	Name       string `json:"name"`
+	Path       string `json:"path"`
+	Title      string `json:"title"`
+	Artist     string `json:"artist"`
+	Album      string `json:"album"`
+	Duration   string `json:"duration"`
+	ParentPath string `json:"parentPath"`
+	Genre      string `json:"genre"`
+}
+
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
-	type audio struct {
-		Id         int    `json:"id"`
-		Name       string `json:"name"`
-		Path       string `json:"path"`
-		Title      string `json:"title"`
-		Artist     string `json:"artist"`
-		Album      string `json:"album"`
-		Duration   string `json:"duration"`
-		ParentPath string `json:"parentPath"`
-		Genre      string `json:"genre"`
-	}
 
 	var result = []audio{}
 
@@ -89,6 +90,39 @@ func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 		Files   []audio `json:"files"`
 		HasMore bool    `json:"hasMore"`
 	}{Files: result, HasMore: offset+filterSettings.Limit < int(count)}}, nil
+}
+
+func (m *Media) SearchAudio(phrase string, fields []string) *ReturnType {
+
+	var result = []audio{}
+	queryString := `SELECT m.*,mm.*, m.name AS name, m.path AS path, mm.title AS title, mm.artist AS artist, mm.album AS album FROM music_files m LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id `
+
+	if len(fields) > 0 {
+		queryString += " WHERE "
+		for i, item := range fields {
+
+			if i > 0 {
+				queryString += "OR "
+			}
+			queryString += fmt.Sprintf("%s LIKE ? ", item)
+		}
+	}
+
+	params := make([]interface{}, len(fields))
+
+	for i, _ := range fields {
+		params[i] = "%" + phrase + "%"
+	}
+
+	db.DBInstance.Instance.Raw(queryString, params...).Scan(&result)
+
+	return &ReturnType{
+		Data: struct {
+			Songs []audio `json:"songs"`
+		}{
+			Songs: result,
+		},
+	}
 }
 
 // writeAudio
