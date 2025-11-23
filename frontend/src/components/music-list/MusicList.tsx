@@ -236,6 +236,7 @@ export const MusicList = ({
                       },
                     }}
                     onClick={() => {
+                      console.log("imheremayn", audioFiles[index]);
                       handleLoadAudio(audioFiles[index]);
                     }}
                   >

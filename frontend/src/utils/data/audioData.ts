@@ -22,6 +22,7 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
     return [];
   }
 
+  console.log("why are we here", response);
   useQueryStore.setState((state) => ({
     ...state,
     hasMore: response.data.hasMore,

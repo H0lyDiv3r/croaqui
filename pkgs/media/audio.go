@@ -8,6 +8,7 @@ import (
 	"log"
 	"myproject/pkgs/db"
 	customErr "myproject/pkgs/error"
+	"myproject/pkgs/playlist"
 	"path/filepath"
 	"strings"
 )
@@ -23,6 +24,7 @@ type audio struct {
 	Duration   string `json:"duration"`
 	ParentPath string `json:"parentPath"`
 	Genre      string `json:"genre"`
+	Favorite   bool   `json:"favorite"`
 }
 
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
@@ -47,7 +49,13 @@ func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 	if err != nil {
 		return nil, err
 	}
-	query := db.DBInstance.Instance.Model(&db.MusicFile{}).Select("*").Joins(`LEFT JOIN music_meta_data mm ON music_files.meta_data_id = mm.id`)
+	query := db.DBInstance.Instance.Table("music_files m").
+		Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id").
+		Joins("LEFT JOIN playlist_musics pm ON pm.music_id = m.id").
+		Joins("LEFT JOIN playlists p ON p.id = pm.playlist_id").
+		Select("m.id, m.name, m.path, mm.title, mm.artist, mm.album, mm.duration,  mm.genre, "+
+			"MAX(CASE WHEN p.name = ? THEN TRUE ELSE FALSE END) AS favorite", playlist.FAVORITES).
+		Group("m.id, m.name, m.path, mm.title, mm.artist, mm.album, mm.duration,  mm.genre")
 
 	if filterSettings.Path != "" {
 		query = query.Where(`path LIKE ?`, filterSettings.Path+"%")
@@ -85,6 +93,8 @@ func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 	}
 
 	query.Scan(&result)
+
+	fmt.Println("hey there boss", result)
 
 	return &ReturnType{Data: struct {
 		Files   []audio `json:"files"`

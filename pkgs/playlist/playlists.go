@@ -18,6 +18,8 @@ type ReturnType struct {
 	Data interface{} `json:"data"`
 }
 
+var FAVORITES = "favorites"
+
 type song struct {
 	// Id       int    `json:"id"`
 	Pname    string `json:"pname"`
@@ -51,9 +53,7 @@ func NewPlaylist() *Playlist {
 }
 func (p *Playlist) StartUp(ctx context.Context) {
 	p.ctx = ctx
-	p.GetPlaylist(4)
-	// p.AddToPlaylist(2, 27)
-	p.DeletePlaylist(4)
+	p.CreatePlaylist(FAVORITES)
 }
 
 // read all playlists
@@ -67,6 +67,45 @@ func (p *Playlist) GetPlaylists() *ReturnType {
 	return &ReturnType{Data: struct {
 		Playlists []playlist `json:"playlists"`
 	}{Playlists: playlists}}
+}
+
+// add to favorites
+func (p *Playlist) AddToFavorites(musicId uint) (*ReturnType, error) {
+	var favId int
+
+	db.DBInstance.Instance.Raw(`
+		SELECT id FROM playlists WHERE name = ?
+		`, FAVORITES).Scan(&favId)
+
+	var exists int
+	db.DBInstance.Instance.Raw(`
+		SELECT EXISTS(SELECT 1 FROM playlist_musics WHERE playlist_id = ? AND music_id = ?)
+		`, favId, musicId).Scan(&exists)
+
+	if exists == 1 {
+		p.Emit("music is already in favorites")
+		return nil, nil
+	}
+
+	fmt.Println("showing the title", favId)
+	return p.AddToPlaylist(musicId, uint(favId))
+}
+
+func (p *Playlist) RemoveFromFavorites(musicId uint) (*ReturnType, error) {
+	var favId int
+	var mid int
+
+	db.DBInstance.Instance.Raw(`
+		SELECT id FROM playlists WHERE name = ?
+		`, FAVORITES).Scan(&favId)
+
+	db.DBInstance.Instance.Raw(`
+		SELECT pm.id FROM playlist_musics pm
+		WHERE pm.playlist_id = ? AND pm.music_id = ?
+		`, favId, musicId).Scan(&mid)
+
+	fmt.Println("showing the title", favId, mid)
+	return p.RemoveFromPlaylist(musicId, uint(favId), uint(mid))
 }
 
 // add to playlist
@@ -157,6 +196,7 @@ func (p *Playlist) RemoveFromPlaylist(musicId, playlistId, id uint) (*ReturnType
 
 // create playlist
 func (p *Playlist) CreatePlaylist(name string) (*ReturnType, error) {
+	var found int
 	if name == "" {
 		emitter := customErr.New("db_error", "name cannot be empty")
 		emitter.Emit(p.ctx)
@@ -166,6 +206,19 @@ func (p *Playlist) CreatePlaylist(name string) (*ReturnType, error) {
 	pl := db.Playlist{
 		Name: name,
 	}
+
+	db.DBInstance.Instance.Raw(`
+		SELECT EXISTS(SELECT 1 FROM playlists pl
+		WHERE pl.name = ?)`, name).Scan(&found)
+
+	fmt.Println("found a playlist", found, name)
+
+	if found == 1 {
+		emitter := customErr.New("db_error", "playlist already exists")
+		emitter.Emit(p.ctx)
+		return nil, errors.New("playlist already exists")
+	}
+
 	result := db.DBInstance.Instance.Create(&pl)
 	if result.Error != nil {
 		log.Print("Error creating playlist:", result.Error)
@@ -208,6 +261,15 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 	}
 	var playlistData playlist
 	db.DBInstance.Instance.Raw(`
+		SELECT COUNT(DISTINCT mm.album) AS albums, COUNT(DISTINCT mm.artist) AS artists, COUNT(m.id) AS songs, SUM(mm.duration) AS duration, p.name as title FROM playlists p
+		LEFT JOIN playlist_musics pm ON p.id = pm.playlist_id
+		LEFT JOIN music_files m ON pm.music_id = m.id
+		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
+		WHERE p.id = ?
+		AND pm.deleted_at IS NULL
+		AND p.deleted_at IS NULL
+		`, id).Scan(&playlistData.Counts)
+	db.DBInstance.Instance.Raw(`
 		SELECT pm.playlist_id,pm.music_id,p.name as pname,pm.id AS ipl,m.id , m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre FROM playlist_musics pm
 		LEFT JOIN playlists p ON pm.playlist_id = p.id
 		LEFT JOIN music_files m ON pm.music_id = m.id
@@ -216,14 +278,7 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 		AND pm.deleted_at IS NULL
 		`, id).Scan(&playlistData.Songs)
 
-	db.DBInstance.Instance.Raw(`
-		SELECT COUNT(DISTINCT mm.album) AS albums, COUNT(DISTINCT mm.artist) AS artists, COUNT(m.id) AS songs, SUM(mm.duration) AS duration, p.name AS title FROM playlist_musics pm
-		LEFT JOIN playlists p ON pm.playlist_id = p.id
-		LEFT JOIN music_files m ON pm.music_id = m.id
-		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
-		WHERE p.id = ?
-		AND pm.deleted_at IS NULL
-		`, id).Scan(&playlistData.Counts)
+	fmt.Println("showing playlist data", playlistData.Counts, id)
 
 	return &ReturnType{Data: struct {
 		Playlist playlist `json:"playlist"`
@@ -232,6 +287,25 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 
 // delete playlist
 func (p *Playlist) DeletePlaylist(id uint) (*ReturnType, error) {
+
+	var found *db.Playlist
+	db.DBInstance.Instance.Raw(`
+		SELECT * FROM playlists pl
+		WHERE pl.id = ?
+		AND pl.deleted_at IS NULL
+		`, id).Scan(&found)
+
+	if found == nil {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to delete playlist. id %d is not found", id).Error())
+		emitter.Emit(p.ctx)
+		return nil, fmt.Errorf("failed to delete playlist. id %d is not found", id)
+	}
+
+	if found.Name == FAVORITES {
+		emitter := customErr.New("db_error", fmt.Errorf("failed to delete playlist. cant delete favorites").Error())
+		emitter.Emit(p.ctx)
+		return nil, fmt.Errorf("failed to delete playlist. cant delete favorites")
+	}
 
 	result := db.DBInstance.Instance.Delete(&db.Playlist{}, id)
 	if result.Error != nil {

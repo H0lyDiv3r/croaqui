@@ -5,6 +5,8 @@ import {
   AddToPlaylist,
   RemoveFromPlaylist,
   DeletePlaylist,
+  AddToFavorites,
+  RemoveFromFavorites,
 } from "../../../wailsjs/go/playlist/Playlist";
 
 export const getPlaylists = async () => {
@@ -33,6 +35,21 @@ export const createPlaylist = async (name: string) => {
 
 export const addToPlaylist = async (songId: number, playlistId: number) => {
   const playlist = await AddToPlaylist(songId, playlistId);
+  if (!playlist) {
+    return null;
+  }
+};
+
+export const addToFavorites = async (songId: number) => {
+  console.log("showing song id", songId);
+  const playlist = await AddToFavorites(songId);
+  if (!playlist) {
+    return null;
+  }
+};
+
+export const removeFromFavorites = async (songId: number) => {
+  const playlist = await RemoveFromFavorites(songId);
   if (!playlist) {
     return null;
   }

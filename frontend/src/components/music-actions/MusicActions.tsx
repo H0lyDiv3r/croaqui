@@ -1,7 +1,12 @@
 import { Box, Menu, Portal, Text } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { ChakraIcon } from "../ChackraIcon";
-import { addToPlaylist, getNeutral, getPlaylists } from "@/utils";
+import {
+  addToFavorites,
+  addToPlaylist,
+  getNeutral,
+  getPlaylists,
+} from "@/utils";
 import { useEffect, useState } from "react";
 
 const MenuTrigger: any = Menu.Trigger;
@@ -28,7 +33,15 @@ export const PlaylistsMenu = ({
         lazyMount
         positioning={{ placement: "left-start", gutter: 18 }}
         onSelect={(value: any) => {
-          addToPlaylist(songId, Number(value["value"]));
+          const vals = JSON.parse(value["value"]);
+
+          if (vals.name === "favorites") {
+            // Handle creating a new playlist
+            addToFavorites(songId);
+          } else {
+            addToPlaylist(songId, Number(vals.id));
+          }
+          console.log("is this favs", JSON.parse(value["value"]));
           handleClose();
         }}
       >
@@ -67,7 +80,10 @@ export const PlaylistsMenu = ({
                   playlists.map((playlist: { id: string; name: string }) => {
                     return (
                       <MenuItem
-                        value={playlist.id}
+                        value={JSON.stringify({
+                          id: playlist.id,
+                          name: playlist.name,
+                        })}
                         key={playlist.id}
                         fontSize={"sm"}
                         p={2}

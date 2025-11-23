@@ -3,6 +3,8 @@
 import {playlist} from '../models';
 import {context} from '../models';
 
+export function AddToFavorites(arg1:number):Promise<playlist.ReturnType>;
+
 export function AddToPlaylist(arg1:number,arg2:number):Promise<playlist.ReturnType>;
 
 export function CreatePlaylist(arg1:string):Promise<playlist.ReturnType>;
@@ -14,6 +16,8 @@ export function Emit(arg1:string):Promise<void>;
 export function GetPlaylist(arg1:number):Promise<playlist.ReturnType>;
 
 export function GetPlaylists():Promise<playlist.ReturnType>;
+
+export function RemoveFromFavorites(arg1:number):Promise<playlist.ReturnType>;
 
 export function RemoveFromPlaylist(arg1:number,arg2:number,arg3:number):Promise<playlist.ReturnType>;
 
