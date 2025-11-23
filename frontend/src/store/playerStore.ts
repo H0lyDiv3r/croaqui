@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type currentTrack = {
+  id: number | null;
   image: string | null;
   artist: string;
   comment: string;
@@ -8,6 +9,7 @@ type currentTrack = {
   description: string;
   title: string;
   path: string;
+  favorite: boolean;
 };
 interface playerStore {
   audioPath: string;
@@ -43,6 +45,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
   muted: false,
   speed: 1,
   currentTrack: {
+    id: null,
     image: null,
     artist: "",
     comment: "",
@@ -50,6 +53,7 @@ export const usePlayerStore = create<playerStore>((set) => ({
     description: "",
     title: "",
     path: "",
+    favorite: false,
   },
   setAudioPath: (audioPath: string) =>
     set((state) => {
@@ -61,12 +65,14 @@ export const usePlayerStore = create<playerStore>((set) => ({
         ...state,
         currentTrack: {
           ...state.currentTrack,
+          id: trackInfo.id || null,
           artist: trackInfo.artist || "",
           comment: trackInfo.comment || "",
           date: trackInfo.date || "",
           description: trackInfo.description || "",
           title: trackInfo.title || "",
           path: trackInfo.path || "",
+          favorite: trackInfo.favorite || "",
         },
       };
     }),

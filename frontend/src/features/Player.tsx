@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, { useRef, useContext, memo } from "react";
+import React, { useRef, useContext, memo, useLayoutEffect } from "react";
 import "./player.css";
 import { Box, Icon, Image, Menu, Portal, Text } from "@chakra-ui/react";
 
@@ -16,11 +16,11 @@ import TimeLine from "@/components/controls/TimeLine";
 import { usePlayerStore, useSidebarDisclosure } from "@/store";
 import { ChakraIcon } from "@/components/ChackraIcon";
 
-import { getNeutral } from "@/utils";
+import { addToFavorites, getNeutral, removeFromFavorites } from "@/utils";
 import { useScreenSize } from "@/hooks";
 import { FaGear } from "react-icons/fa6";
 const Player: React.FC = () => {
-  const [favorite, setFavorite] = useState(true);
+  const [favorite, setFavorite] = useState(false);
   const { isMedium, isSmall, isLarge } = useScreenSize();
   const switchSide = useSidebarDisclosure((state) => state.switch);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
@@ -37,6 +37,10 @@ const Player: React.FC = () => {
       rightBarOpen: target,
     }));
   };
+
+  useLayoutEffect(() => {
+    setFavorite(currentTrack.favorite);
+  }, [currentTrack]);
   return (
     <Box
       bgImage={"./musicLiner.svg"}
@@ -120,13 +124,16 @@ const Player: React.FC = () => {
             </Box>
             <Box display={"flex"}>
               <ChakraIcon
-                // onClick={handleSetFavorite}
+                onClick={() => {
+                  setFavorite((prev) => !prev);
+                  if (favorite) {
+                    removeFromFavorites(currentTrack.id);
+                  } else {
+                    addToFavorites(currentTrack.id);
+                  }
+                }}
                 icon={favorite ? TbHeartFilled : TbHeart}
                 boxSize={4}
-                color={favorite ? "secondary.500" : getNeutral("light", 500)}
-                _dark={{
-                  color: favorite ? "secondary.500" : getNeutral("dark", 500),
-                }}
               />
             </Box>
           </Box>

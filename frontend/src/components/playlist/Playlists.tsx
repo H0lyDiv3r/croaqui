@@ -78,24 +78,21 @@ export const Playlists = () => {
                   <ChakraIcon icon={BsFillCassetteFill}></ChakraIcon>
                   <Text overflow={"hidden"}>{playlist.name}</Text>
                 </Box>
-                <Box
-                  as="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeletePlaylist(Number(playlist.id));
-                  }}
-                  _hover={{
-                    cursor: "pointer",
-                    bg: getNeutral("light", 900),
-                    _dark: {
-                      bg: getNeutral("dark", 900),
-                    },
-                  }}
-                  borderRadius={"sm"}
-                  p={2}
-                >
-                  <ChakraIcon icon={BsFillTrashFill} />
-                </Box>
+                {playlist.name != "favorites" ? (
+                  <Box
+                    as="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeletePlaylist(Number(playlist.id));
+                    }}
+                    _hover={{
+                      cursor: "pointer",
+                    }}
+                    borderRadius={"sm"}
+                  >
+                    <ChakraIcon icon={BsFillTrashFill} />
+                  </Box>
+                ) : null}
               </Box>
             ),
           )}
