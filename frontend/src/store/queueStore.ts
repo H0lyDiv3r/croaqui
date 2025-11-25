@@ -7,7 +7,7 @@ type QueueStore = {
   setPlayingIndex: (index: number) => void;
   shuffle: boolean;
   toggleShuffle: () => void;
-  loop: number;
+  loop: number; //0 noloop, 1 loop, 2 repeat
   setLoop: () => void;
 };
 

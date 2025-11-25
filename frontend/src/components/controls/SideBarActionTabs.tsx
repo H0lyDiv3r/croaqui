@@ -1,5 +1,5 @@
 import { TabListItem } from "@/types";
-import { getNeutral } from "@/utils";
+import { getBrandWithAlpha, getNeutral } from "@/utils";
 import { Box, Field, Input, Tabs, Text, useDisclosure } from "@chakra-ui/react";
 import { ChakraIcon } from "../ChackraIcon";
 import { RiExpandLeftFill } from "react-icons/ri";
@@ -76,17 +76,28 @@ export const SideBarActionTabs = ({
             <TabsTrigger
               key={tab.value}
               value={tab.value}
+              bg={
+                tabs.value === tab.value
+                  ? getBrandWithAlpha(400, 0.3)
+                  : "transparent"
+              }
               color={
                 tabs.value === tab.value
                   ? "brand.700"
                   : getNeutral("light", 500)
               }
+              _dark={{
+                color:
+                  tabs.value === tab.value
+                    ? getBrandWithAlpha(100, 1)
+                    : getNeutral("dark", 200),
+              }}
             >
               {tab.icon && <ChakraIcon icon={tab.icon} />}
               {tab.label}
             </TabsTrigger>
           ))}
-          <TabsIndicator rounded="l2" bg={"brand.300"} />
+          {/*<TabsIndicator rounded="l2" bg={"brand.300"} />*/}
         </TabsList>
         <Box
           bg={getNeutral("light", 800)}

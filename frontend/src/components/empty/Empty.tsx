@@ -3,6 +3,7 @@ import { Box, EmptyState, Text, VStack } from "@chakra-ui/react";
 import { TbPlaylistOff } from "react-icons/tb";
 import { BsFolder2Open } from "react-icons/bs";
 import { MdMusicOff } from "react-icons/md";
+import { Track } from "@chakra-ui/react/dist/types/components/progress/namespace";
 
 const EmptyPlaylist = () => {
   return (
@@ -83,8 +84,36 @@ const EmptyMusic = () => {
     </Box>
   );
 };
+
+const EmptyTrack = () => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height="100%"
+    >
+      <EmptyState.Root size="md">
+        <EmptyState.Content>
+          <EmptyState.Indicator>
+            <MdMusicOff />
+          </EmptyState.Indicator>
+          <VStack textAlign="center">
+            <EmptyState.Title>Get the party started!!</EmptyState.Title>
+            <EmptyState.Description whiteSpace={"break-spaces"}>
+              you dont have music playing.
+            </EmptyState.Description>
+          </VStack>
+        </EmptyState.Content>
+      </EmptyState.Root>
+    </Box>
+  );
+};
+
 export const Empty = {
   Playlist: EmptyPlaylist,
   Directory: EmptyDirectory,
   Music: EmptyMusic,
+  Track: EmptyTrack,
 };
