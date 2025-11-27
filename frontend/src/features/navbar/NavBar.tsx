@@ -87,16 +87,10 @@ const NavMenu = () => {
               color={getNeutral("light", 300)}
             >
               <Menu.Item>
-                <Link>Home</Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link href="/library">Library</Link>
+                <Link href="/">Library</Link>
               </Menu.Item>
               <Menu.Item>
                 <Link href="/albums">Albums</Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link href="/artists">Artists</Link>
               </Menu.Item>
             </Menu.Content>
           </Menu.Positioner>
