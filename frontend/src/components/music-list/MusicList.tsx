@@ -27,7 +27,7 @@ const List: any = FixedSizeList;
 export const MusicList = ({
   handleGetQueue,
 }: {
-  handleGetQueue: () => Promise<any>;
+  handleGetQueue: (song?: { [key: string]: any }) => Promise<any>;
 }) => {
   const audioFiles = useDataStore((state) => state.musicFiles);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -84,7 +84,7 @@ export const MusicList = ({
   const handleLoadAudio = async (item: any) => {
     setPlayingIndex(0);
     await loadAudio(item);
-    const queue = await handleGetQueue();
+    const queue = await handleGetQueue(item);
     setQueue(queue);
   };
   // const loadAudio = (item: any) => {
@@ -142,7 +142,7 @@ export const MusicList = ({
   //   });
   // }, []);
   return (
-    <Box height={"100%"}>
+    <Box height={"100%"} px={8}>
       <Box
         display={"flex"}
         flexDirection={"column"}

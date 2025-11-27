@@ -13,6 +13,7 @@ import { getNeutral } from "@/utils";
 import { QueryParams, useDataStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
 import { Empty } from "../empty";
+import { useLocation } from "wouter";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);
@@ -21,6 +22,7 @@ export const DirTree = () => {
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);
   const setMusicListPath = useDataStore((state) => state.setMusicListPath);
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
+  const [_, setLocation] = useLocation();
   const getDir = () => {
     GetDirs(currentPath)
       .then((res) => {
@@ -69,6 +71,7 @@ export const DirTree = () => {
                 }}
                 key={dir.id}
                 onClick={() => {
+                  setLocation("/");
                   GetDirs(dir.path).then((res) => {
                     if (res.data.dirs) {
                       setCurrentPath(dir.path);

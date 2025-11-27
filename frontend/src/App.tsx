@@ -5,20 +5,26 @@ import { getNeutral } from "./utils";
 import { useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch } from "wouter";
-import { AlbumDetail, Albums, Library } from "./pages";
+import { Library } from "./pages";
 import { useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
 import { WindowBar } from "./components/WindowBar";
-import { useGeneralStore } from "./store";
+import { useDataStore, useGeneralStore, useQueueStore } from "./store";
 import { ChakraIcon } from "./components/ChackraIcon";
 import { BsGripVertical } from "react-icons/bs";
 import { MiniPlayer } from "./features/miniPlayer";
 import { AlbumsLayout } from "./pages/albums/AlbumsLayout";
+import { SearchResults } from "./pages/searchResults";
+import { SidebarNavigator } from "./features/sidebar-navigator";
+import { QueueBar } from "./features/queue-bar";
 
 function App() {
   const { showToast } = useShowToast();
 
   const miniPlayerOpen = useGeneralStore((state) => state.miniPlayerOpen);
+  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
+  const musicListPath = useDataStore((state) => state.musicListPath);
+  const shuffle = useQueueStore((state) => state.shuffle);
 
   useLayoutEffect(() => {
     EventsOn("toast:err", (err) => {
@@ -71,7 +77,30 @@ function App() {
           <NavBar />
           <Switch>
             <Box display={"flex"} flex={1} minH={0}>
-              <Route path="/library" component={Library} />
+              <Box display={"flex"} height={"100%"} flex={1}>
+                <Box
+                  // bg={getNeutral("light", 800)}
+                  // _dark={{ bg: getNeutral("dark", 800) }}
+                  height={"100%"}
+                >
+                  <SidebarNavigator />
+                </Box>
+                <Box flex={1} height={"100%"}>
+                  <Route path="/" component={Library} />
+                  <Route path="/search-results" component={SearchResults} />
+                </Box>
+                <Box height={"100%"}>
+                  <QueueBar
+                    queueInfo={{
+                      type: currentPlaylist ? "playlist" : "dir",
+                      args: currentPlaylist
+                        ? String(currentPlaylist || 0)
+                        : musicListPath,
+                      shuffle: shuffle,
+                    }}
+                  />
+                </Box>
+              </Box>
               <Route path="/albums" nest>
                 <AlbumsLayout />
               </Route>

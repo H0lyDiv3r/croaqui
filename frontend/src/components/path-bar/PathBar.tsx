@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
 import { useDataStore } from "@/store";
+import { useLocation } from "wouter";
 
 export const PathBar = ({
   currentPath,
@@ -14,6 +15,7 @@ export const PathBar = ({
   setCurrentPath: (path: string) => void;
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [_, setLocation] = useLocation();
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (!scrollRef.current) return;
@@ -77,6 +79,7 @@ export const PathBar = ({
               key={index}
               onClick={(e) => {
                 e.stopPropagation();
+                setLocation("/");
                 setCurrentPath(
                   currentPath
                     .split("/")

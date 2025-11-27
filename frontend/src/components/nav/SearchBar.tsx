@@ -10,10 +10,12 @@ import { BiNote, BiText, BiUser } from "react-icons/bi";
 import { MdTitle } from "react-icons/md";
 import { PiPath } from "react-icons/pi";
 import { BsMusicNote } from "react-icons/bs";
+import { useLocation } from "wouter";
 
 export const SearchBar = () => {
   const [phrase, setPhrase] = useState<string>("");
   const [focused, setFocused] = useState(false);
+  const [_, setLocation] = useLocation();
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const searchRef = useRef<HTMLInputElement>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -28,6 +30,7 @@ export const SearchBar = () => {
   const handleSubmit = async (e: React.FormEvent | Event) => {
     e.preventDefault();
     console.log("going to submit now", phrase);
+    setLocation("/search-results");
     const res = await handleSearch(phrase, activeFilters);
     setAudioFiles(res);
   };

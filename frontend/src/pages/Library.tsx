@@ -11,28 +11,8 @@ export const Library = () => {
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
   return (
-    <Box display={"flex"} height={"100%"} width={"100%"}>
-      <Box
-        // bg={getNeutral("light", 800)}
-        // _dark={{ bg: getNeutral("dark", 800) }}
-        height={"100%"}
-      >
-        <SidebarNavigator />
-      </Box>
-      <Box flex={1} height={"100%"}>
-        {currentPlaylist ? <PlaylistDetail /> : <DirectoryDetail />}
-      </Box>
-      <Box height={"100%"}>
-        <QueueBar
-          queueInfo={{
-            type: currentPlaylist ? "playlist" : "dir",
-            args: currentPlaylist
-              ? String(currentPlaylist || 0)
-              : musicListPath,
-            shuffle: shuffle,
-          }}
-        />
-      </Box>
+    <Box height={"100%"}>
+      {currentPlaylist ? <PlaylistDetail /> : <DirectoryDetail />}
     </Box>
   );
 };
