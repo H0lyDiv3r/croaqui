@@ -26,6 +26,8 @@ import {
 import { BiVolume } from "react-icons/bi";
 import { TbVolume, TbVolumeOff } from "react-icons/tb";
 import { IoSpeedometer, IoSpeedometerOutline } from "react-icons/io5";
+import VolumeControl from "@/components/controls/VolumeControl";
+import PlaybackRateControl from "@/components/controls/PlaybackRateControl";
 
 export const MiniPlayer = () => {
   const plref = useRef<HTMLElement>(null);
@@ -218,7 +220,9 @@ export const MiniPlayer = () => {
                   borderColor={getNeutral("light", 600)}
                   color={getNeutral("light", 300)}
                 >
-                  <VolumeMenu />
+                  {/*<VolumeMenu />*/}
+                  <VolumeControl small={true} orientation="horizontal" />
+                  <PlaybackRateControl small={true} />
                 </Box>
               </Box>
             </Box>

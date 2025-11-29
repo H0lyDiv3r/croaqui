@@ -151,22 +151,20 @@ const Player: React.FC = () => {
         </Box>
 
         {/* right */}
-        {isMedium || isSmall ? (
-          <PlayerSettings />
-        ) : (
-          <Box
-            width={"30%"}
-            height={"100%"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"flex-end"}
-            px={"6px"}
-            overflow={"hidden"}
-          >
-            <PlaybackRateControl />
-            <VolumeControl />
-          </Box>
-        )}
+
+        <Box
+          width={"30%"}
+          height={"100%"}
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          px={"6px"}
+          overflow={"hidden"}
+          gap={2}
+        >
+          <PlaybackRateControl small={false} />
+          <VolumeControl small={isMedium || isSmall} />
+        </Box>
       </Box>
     </Box>
   );
