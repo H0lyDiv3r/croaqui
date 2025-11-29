@@ -1,20 +1,33 @@
-import { Box, Icon, Input, Text } from "@chakra-ui/react";
-import React, { forwardRef, memo, useContext } from "react";
-import { FaVolumeLow, FaVolumeXmark } from "react-icons/fa6";
-import "./volume.css";
+import { Box, Menu, Portal, Slider, Text } from "@chakra-ui/react";
+import React from "react";
 import { SetVolume, ToggleMute } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
 import { getNeutral } from "@/utils";
+import { TbVolume, TbVolumeOff } from "react-icons/tb";
+import { IoVolumeHigh } from "react-icons/io5";
 
-const VolumeControl: React.FC = () => {
+const SliderControl: any = Slider.Control;
+const SliderTrack: any = Slider.Track;
+const SliderThumb: any = Slider.Thumb;
+const SliderRange: any = Slider.Range;
+const MenuTrigger: any = Menu.Trigger;
+const MenuPositioner: any = Menu.Positioner;
+const MenuContent: any = Menu.Content;
+const VolumeControl = ({
+  small = false,
+  orientation = "vertical",
+}: {
+  small?: boolean;
+  orientation?: "vertical" | "horizontal";
+}) => {
   const setVolumeState = usePlayerStore((state) => state.setVolume);
   const toggleMute = usePlayerStore((state) => state.toggleMute);
   const muted = usePlayerStore((state) => state.muted);
   const volume = usePlayerStore((state) => state.volume);
   const { handleVolume, handleMute } = {
-    handleVolume: (e: React.ChangeEvent<HTMLInputElement>) => {
-      SetVolume(Number(e.target.value)).then((res) => {
+    handleVolume: (value: any) => {
+      SetVolume(Math.min(Number(value), 100)).then((res) => {
         setVolumeState(res.data.volume);
       });
     },
@@ -24,41 +37,159 @@ const VolumeControl: React.FC = () => {
       });
     },
   };
+  const handleScroll = (e: any) => {
+    const sign = e.deltaY / Math.abs(e.deltaY);
+    handleVolume(volume - sign * 5);
+  };
+  const volumeColor = [
+    "red ",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "indigo",
+    "violet",
+  ];
   return (
-    <Box
-      display={"flex"}
-      alignItems={"center"}
-      color={getNeutral("light", 200)}
-      _dark={{ color: getNeutral("dark", 200) }}
+    <>
+      {small ? (
+        <Box onWheel={(e) => handleScroll(e)}>
+          <Menu.Root
+            lazyMount
+            positioning={{ placement: "top", gutter: 5 }}
+            _dark={{
+              color: getNeutral("dark", 200),
+            }}
+          >
+            <MenuTrigger
+              border={"none"}
+              bg={"none"}
+              _hover={{ cursor: "pointer" }}
+              textAlign={"center"}
+              width="100%"
+              height="100%"
+              _focus={{
+                outline: "none",
+              }}
+            >
+              <ChakraIcon
+                icon={TbVolume}
+                boxSize={5}
+                // onClick={() => {
+                //   handleMute();
+                // }}
+                color={`hsla(${Math.min(70, 120 - volume)}, 60%, 50%, ${Math.max(0.1, volume / 100)})`}
+                // _dark={{
+                //   color: getNeutral("dark", 300),
+                // }}
+              />
+            </MenuTrigger>
+            <Portal>
+              <MenuPositioner>
+                <MenuContent
+                  minWidth={"40px"}
+                  bg={getNeutral("light", 800)}
+                  _dark={{
+                    bg: getNeutral("dark", 800),
+                    borderColor: getNeutral("dark", 600),
+                  }}
+                  border={"1px solid"}
+                  borderColor={getNeutral("light", 600)}
+                  pt={2}
+                >
+                  <Box display="flex" gap={1}>
+                    <ChakraIcon
+                      icon={muted ? TbVolumeOff : TbVolume}
+                      boxSize={5}
+                      onClick={() => {
+                        handleMute();
+                      }}
+                      color={getNeutral("light", 300)}
+                      _dark={{
+                        color: getNeutral("dark", 300),
+                      }}
+                    />
+                    <VolumeSlider
+                      volume={volume}
+                      handleVolume={handleVolume}
+                      orientation={orientation}
+                    />
+                  </Box>
+                </MenuContent>
+              </MenuPositioner>
+            </Portal>
+          </Menu.Root>
+        </Box>
+      ) : (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          color={getNeutral("light", 200)}
+          _dark={{ color: getNeutral("dark", 200) }}
+          w={"96px"}
+          gap={2}
+          onWheel={(e) => handleScroll(e)}
+        >
+          <ChakraIcon
+            icon={muted ? TbVolumeOff : TbVolume}
+            boxSize={5}
+            onClick={() => {
+              handleMute();
+            }}
+            color={getNeutral("light", 300)}
+            _dark={{
+              color: getNeutral("dark", 300),
+            }}
+          />
+          <Box flex={1}>
+            <VolumeSlider volume={volume} handleVolume={handleVolume} />
+          </Box>
+        </Box>
+      )}
+    </>
+  );
+};
+
+const VolumeSlider = ({
+  volume,
+  handleVolume,
+  orientation = "horizontal",
+}: {
+  volume: number;
+  handleVolume: (volume: number) => void;
+  orientation?: "horizontal" | "vertical";
+}) => {
+  return (
+    <Slider.Root
+      min={0}
+      max={100}
+      value={[volume]}
+      size={"sm"}
+      orientation={orientation}
+      height={orientation === "vertical" ? "100px" : undefined}
+      width={orientation === "horizontal" ? "100px" : undefined}
+      onValueChange={(e: any) => {
+        handleVolume(e.value);
+      }}
     >
-      <ChakraIcon
-        icon={muted ? FaVolumeXmark : FaVolumeLow}
-        onClick={() => handleMute()}
-        marginRight={"2px"}
-        boxSize={4}
-      />
-      <Box
-        className="volume"
-        height={"1"}
-        mx={"2px"}
-        display={"flex"}
-        overflow={"hidden"}
-        width={"100px"}
-        bg={getNeutral("light", 800)}
-        _dark={{ bg: getNeutral("dark", 800) }}
-        pos={"relative"}
-        opacity={muted ? 0.3 : 1}
-      >
-        <Input
-          type="range"
-          min={0}
-          max={100}
-          value={volume}
-          onChange={(e) => handleVolume(e)}
-          top={0}
-        />
-      </Box>
-    </Box>
+      <SliderControl pos={"relative"}>
+        <SliderTrack
+          bg={getNeutral("dark", 400)}
+          borderRadius={"1px"}
+          width={orientation === "vertical" ? "4px" : undefined}
+          height={orientation === "horizontal" ? "4px" : undefined}
+        >
+          <SliderRange bg={"brand.300"} />
+        </SliderTrack>
+        <SliderThumb
+          bg={"brand.700"}
+          borderColor={"brand.400"}
+          _drag={{
+            cursor: "pointer",
+          }}
+        ></SliderThumb>
+      </SliderControl>
+    </Slider.Root>
   );
 };
 

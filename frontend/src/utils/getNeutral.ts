@@ -4,6 +4,12 @@ export const getNeutral = (mode: "light" | "dark", level: number) => {
   return `neutral.${mode}.${level}`;
 };
 
+export const getNeutralRaw = (mode: "light" | "dark", level: number) => {
+  //@ts-ignore
+  const color = colors.neutral[mode][level as any]["value"];
+  return color;
+};
+
 export const getBrandWithAlpha = (val: number, alpha: number) => {
   // Remove leading #
   const hex = (colors.brand as any)[val].value.replace(/^#/, "");
@@ -15,5 +21,4 @@ export const getBrandWithAlpha = (val: number, alpha: number) => {
 
   // Return rgba string
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  return;
 };

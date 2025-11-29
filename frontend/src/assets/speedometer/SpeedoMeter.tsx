@@ -1,0 +1,1052 @@
+import { useColorMode } from "@/components/ui/color-mode";
+import { getNeutral, getNeutralRaw } from "@/utils";
+import React from "react";
+
+interface SpeedometerProps {
+  className?: string;
+}
+
+const TickMarks = () => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 100);
+  return (
+    <g>
+      {[
+        "matrix(0.040522,0.104305,-0.139069,0.054028,715.277382,146.120678)",
+        "matrix(-0.021031,0.109905,-0.146536,-0.028041,751.104512,92.894751)",
+        "matrix(-0.077326,0.080884,-0.107842,-0.103098,810.948777,68.016192)",
+        "matrix(-0.109026,0.025198,-0.033596,-0.145363,874.475332,79.971306)",
+        "matrix(-0.109019,-0.025225,0.033632,-0.145355,914.401954,112.732267)",
+        "matrix(-0.077698,-0.080526,0.107365,-0.103595,937.081767,172.993758)",
+        "matrix(-0.022619,-0.10959,0.146115,-0.030158,924.556394,235.905331)",
+        "matrix(0.041853,-0.103778,0.138367,0.055802,878.548414,281.0224)",
+      ].map((transform, i) => (
+        <g key={i} transform={transform}>
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: "rgb(66,66,66)",
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+      ))}
+    </g>
+  );
+};
+
+export const Speedometer25: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(2.542626,-3.641691,3.641691,2.542626,-1929.051591,2711.908746)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            0.25
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer50: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(4.0957,-1.718168,1.718168,4.0957,-2855.207886,848.393946)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            0.50
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer75: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(4.367825,0.80558,-0.80558,4.367825,-2619.392557,-1275.195901)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            0.75
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer100: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(3.226995,3.05178,-3.05178,3.226995,-1272.919315,-2913.462539)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            1.00
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer125: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.584017,4.149428,-4.149428,1.584017,277.129458,-3516.416806)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            1.25
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer150: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.89925,4.349507,-4.349507,-0.89925,2354.334716,-3228.762159)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            1.50
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer175: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(-3.111548,3.169404,-3.169404,-3.111548,3957.590806,-1856.18703)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <TickMarks />
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            1.75
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const Speedometer200: React.FC<SpeedometerProps> = ({
+  className = "",
+}) => {
+  const { colorMode } = useColorMode();
+  const stroke =
+    colorMode === "light"
+      ? getNeutralRaw("light", 200)
+      : getNeutralRaw("dark", 200);
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 268 321"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlSpace="preserve"
+      style={{
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeMiterlimit: 1.5,
+      }}
+      className={className}
+    >
+      <g transform="matrix(1,0,0,1,-689.642586,-49.426088)">
+        <g transform="matrix(1.057158,0,0,1.057158,-47.075938,-9.019062)">
+          <path
+            d="M725.477,257.247C709.461,236.397 699.936,210.307 699.936,182.009C699.936,113.752 755.352,58.336 823.609,58.336C891.866,58.336 947.282,113.752 947.282,182.009C947.282,210.307 937.758,236.397 921.742,257.247L725.477,257.247Z"
+            style={{
+              fill: "white",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "6.1px",
+            }}
+          />
+        </g>
+        <g transform="matrix(1.012747,0,0,1.012747,-10.498794,-2.008817)">
+          <path
+            d="M727.462,252.255C713.039,232.557 704.521,208.27 704.521,182.009C704.521,116.282 757.883,62.92 823.609,62.92C889.336,62.92 942.698,116.282 942.698,182.009C942.698,208.27 934.179,232.557 919.757,252.255L727.462,252.255Z"
+            style={{
+              fill: "rgb(215,99,99)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "4.09px",
+            }}
+          />
+        </g>
+        <path
+          d="M727.455,248.087C723.818,243.15 722.276,240.43 719.478,235.004C716.687,229.593 714.329,223.95 712.433,218.098C710.571,212.352 709.155,206.404 708.213,200.275C707.752,197.281 707.405,194.245 707.174,191.168C706.948,188.153 706.833,185.099 706.833,182.009C706.833,117.558 759.159,65.232 823.609,65.232C888.06,65.232 940.386,117.558 940.386,182.009C940.386,207.888 933.945,228.867 919.674,248.234"
+          style={{
+            fill: "rgb(215,99,99)",
+            fillOpacity: 0,
+            stroke: `${stroke}`,
+            strokeWidth: "4.02px",
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeMiterlimit: 2,
+            strokeDasharray: "0.804,16.073,0,0,0,0",
+          }}
+        />
+        <g transform="matrix(0.454611,0,0,0.454611,455.303415,94.345143)">
+          <circle
+            cx="809.885"
+            cy="192.832"
+            r="75.936"
+            style={{
+              fill: "rgb(130,130,130)",
+              fillOpacity: 0,
+              stroke: `${stroke}`,
+              strokeWidth: "28px",
+            }}
+          />
+        </g>
+        <g transform="matrix(-4.328872,0.993842,-0.993842,-4.328872,4561.93917,153.333731)">
+          <path
+            d="M820.06,178.315C820.58,178.073 821.16,177.938 821.772,177.938C824.018,177.938 825.842,179.762 825.842,182.009C825.842,184.255 824.018,186.079 821.772,186.079C819.525,186.079 817.701,184.255 817.701,182.009C817.701,181.842 817.711,181.677 817.731,181.515C817.731,181.515 803.923,170.713 802.396,169.518C802.318,169.457 802.299,169.347 802.352,169.264C802.448,169.114 802.596,168.883 802.693,168.731C802.748,168.645 802.86,168.617 802.948,168.667C804.678,169.642 820.06,178.315 820.06,178.315Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${colorMode === "light" ? getNeutralRaw("light", 900) : getNeutralRaw("dark", 900)}`,
+              strokeWidth: "0.59px",
+            }}
+          />
+        </g>
+        <g transform="matrix(0.040522,0.104305,-0.139069,0.054028,715.277382,146.120678)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.021031,0.109905,-0.146536,-0.028041,751.104512,92.894751)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.077326,0.080884,-0.107842,-0.103098,810.948777,68.016192)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.109026,0.025198,-0.033596,-0.145363,874.475332,79.971306)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L649.765,202.132L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.109019,-0.025225,0.033632,-0.145355,914.401954,112.732267)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L649.809,202.089L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.077698,-0.080526,0.107365,-0.103595,937.081767,172.993758)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(-0.022619,-0.10959,0.146115,-0.030158,924.556394,235.905331)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(0.041853,-0.103778,0.138367,0.055802,878.548414,281.0224)">
+          <path
+            d="M640.257,115.143C640.473,111.587 644.379,108.788 649.125,108.788C649.397,108.788 649.669,108.788 649.941,108.788C654.673,108.788 658.573,111.573 658.807,115.117C660.191,136.093 664.541,202.011 664.541,202.011L634.965,202.011C634.965,202.011 638.977,136.146 640.257,115.143Z"
+            style={{
+              fill: `${stroke}`,
+              stroke: `${stroke}`,
+              strokeWidth: "7.58px",
+              strokeLinecap: "butt",
+              strokeLinejoin: "miter",
+              strokeMiterlimit: 2,
+            }}
+          />
+        </g>
+        <g transform="matrix(3.164017,0,0,3.164017,-1682.069003,-424.09808)">
+          <g transform="matrix(31.64761,0,0,31.64761,823.020805,244.413945)" />
+          <text
+            x="761.425px"
+            y="244.414px"
+            style={{
+              fontFamily: "'Arial-BoldMT', 'Arial', sans-serif",
+              fontWeight: 700,
+              fontSize: "31.648px",
+              fill: `${stroke}`,
+            }}
+          >
+            2.00
+          </text>
+          <rect
+            x="761.425"
+            y="247.767"
+            width="61.595"
+            height="3.322"
+            style={{ fill: `${stroke}` }}
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export default Speedometer25;
