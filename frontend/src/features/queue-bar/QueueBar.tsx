@@ -122,7 +122,7 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                 </TabsTrigger>
               </Box>
             </TabsList>
-            <TabsContent value="track">
+            <TabsContent value="track" minH={0} flex={1} overflowY="auto">
               <Box>
                 {currentTrack.path ? (
                   <Box
@@ -198,7 +198,13 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                 </Box>
               </Box>
             </TabsContent>
-            <TabsContent value="queue" flex={1} overflowY={"auto"} my={2}>
+            <TabsContent
+              value="queue"
+              minH={0}
+              flex={1}
+              overflowY={"auto"}
+              my={2}
+            >
               <Box
                 flex={1}
                 borderRadius={"md"}

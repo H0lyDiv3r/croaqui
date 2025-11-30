@@ -4,7 +4,7 @@ import { Box } from "@chakra-ui/react";
 import { getNeutral } from "./utils";
 import { useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useRoute } from "wouter";
 import { Library } from "./pages";
 import { useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
@@ -25,6 +25,8 @@ function App() {
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
+
+  const [match, params] = useRoute("/albums/:albumId");
 
   useLayoutEffect(() => {
     EventsOn("toast:err", (err) => {
@@ -75,38 +77,31 @@ function App() {
           <WindowBar />
 
           <NavBar />
-          <Switch>
-            <Box display={"flex"} flex={1} minH={0}>
-              <Box display={"flex"} height={"100%"} flex={1}>
-                <Box
-                  // bg={getNeutral("light", 800)}
-                  // _dark={{ bg: getNeutral("dark", 800) }}
-                  height={"100%"}
-                >
-                  <SidebarNavigator />
-                </Box>
-                <Box flex={1} height={"100%"}>
-                  <Route path="/" component={Library} />
-                  <Route path="/search-results" component={SearchResults} />
-                </Box>
-                <Box height={"100%"}>
-                  <QueueBar
-                    queueInfo={{
-                      type: currentPlaylist ? "playlist" : "dir",
-                      args: currentPlaylist
-                        ? String(currentPlaylist || 0)
-                        : musicListPath,
-                      shuffle: shuffle,
-                    }}
-                  />
-                </Box>
-              </Box>
+          <Box display={"flex"} flex={1} minH={0}>
+            <Switch>
               <Route path="/albums" nest>
-                <AlbumsLayout />
+                <Box display={"flex"} height={"100%"} flex={1}>
+                  <AlbumsLayout />
+                </Box>
               </Route>
-              {/*<Route path="/albums/:id" component={AlbumDetail} />*/}
+              <Route path="/">
+                <RootLayout />
+              </Route>
+            </Switch>
+            <Box height={"100%"}>
+              <QueueBar
+                queueInfo={{
+                  type: currentPlaylist ? "playlist" : match ? "album" : "dir",
+                  args: currentPlaylist
+                    ? String(currentPlaylist || 0)
+                    : match
+                      ? String(params)
+                      : musicListPath,
+                  shuffle: shuffle,
+                }}
+              />
             </Box>
-          </Switch>
+          </Box>
 
           <Player />
         </>
@@ -116,3 +111,23 @@ function App() {
 }
 
 export default App;
+
+export const RootLayout = () => {
+  return (
+    <Box display={"flex"} height={"100%"} flex={1}>
+      <Box
+        // bg={getNeutral("light", 800)}
+        // _dark={{ bg: getNeutral("dark", 800) }}
+        height={"100%"}
+      >
+        <SidebarNavigator />
+      </Box>
+      <Box flex={1} height={"100%"}>
+        <Switch>
+          <Route path="/" component={Library} />
+          <Route path="/search-results" component={SearchResults} />
+        </Switch>
+      </Box>
+    </Box>
+  );
+};
