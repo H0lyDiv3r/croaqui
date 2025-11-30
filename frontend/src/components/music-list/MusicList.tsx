@@ -223,7 +223,7 @@ export const MusicList = ({
           )}
         </Box>
       </Box>
-      {idxOfDropdown + 1 && (
+      {idxOfDropdown + 1 ? (
         <MusicDropdown
           id={audioFiles[idxOfDropdown].ipl || null}
           songId={audioFiles[idxOfDropdown].id}
@@ -232,7 +232,7 @@ export const MusicList = ({
           position={dropdownPos}
           clearIndexOfDropdown={() => setIdxOfDropdown(-1)}
         />
-      )}
+      ) : null}
     </Box>
   );
 };
