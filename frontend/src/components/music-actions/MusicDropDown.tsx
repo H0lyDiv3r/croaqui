@@ -1,26 +1,9 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  Drawer,
-  Icon,
-  Menu,
-  MenuItem,
-  Portal,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
-import React, { useContext, useEffect } from "react";
+import { Box, Dialog, Portal, Text, useDisclosure } from "@chakra-ui/react";
+import React from "react";
 import { useState } from "react";
-import {
-  TbDots,
-  TbHeartMinus,
-  TbHeartPlus,
-  TbPlaylistAdd,
-} from "react-icons/tb";
+import { TbDots } from "react-icons/tb";
 import { MdOutlineAddToQueue, MdOutlineQueue } from "react-icons/md";
-import { useShowToast } from "../../hooks/useShowToast";
-import { useCallback } from "react";
+
 import { getNeutral, getPlaylistContent, removeFromPlaylist } from "@/utils";
 import { PlaylistsMenu } from "./MusicActions";
 import { ChakraIcon } from "../ChackraIcon";
@@ -29,21 +12,25 @@ import { useDataStore, usePlaylistStore } from "@/store";
 const DialogOverlay: any = Dialog.Backdrop;
 const DialogContent: any = Dialog.Content;
 const DialogPositioner: any = Dialog.Positioner;
-const DialogTrigger: any = Dialog.Trigger;
 const DialogBody: any = Dialog.Body;
 const MusicDropdown = ({
   songId,
   id,
-  hovered,
+  open,
+  setOpen,
+  position,
+  clearIndexOfDropdown,
 }: {
-  hovered: boolean;
+  open: boolean;
+  setOpen: (open: boolean) => void;
   songId: number;
   id: number | null;
+  position: { x: number; y: number };
+  clearIndexOfDropdown: () => void;
 }) => {
-  const { open, setOpen } = useDisclosure();
+  // const { open, setOpen } = useDisclosure()
   const currentPlaylistId = useDataStore((state) => state.currentPlaylist);
 
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const handleRemoveFromPlaylist = async (
     songId: number,
     currentPlaylistId: number,
@@ -57,84 +44,66 @@ const MusicDropdown = ({
   };
   return (
     <>
-      {hovered ? (
-        <>
-          <Box
-            bg={"none"}
-            _hover={{ bg: "none" }}
-            onClick={(e) => {
+      <Dialog.Root open={open}>
+        <Portal>
+          <DialogOverlay bg={"none"} />
+          <DialogPositioner
+            onClick={(e: Event) => {
               e.stopPropagation();
-              setModalPosition({ x: e.pageX, y: e.pageY });
-              setOpen(true);
+              setOpen(false);
+              clearIndexOfDropdown();
             }}
           >
-            <ChakraIcon icon={TbDots} />
-          </Box>
-          <Dialog.Root open={open}>
-            <Portal>
-              <DialogOverlay bg={"none"} />
-              <DialogPositioner
-                onClick={(e: Event) => {
-                  e.stopPropagation();
-                  setOpen(false);
-                }}
-              >
-                <DialogContent
-                  m={0}
-                  pos={"absolute"}
-                  boxShadow={"0px 2px 6px rgba(0, 0, 0, 0.2)"}
-                  bg={getNeutral("light", 800)}
-                  color={getNeutral("light", 200)}
-                  _dark={{
-                    bg: getNeutral("dark", 800),
-                    color: getNeutral("dark", 200),
-                    borderColor: getNeutral("dark", 700),
-                  }}
-                  border={"1px solid"}
-                  borderColor={getNeutral("light", 700)}
-                  top={modalPosition.y}
-                  left={modalPosition.x - 200}
-                  width={"200px"}
-                  onClick={(e: Event) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <DialogBody px={"6px"}>
-                    <Box mb={4}>
-                      <Text fontSize={"lg"}>Music Actions</Text>
-                    </Box>
-                    <ItemsWrapper>
-                      <PlaylistsMenu
-                        songId={songId}
-                        handleClose={() => {
-                          setOpen(false);
-                        }}
-                      />
-                    </ItemsWrapper>
+            <DialogContent
+              m={0}
+              pos={"absolute"}
+              boxShadow={"0px 2px 6px rgba(0, 0, 0, 0.2)"}
+              bg={getNeutral("light", 800)}
+              color={getNeutral("light", 200)}
+              _dark={{
+                bg: getNeutral("dark", 800),
+                color: getNeutral("dark", 200),
+                borderColor: getNeutral("dark", 700),
+              }}
+              border={"1px solid"}
+              borderColor={getNeutral("light", 700)}
+              top={position.y}
+              left={position.x - 200}
+              width={"200px"}
+              onClick={(e: Event) => {
+                e.stopPropagation();
+              }}
+            >
+              <DialogBody px={"6px"}>
+                <Box mb={4}>
+                  <Text fontSize={"lg"}>Music Actions</Text>
+                </Box>
+                <ItemsWrapper>
+                  <PlaylistsMenu
+                    songId={songId}
+                    handleClose={() => {
+                      setOpen(false);
+                    }}
+                  />
+                </ItemsWrapper>
 
-                    {currentPlaylistId && id && (
-                      <ItemsWrapper>
-                        <Box
-                          as={"button"}
-                          onClick={() =>
-                            handleRemoveFromPlaylist(
-                              songId,
-                              currentPlaylistId,
-                              id,
-                            )
-                          }
-                        >
-                          Remove from Playlist
-                        </Box>
-                      </ItemsWrapper>
-                    )}
-                  </DialogBody>
-                </DialogContent>
-              </DialogPositioner>
-            </Portal>
-          </Dialog.Root>
-        </>
-      ) : null}
+                {currentPlaylistId && id && (
+                  <ItemsWrapper>
+                    <Box
+                      as={"button"}
+                      onClick={() =>
+                        handleRemoveFromPlaylist(songId, currentPlaylistId, id)
+                      }
+                    >
+                      Remove from Playlist
+                    </Box>
+                  </ItemsWrapper>
+                )}
+              </DialogBody>
+            </DialogContent>
+          </DialogPositioner>
+        </Portal>
+      </Dialog.Root>
     </>
   );
 };

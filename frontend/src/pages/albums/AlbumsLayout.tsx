@@ -19,13 +19,13 @@ export const AlbumsLayout = () => {
         <Route path={"/"} component={Albums} />
         <Route path={"/albums/:id"} component={AlbumDetail} />
       </Switch>
-      <QueueBar
+      {/*<QueueBar
         queueInfo={{
           type: "album",
           args: params ? String(params) : null,
           shuffle,
         }}
-      />
+      />*/}
     </Box>
   );
 };
