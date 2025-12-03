@@ -99,7 +99,7 @@ func (q *Queue) shuffleQuery(a *[]audio) {
 
 	b := *a
 	for i := len(*a) - 1; i > 0; i-- {
-		j := rand.Intn(i)
+		j := rand.Intn(i + 1)
 
 		b[i], b[j] = b[j], b[i]
 

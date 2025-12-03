@@ -47,6 +47,9 @@ func (p *Player) StartUp(ctx context.Context) {
 
 	p.mpv.SetProperty("vid", mpv.FormatFlag, false)
 
+	p.mpv.RequestEvent(mpv.EventFileLoaded, true)
+	p.mpv.RequestEvent(mpv.EventEnd, true)
+	p.mpv.RequestEvent(mpv.EventPlaybackRestart, true)
 	go p.EventLoop()
 
 }
@@ -59,8 +62,12 @@ func (p *Player) EventLoop() {
 			fmt.Print("terminating and destroying")
 			p.mpv.TerminateDestroy()
 			return
+
 		default:
-			ev := p.mpv.WaitEvent(-1)
+			ev := p.mpv.WaitEvent(0.5)
+			if ev == nil {
+				continue
+			}
 			if ev.EventID == mpv.EventQueueOverflow {
 				log.Println("Event queue overflow detected! Clearing or slowing down event processing.")
 			}
@@ -77,7 +84,7 @@ func (p *Player) EventLoop() {
 						Message: "end of file reached",
 					})
 				} else {
-					fmt.Println("ended for some stupid reason")
+					fmt.Println("ended for some stupid reason", end.Reason)
 					runtime.EventsEmit(p.ctx, "MPV:END", struct {
 						Reason  string `json:"reason"`
 						Message string `json:"message"`
@@ -85,9 +92,9 @@ func (p *Player) EventLoop() {
 						Message: "unknown",
 					})
 				}
-				// case mpv.EventFileLoaded, mpv.EventPlaybackRestart, mpv.EventAudioReconfig:
-				// 	fmt.Println("the file is loaded")
-				// 	runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
+			case mpv.EventFileLoaded, mpv.EventPlaybackRestart, mpv.EventAudioReconfig:
+				fmt.Println("the file is loaded")
+				runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
 
 			}
 		}
@@ -95,6 +102,11 @@ func (p *Player) EventLoop() {
 }
 
 func (p *Player) LoadMusic(url string) (*ReturnType, error) {
+
+	runtime.EventsEmit(p.ctx, "MPV:END", struct {
+		Reason  string `json:"reason"`
+		Message string `json:"message"`
+	}{Reason: "restarting", Message: "restarting file"})
 
 	// p.mpv.SetProperty("pause", mpv.FormatFlag, true)
 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
@@ -104,6 +116,7 @@ func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 
 		return nil, err
 	}
+
 	return &ReturnType{Data: struct {
 		Loaded bool `json:"loaded"`
 	}{Loaded: true}}, nil

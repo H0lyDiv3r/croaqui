@@ -9,7 +9,12 @@ import { Library } from "./pages";
 import { useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
 import { WindowBar } from "./components/WindowBar";
-import { useDataStore, useGeneralStore, useQueueStore } from "./store";
+import {
+  useDataStore,
+  useGeneralStore,
+  usePlayerStore,
+  useQueueStore,
+} from "./store";
 import { ChakraIcon } from "./components/ChackraIcon";
 import { BsGripVertical } from "react-icons/bs";
 import { MiniPlayer } from "./features/miniPlayer";
@@ -17,6 +22,7 @@ import { AlbumsLayout } from "./pages/albums/AlbumsLayout";
 import { SearchResults } from "./pages/searchResults";
 import { SidebarNavigator } from "./features/sidebar-navigator";
 import { QueueBar } from "./features/queue-bar";
+import { GetImage, GetStatus } from "wailsjs/go/player/Player";
 
 function App() {
   const { showToast } = useShowToast();
@@ -25,6 +31,10 @@ function App() {
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
+  const setCurrentTrackImage = usePlayerStore(
+    (state) => state.setCurrentTrackImage,
+  );
+  const setPlayerStatus = usePlayerStore((state) => state.setPlayerStatus);
 
   const [match, params] = useRoute("/albums/:albumId");
 
@@ -39,19 +49,15 @@ function App() {
       showToast("success", msg);
     });
 
-    // EventsOn("MPV:FILE_LOADED", () => {
-    //   // showToast("info", "loaded");
-    //   console.log("file loaded coming from thef fring");
-    //   setLoaded(true);
-    //   // setTrack(item);
-    //   // GetImage().then((res) => {
-    //   //   setCurrentTrackImage(res.data.image);
-    //   // });
-    //   GetStatus().then((res) => {
-    //     console.log("about to set all", res);
-    //     setAll(res.data);
-    //   });
-    // });
+    EventsOn("MPV:FILE_LOADED", () => {
+      GetImage().then((res) => {
+        setCurrentTrackImage(res.data.image);
+      });
+      GetStatus().then((res) => {
+        console.log("about to set all", res);
+        setPlayerStatus(res.data);
+      });
+    });
   }, []);
 
   return (
@@ -84,7 +90,7 @@ function App() {
                   <AlbumsLayout />
                 </Box>
               </Route>
-              <Route path="/">
+              <Route path="/" nest>
                 <RootLayout />
               </Route>
             </Switch>

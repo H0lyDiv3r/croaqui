@@ -6,6 +6,7 @@ import {
 } from "../../../wailsjs/go/player/Player";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
 import { FetchImage } from "wailsjs/go/media/Media";
+import { EventsOn } from "wailsjs/runtime/runtime";
 
 // const audioFiles = useDataStore((state) => state.musicFiles);
 // const scrollRef = useRef<HTMLDivElement>(null);
@@ -26,8 +27,11 @@ const setCurrentTrackImage = usePlayerStore.getState().setCurrentTrackImage;
 //   (state) => state.setCurrentTrackImage,
 // );
 export const loadAudio = async (item: any) => {
+  // EventsOn("MPV:FILE_LOADED", () => {
+  //   console.log("LOADED");
+  // });
   setLoaded(false);
-  setTrack(item);
+  // setTrack(item);
 
   const loaded = await LoadMusic(item.path);
 
@@ -37,17 +41,21 @@ export const loadAudio = async (item: any) => {
 
   setLoaded(true);
   setTrack(item);
-  GetImage().then((res) => {});
-  const status = await GetStatus();
-  const img = await FetchImage(item.path);
-  setCurrentTrackImage(img || "");
-
-  if (!status.data) return;
-  setAll({
-    ...status.data,
-    position: status.data.position || 0,
+  usePlayerStore.setState({
+    position: 0,
     duration: item.duration,
   });
+  // GetImage().then((res) => {});
+  // const status = await GetStatus();
+  // const img = await FetchImage(item.path);
+  // setCurrentTrackImage(img || "");
+
+  // if (!status.data) return;
+  // setAll({
+  //   ...status.data,
+  //   position: Math.max(status.data.position, 0) || 0,
+  //   duration: item.duration,
+  // });
   // })
   // .then((res) => {
   //   console.log("loaded");
