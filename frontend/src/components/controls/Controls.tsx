@@ -79,10 +79,10 @@ const Controls: React.FC = () => {
     EventsOn("MPV:END", (msg) => {
       if (time.current) {
         clearInterval(time.current);
-        usePlayerStore.setState((state) => {
-          return { ...state, paused: true };
-        });
       }
+      usePlayerStore.setState((state) => {
+        return { ...state, paused: true };
+      });
       console.log("ended bro ended", msg);
 
       if (msg.reason === "eof") {

@@ -97,16 +97,16 @@ export const DirectoryDetail = () => {
   }, [currentPath]);
 
   useEffect(() => {
-    EventsOn("MPV:FILE_LOADED", () => {
-      setLoaded(true);
-      // setTrack(item);
-      GetImage().then((res) => {
-        setCurrentTrackImage(res.data.image);
-      });
-      GetStatus().then((res) => {
-        setAll(res.data);
-      });
-    });
+    // EventsOn("MPV:FILE_LOADED", () => {
+    //   setLoaded(true);
+    //   // setTrack(item);
+    //   GetImage().then((res) => {
+    //     setCurrentTrackImage(res.data.image);
+    //   });
+    //   GetStatus().then((res) => {
+    //     setAll(res.data);
+    //   });
+    // });
   }, []);
   return (
     <Box height={"100%"}>
