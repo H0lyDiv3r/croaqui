@@ -223,7 +223,7 @@ export const MusicList = ({
           )}
         </Box>
       </Box>
-      {idxOfDropdown + 1 ? (
+      {idxOfDropdown >= 0 ? (
         <MusicDropdown
           id={audioFiles[idxOfDropdown].ipl || null}
           songId={audioFiles[idxOfDropdown].id}

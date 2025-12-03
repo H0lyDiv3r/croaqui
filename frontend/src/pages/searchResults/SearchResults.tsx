@@ -2,6 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { getNeutral, getQueue, toHMS } from "@/utils";
 import { useDataStore, usePlaylistStore, useQueueStore } from "@/store";
 import { MusicList } from "@/components/music-list";
+import { useEffect } from "react";
 
 export const SearchResults = () => {
   const playlistMetaData = usePlaylistStore((state) => state.playlistMetaData);
@@ -16,8 +17,16 @@ export const SearchResults = () => {
       shuffle: shuffle,
     });
   };
+  useEffect(() => {
+    console.log("useEffect called in search result");
+  }, []);
   return (
-    <Box height={"100%"} display={"flex"} flexDirection={"column"}>
+    <Box
+      height={"100%"}
+      display={"flex"}
+      flexDirection={"column"}
+      width={"100%"}
+    >
       {/*<Box
         display="flex"
         flexDir="column"
@@ -51,6 +60,7 @@ export const SearchResults = () => {
       </Box>*/}
 
       <Box flex={1} minH={0}>
+        aaaaaaaaaaaaaaaaaaaaaaaaa
         <MusicList handleGetQueue={handleGetQueue} />
       </Box>
     </Box>
