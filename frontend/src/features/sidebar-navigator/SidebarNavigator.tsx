@@ -23,6 +23,7 @@ export const SidebarNavigator = () => {
   const [showCreatePlaylistForm, setShowCreatePlaylistForm] = useState(false);
   const currentPath = useDataStore((state) => state.currentPath);
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);
+  const rightOpen = useSidebarDisclosure((state) => state.rightBarOpen);
 
   const { isSmall, isLarge, isMedium } = useScreenSize();
   const tabs = useTabs({
@@ -35,7 +36,7 @@ export const SidebarNavigator = () => {
   ];
 
   const handleHide = (target: boolean) => {
-    if (isLarge || isMedium || isSmall) {
+    if ((isLarge || isMedium || isSmall) && rightOpen) {
       useSidebarDisclosure.setState((state) => ({
         ...state,
         rightBarOpen: !target,
@@ -58,11 +59,11 @@ export const SidebarNavigator = () => {
     setShowCreatePlaylistForm(false);
   };
 
-  useEffect(() => {
-    if (isSmall) {
-      handleHide(false);
-    }
-  }, [isSmall]);
+  // useEffect(() => {
+  //   if (isSmall) {
+  //     handleHide(false);
+  //   }
+  // }, [isSmall]);
   return (
     <Box position={"relative"} height={"100%"}>
       {isOpen ? (

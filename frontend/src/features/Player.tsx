@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useRef, useContext, memo, useLayoutEffect } from "react";
 import "./player.css";
 import { Box, Icon, Image, Menu, Portal, Text } from "@chakra-ui/react";
@@ -22,10 +21,10 @@ import { FaGear } from "react-icons/fa6";
 const Player: React.FC = () => {
   const [favorite, setFavorite] = useState(false);
   const { isMedium, isSmall, isLarge } = useScreenSize();
-  const switchSide = useSidebarDisclosure((state) => state.switch);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const leftOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const handleHide = (target: boolean) => {
-    if (isLarge || isMedium || isSmall) {
+    if ((isLarge || isMedium || isSmall) && leftOpen) {
       useSidebarDisclosure.setState((state) => ({
         ...state,
         leftBarOpen: !target,
@@ -126,10 +125,12 @@ const Player: React.FC = () => {
               <ChakraIcon
                 onClick={() => {
                   setFavorite((prev) => !prev);
-                  if (favorite) {
-                    removeFromFavorites(currentTrack.id);
-                  } else {
-                    addToFavorites(currentTrack.id);
+                  if (currentTrack.id) {
+                    if (favorite) {
+                      removeFromFavorites(currentTrack.id);
+                    } else {
+                      addToFavorites(currentTrack.id);
+                    }
                   }
                 }}
                 icon={favorite ? TbHeartFilled : TbHeart}
@@ -171,47 +172,3 @@ const Player: React.FC = () => {
 };
 
 export default memo(Player);
-const PlayerSettings = () => {
-  return (
-    <Menu.Root>
-      <Menu.Trigger
-        width={"10%"}
-        height={"100%"}
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        px={"6px"}
-        overflow={"hidden"}
-        _hover={{ cursor: "pointer" }}
-      >
-        <ChakraIcon icon={FaGear} boxSize={5} />
-      </Menu.Trigger>
-      <Portal>
-        <Menu.Positioner>
-          <Menu.Content
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"center"}
-            bg={getNeutral("light", 800)}
-            _dark={{
-              bg: getNeutral("dark", 800),
-              borderColor: getNeutral("dark", 700),
-              color: getNeutral("dark", 300),
-            }}
-            border="1px solid"
-            borderColor={getNeutral("light", 700)}
-            color={getNeutral("light", 300)}
-            gap={6}
-          >
-            <Box>
-              <PlaybackRateControl />
-            </Box>
-            <Box>
-              <VolumeControl />
-            </Box>
-          </Menu.Content>
-        </Menu.Positioner>
-      </Portal>
-    </Menu.Root>
-  );
-};
