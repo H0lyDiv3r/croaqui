@@ -42,23 +42,11 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
     }
   };
   const handleHide = (target: boolean) => {
-    if (isLarge) {
-      switchSide();
-    }
-
     useSidebarDisclosure.setState((state) => ({
       ...state,
       rightBarOpen: target,
     }));
   };
-  useEffect(() => {
-    if (isMedium || isSmall) {
-      handleHide(false);
-    }
-    if (isLarge && isLeftOpen) {
-      handleHide(false);
-    }
-  }, [isLarge, isMedium, isSmall]);
 
   useEffect(() => {
     console.log("rerendering", queueInfo);

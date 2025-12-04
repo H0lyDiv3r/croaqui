@@ -2,11 +2,11 @@ import "./App.css";
 import Player from "./features/Player";
 import { Box } from "@chakra-ui/react";
 import { getNeutral } from "./utils";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch, useRoute } from "wouter";
 import { Library } from "./pages";
-import { useShowToast } from "./hooks";
+import { useScreenSize, useShowToast } from "./hooks";
 import { EventsOn } from "../wailsjs/runtime";
 import { WindowBar } from "./components/WindowBar";
 import {
@@ -14,6 +14,7 @@ import {
   useGeneralStore,
   usePlayerStore,
   useQueueStore,
+  useSidebarDisclosure,
 } from "./store";
 import { ChakraIcon } from "./components/ChackraIcon";
 import { BsGripVertical } from "react-icons/bs";
@@ -35,6 +36,7 @@ function App() {
     (state) => state.setCurrentTrackImage,
   );
   const setPlayerStatus = usePlayerStore((state) => state.setPlayerStatus);
+  const { isSmall } = useScreenSize();
 
   const [match, params] = useRoute("/albums/:albumId");
 
@@ -59,7 +61,9 @@ function App() {
       });
     });
   }, []);
-
+  useEffect(() => {
+    useSidebarDisclosure.setState({ leftBarOpen: false, rightBarOpen: false });
+  }, [isSmall]);
   return (
     <Box
       display={"flex"}

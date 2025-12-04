@@ -88,17 +88,6 @@ export const MiniPlayer = () => {
           ref={plref}
         >
           <Box>
-            {/*brand: {
-              900: { value: "#40421a" }, // deeper, richer olive with cooler undertones
-              800: { value: "#5B622D" }, // dark olive-green with a hint of blue
-              700: { value: "#76823F" }, // balanced dark olive with more saturation
-              600: { value: "#90A252" }, // medium-dark olive with fresh tone
-              500: { value: "#abc265" }, // warm olive-yellow green
-              400: { value: "#BDD07E" }, // lighter warm green with yellow hint
-              300: { value: "#CFDD96" }, // soft pastel green-yellow
-              200: { value: "#E1EBAF" }, // pale warm yellow-green
-              100: { value: "#f3f8c7" },
-            },*/}
             <svg
               width="452"
               height="112"
@@ -135,9 +124,9 @@ export const MiniPlayer = () => {
                 bg={getNeutral("light", 800)}
                 borderRadius={"xl"}
                 overflow={"hidden"}
-                border={"1px solid"}
+                // border={"1px solid"}
                 borderColor={getNeutral("light", 400)}
-                boxShadow={"0 0 10px black"}
+                boxShadow={`0 2px 15px rgba(0, 0, 0, 0.2)`}
                 p={1}
               >
                 <Image
