@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 	"log"
-	customErr "myproject/pkgs/error"
 
 	"github.com/gen2brain/go-mpv"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -54,16 +54,15 @@ func (p *Player) StartUp(ctx context.Context) {
 
 	<-eventLoopReady
 
-	p.execute(
+	_, _ = p.execute(
 		func() (any, error) {
-			p.mpv.SetProperty("vid", mpv.FormatFlag, false)
-			p.mpv.RequestEvent(mpv.EventFileLoaded, true)
-			p.mpv.RequestEvent(mpv.EventEnd, true)
-			p.mpv.RequestEvent(mpv.EventPlaybackRestart, true)
+			_ = p.mpv.SetProperty("vid", mpv.FormatFlag, false)
+			_ = p.mpv.RequestEvent(mpv.EventFileLoaded, true)
+			_ = p.mpv.RequestEvent(mpv.EventEnd, true)
+			_ = p.mpv.RequestEvent(mpv.EventPlaybackRestart, true)
 			return nil, nil
 		},
 	)
-
 }
 
 func (p *Player) execute(fn func() (any, error)) (any, error) {

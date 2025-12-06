@@ -1,0 +1,22 @@
+version: 2
+
+run:
+  timeout: 5m
+
+# FORMATTERS (gofmt, goimports, gofumpt, etc.)
+formatters:
+  enable:
+    - gofmt
+
+# LINTERS
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - gosec
+
+linters-settings:
+  gofmt:
+    simplify: true

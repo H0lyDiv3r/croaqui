@@ -1,4 +1,4 @@
-module myproject
+module github.com/H0lyDiv3r/croaqui
 
 go 1.24.0
 
