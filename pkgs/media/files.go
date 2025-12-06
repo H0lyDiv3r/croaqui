@@ -3,10 +3,10 @@ package media
 import (
 	"bufio"
 	"fmt"
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/player"
 	"log"
-	"myproject/pkgs/db"
-	customErr "myproject/pkgs/error"
-	"myproject/pkgs/player"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,6 +50,7 @@ func (m *Media) GetStandardDirs() *ReturnType {
 	}
 	xdgfile := filepath.Join(home, ".config", "user-dirs.dirs")
 
+	//nolint:gosec
 	file, err := os.Open(xdgfile)
 	if err != nil {
 		return &ReturnType{
@@ -60,7 +61,9 @@ func (m *Media) GetStandardDirs() *ReturnType {
 			},
 		}
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	scanner := bufio.NewScanner(file)
 
@@ -118,10 +121,12 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 
 func (m *Media) FetchImage(url string) (string, error) {
 	p := mpv.New()
-	p.Initialize()
+	if err := p.Initialize(); err != nil {
+		return "", err
+	}
 	defer p.TerminateDestroy()
-	p.SetProperty("pause", mpv.FormatFlag, true)
-	p.SetProperty("vid", mpv.FormatFlag, false)
+	_ = p.SetProperty("pause", mpv.FormatFlag, true)
+	_ = p.SetProperty("vid", mpv.FormatFlag, false)
 	if err := p.Command([]string{"loadfile", url}); err != nil {
 		log.Print("unable to load music", err)
 		return "", err

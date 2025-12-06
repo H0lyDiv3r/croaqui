@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 	"log"
-	"myproject/pkgs/db"
-	customErr "myproject/pkgs/error"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -53,7 +53,7 @@ func NewPlaylist() *Playlist {
 }
 func (p *Playlist) StartUp(ctx context.Context) {
 	p.ctx = ctx
-	p.CreatePlaylist(FAVORITES)
+	_, _ = p.CreatePlaylist(FAVORITES)
 }
 
 // read all playlists
@@ -88,6 +88,7 @@ func (p *Playlist) AddToFavorites(musicId uint) (*ReturnType, error) {
 	}
 
 	fmt.Println("showing the title", favId)
+	//nolint:gosec
 	return p.AddToPlaylist(musicId, uint(favId))
 }
 
@@ -105,6 +106,7 @@ func (p *Playlist) RemoveFromFavorites(musicId uint) (*ReturnType, error) {
 		`, favId, musicId).Scan(&mid)
 
 	fmt.Println("showing the title", favId, mid)
+	//nolint:gosec
 	return p.RemoveFromPlaylist(musicId, uint(favId), uint(mid))
 }
 

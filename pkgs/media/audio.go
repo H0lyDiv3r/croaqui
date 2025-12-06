@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 	"io/fs"
 	"log"
-	"myproject/pkgs/db"
-	customErr "myproject/pkgs/error"
-	"myproject/pkgs/playlist"
 	"path/filepath"
 	"strings"
 )
@@ -120,7 +120,7 @@ func (m *Media) SearchAudio(phrase string, fields []string) *ReturnType {
 
 	params := make([]interface{}, len(fields))
 
-	for i, _ := range fields {
+	for i := range fields {
 		params[i] = "%" + phrase + "%"
 	}
 
@@ -144,7 +144,7 @@ func (m *Media) ScanForAudio(path string) error {
 		if d.IsDir() {
 			if m.hasAudio(path) {
 				parts := strings.Split(path, "/")
-				db.DBInstance.WriteDirData(db.Directory{
+				_ = db.DBInstance.WriteDirData(db.Directory{
 					Name:       d.Name(),
 					Path:       path,
 					ParentPath: filepath.Dir(path),

@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/taglib"
 	"log"
-	customErr "myproject/pkgs/error"
-	"myproject/pkgs/taglib"
 	"path/filepath"
 
 	"gorm.io/driver/sqlite"
@@ -33,11 +33,11 @@ func (d *DB) StartUp(ctx context.Context) {
 		return
 	}
 	d.Instance = dataBase
-	dataBase.AutoMigrate(&MusicMetaData{})
-	dataBase.AutoMigrate(&MusicFile{})
-	dataBase.AutoMigrate(&Directory{})
-	dataBase.AutoMigrate(&Playlist{})
-	dataBase.AutoMigrate(&PlaylistMusic{})
+	_ = dataBase.AutoMigrate(&MusicMetaData{})
+	_ = dataBase.AutoMigrate(&MusicFile{})
+	_ = dataBase.AutoMigrate(&Directory{})
+	_ = dataBase.AutoMigrate(&Playlist{})
+	_ = dataBase.AutoMigrate(&PlaylistMusic{})
 	// d.Instance.Create(&Playlist{Name: "favorites"})
 
 	log.Print("DB startup")

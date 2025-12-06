@@ -47,7 +47,7 @@ func NewTaglib() *Taglib {
 
 func (t *Taglib) Startup(ctx context.Context) {
 	t.ctx = ctx
-	t.GetMetadataTaglib("/home/yuri/Data/music/The 1975 - Discography (2013-2020) (320)/2013 - The 1975/01 The 1975.mp3")
+	_, _ = t.GetMetadataTaglib("/home/yuri/Data/music/The 1975 - Discography (2013-2020) (320)/2013 - The 1975/01 The 1975.mp3")
 }
 
 func (t *Taglib) GetMetadataTaglib(path string) (Metadata, error) {

@@ -3,8 +3,8 @@ package media
 import (
 	"encoding/json"
 	"fmt"
-	"myproject/pkgs/db"
-	customErr "myproject/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 )
 
 type Album struct {

@@ -2,11 +2,12 @@ package queue
 
 import (
 	"context"
-
+	"crypto/rand"
 	"fmt"
-	"math/rand"
-	"myproject/pkgs/db"
-	customErr "myproject/pkgs/error"
+	"math/big"
+
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 )
 
 type Queue struct {
@@ -21,7 +22,7 @@ func (q *Queue) StartUp(ctx context.Context) {
 	q.ctx = ctx
 	// q.Shuffle()
 
-	q.GetQueue(filter{Type: "playlist", Args: "1", Shuffle: true})
+	_, _ = q.GetQueue(filter{Type: "playlist", Args: "1", Shuffle: true})
 }
 
 type audio struct {
@@ -96,13 +97,11 @@ func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 
 }
 func (q *Queue) shuffleQuery(a *[]audio) {
-
 	b := *a
 	for i := len(*a) - 1; i > 0; i-- {
-		j := rand.Intn(i + 1)
+		randBig, _ := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
+		j := int(randBig.Int64())
 
 		b[i], b[j] = b[j], b[i]
-
 	}
-
 }
