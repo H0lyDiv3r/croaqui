@@ -3,7 +3,7 @@
 import {player} from '../models';
 import {context} from '../models';
 
-export function EventLoop():Promise<void>;
+export function EventLoop(arg1:any):Promise<void>;
 
 export function GetImage():Promise<player.ReturnType>;
 
@@ -15,7 +15,7 @@ export function GetStatus():Promise<player.ReturnType>;
 
 export function LoadMusic(arg1:string):Promise<player.ReturnType>;
 
-export function SetPosition(arg1:number):Promise<void>;
+export function SetPosition(arg1:number):Promise<player.ReturnType>;
 
 export function SetSpeed(arg1:number):Promise<player.ReturnType>;
 
