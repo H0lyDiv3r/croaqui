@@ -5,7 +5,7 @@ import {context} from '../models';
 
 export function EventLoop(arg1:any):Promise<void>;
 
-export function GetImage():Promise<player.ReturnType>;
+export function GetImage(arg1:string):Promise<player.ReturnType>;
 
 export function GetMetadata():Promise<player.ReturnType>;
 

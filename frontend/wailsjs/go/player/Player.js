@@ -6,8 +6,8 @@ export function EventLoop(arg1) {
   return window['go']['player']['Player']['EventLoop'](arg1);
 }
 
-export function GetImage() {
-  return window['go']['player']['Player']['GetImage']();
+export function GetImage(arg1) {
+  return window['go']['player']['Player']['GetImage'](arg1);
 }
 
 export function GetMetadata() {

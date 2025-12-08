@@ -1,8 +1,11 @@
 package media
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+
+	"github.com/H0lyDiv3r/croaqui/internals/taglib"
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 )
@@ -113,27 +116,18 @@ func (m *Media) GetAlbumImage(album string) (*ReturnType, error) {
 		if item.Album == "unknown" {
 			continue
 		}
-		img, err := m.FetchImage(item.Path)
+		res, err := taglib.GetAlbumCover(item.Path)
 		if err != nil {
 			continue
 		}
 
-		if img != "" {
-			return &ReturnType{
-				Data: struct {
-					Image string `json:"image"`
-				}{
-					Image: img,
-				},
-			}, nil
-		}
+		return &ReturnType{
+			Data: struct {
+				Image string `json:"image"`
+			}{
+				Image: fmt.Sprintf("data:%s;base64,%s", res.MimeType, base64.StdEncoding.EncodeToString(res.Data)),
+			},
+		}, nil
 	}
-
-	return &ReturnType{
-		Data: struct {
-			Image string `json:"image"`
-		}{
-			Image: "",
-		},
-	}, nil
+	return nil, fmt.Errorf("couldnt find album image")
 }

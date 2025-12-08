@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+
 	"github.com/H0lyDiv3r/croaqui/pkgs/app"
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	"github.com/H0lyDiv3r/croaqui/pkgs/ffmpeg"
@@ -10,7 +11,6 @@ import (
 	"github.com/H0lyDiv3r/croaqui/pkgs/player"
 	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 	"github.com/H0lyDiv3r/croaqui/pkgs/queue"
-	"github.com/H0lyDiv3r/croaqui/pkgs/taglib"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -28,7 +28,6 @@ func main() {
 	data := db.NewDB()
 	ffmpeg := ffmpeg.NewFFmpeg()
 	playlists := playlist.NewPlaylist()
-	taglib := taglib.NewTaglib()
 	queue := queue.NewQueue()
 	app := app.New()
 	// Create application with options
@@ -56,7 +55,6 @@ func main() {
 			ffmpeg.StartUp(ctx)
 			player.StartUp(ctx)
 			playlists.StartUp(ctx)
-			taglib.Startup(ctx)
 			queue.StartUp(ctx)
 			app.StartUp(ctx)
 

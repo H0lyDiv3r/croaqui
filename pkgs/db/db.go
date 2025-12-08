@@ -3,10 +3,11 @@ package db
 import (
 	"context"
 	"fmt"
-	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
-	"github.com/H0lyDiv3r/croaqui/pkgs/taglib"
 	"log"
 	"path/filepath"
+
+	"github.com/H0lyDiv3r/croaqui/internals/taglib"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -46,7 +47,7 @@ func (d *DB) StartUp(ctx context.Context) {
 func (d *DB) WriteAudioData(path string) error {
 
 	var exists bool
-	metadata, err := taglib.TaglibInstance.GetMetadataTaglib(path)
+	metadata, err := taglib.GetMetadataTaglib(path)
 	if err != nil {
 
 		return err

@@ -35,10 +35,10 @@ export const AlbumCard = ({ item }: { item: Item }) => {
       p={2}
       _hover={{ cursor: "pointer" }}
       onClick={() => {
-        navigate(`/albums/${encodeURIComponent(item.album)}`);
+        navigate(`/${encodeURIComponent(item.album)}`);
       }}
       borderRadius={"xl"}
-      bg={getNeutral("light", 900)}
+      bg={"red"}
       _dark={{
         bg: getNeutral("dark", 800),
       }}
@@ -54,7 +54,7 @@ export const AlbumCard = ({ item }: { item: Item }) => {
         pos={"relative"}
       >
         <Image
-          src={`data:image/jpeg;base64,${image}`}
+          src={`${image}`}
           alt={item.album}
           objectFit={"cover"}
           width={"100%"}

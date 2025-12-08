@@ -2,10 +2,13 @@ package player
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 	"log"
+
+	"github.com/H0lyDiv3r/croaqui/internals/taglib"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 
 	"github.com/gen2brain/go-mpv"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -348,19 +351,31 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 	return &ReturnType{Data: result}, nil
 }
 
-func (p *Player) GetImage() (*ReturnType, error) {
-	b64, err := GetImageFromAudio(p.mpv)
+func (p *Player) GetImage(path string) (*ReturnType, error) {
+	res, err := taglib.GetAlbumCover(path)
 	if err != nil {
 		log.Print(fmt.Errorf("failed to load image:%w", err).Error())
 		return nil, err
 	}
+
+	img := base64.StdEncoding.EncodeToString(res.Data)
+
 	return &ReturnType{Data: struct {
 		Success bool   `json:"success"`
 		Image   string `json:"image"`
-	}{Success: true, Image: b64}}, nil
+	}{Success: true, Image: fmt.Sprintf("data:%s;base64,%s", res.MimeType, img)}}, nil
 }
 
-func GetImageFromAudio(m *mpv.Mpv) (string, error) {
+func GetImageFromAudio(path string) (string, error) {
+	// meta, err := taglib.TaglibInstance.GetAlbumCover(path)
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// return meta.Data, nil
+
+	// fmt.Println("this is the meta extracted:", meta)
+
 	// if err := os.MkdirAll("./tmp", 0755); err != nil {
 	// 	return "", err
 	// }

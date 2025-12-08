@@ -1,8 +1,7 @@
-import React, { useRef, useContext, memo, useLayoutEffect } from "react";
+import React, { memo, useLayoutEffect } from "react";
 import "./player.css";
-import { Box, Icon, Image, Menu, Portal, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 
-import { useEffect } from "react";
 // import { motion } from "framer-motion";
 import { useState } from "react";
 import { TbHeart, TbHeartFilled } from "react-icons/tb";
@@ -17,7 +16,6 @@ import { ChakraIcon } from "@/components/ChackraIcon";
 
 import { addToFavorites, getNeutral, removeFromFavorites } from "@/utils";
 import { useScreenSize } from "@/hooks";
-import { FaGear } from "react-icons/fa6";
 const Player: React.FC = () => {
   const [favorite, setFavorite] = useState(false);
   const { isMedium, isSmall, isLarge } = useScreenSize();
@@ -91,7 +89,7 @@ const Player: React.FC = () => {
             <Image
               src={
                 currentTrack.image
-                  ? `data:image/jpeg;base64,${currentTrack.image}`
+                  ? `${currentTrack.image}`
                   : "./trackImage.svg"
               }
               width={"100%"}

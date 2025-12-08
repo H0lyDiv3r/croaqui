@@ -17,7 +17,7 @@ export const AlbumsLayout = () => {
     <Box display={"flex"} width={"100%"}>
       <Switch>
         <Route path={"/"} component={Albums} />
-        <Route path={"/albums/:id"} component={AlbumDetail} />
+        <Route path={"/:id"} component={AlbumDetail} />
       </Switch>
       {/*<QueueBar
         queueInfo={{

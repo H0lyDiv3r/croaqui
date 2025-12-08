@@ -85,8 +85,6 @@ func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 		q.shuffleQuery(&res)
 	}
 
-	fmt.Println("this is by playlist", res)
-
 	return &ReturnType{
 		Data: struct {
 			Queue []audio `json:"queue"`

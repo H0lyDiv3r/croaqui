@@ -5,8 +5,6 @@ import {context} from '../models';
 
 export function Emit(arg1:string):Promise<void>;
 
-export function FetchImage(arg1:string):Promise<string>;
-
 export function GetAlbumData(arg1:string):Promise<media.ReturnType>;
 
 export function GetAlbumImage(arg1:string):Promise<media.ReturnType>;

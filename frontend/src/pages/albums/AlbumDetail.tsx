@@ -3,24 +3,15 @@ import {
   getComplementaryColor,
   getNeutral,
   getQueue,
-  rgbToHsl,
   toHMS,
 } from "@/utils";
-import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {
-  GetImage,
-  GetStatus,
-  LoadMusic,
-} from "../../../wailsjs/go/player/Player";
 import { useDataStore, usePlayerStore, useQueueStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
 import { GetAlbumImage } from "../../../wailsjs/go/media/Media";
 import analyze from "rgbaster";
 import { MusicList } from "@/components/music-list";
-import { color } from "framer-motion";
-import { QueueBar } from "@/features/queue-bar";
-// import { useParams } from "wouter";
 
 export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   // const params = useParams();
@@ -69,23 +60,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     setAlbumInfo(res.albumInfo);
     // setAll(audioFiles);
   };
-  const loadAudio = (item: any) => {
-    // LoadMusic(item.path)
-    //   .then((res) => {
-    //     setLoaded(res.data.loaded);
-    //     setTrack(item);
-    //     GetImage().then((res) => {
-    //       setCurrentTrackImage(res.data.image);
-    //     });
-    //     GetStatus().then((res) => {
-    //       setAll(res.data);
-    //     });
-    //     // setAll(JSON.parse(res));
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error loading music:", error);
-    //   });
-  };
+
   const handleGetQueue = async () => {
     return await getQueue({
       type: "album",
@@ -96,7 +71,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   };
   //
   const getDominantColor = async (img: string) => {
-    const colors = await analyze(`data:image/jpeg;base64,${img}`);
+    const colors = await analyze(`${img}`);
     console.log(
       "colors go brr",
       colors ? colors[0].color : "rgba(255,255,255,1)",
@@ -167,7 +142,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
               zIndex={2}
             >
               <Image
-                src={`data:image/jpeg;base64,${banner}`}
+                src={`${banner}`}
                 alt="Album Cover"
                 height="100%"
                 width={"100%"}
