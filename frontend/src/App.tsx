@@ -105,7 +105,7 @@ function App() {
                   args: currentPlaylist
                     ? String(currentPlaylist || 0)
                     : match
-                      ? String(params)
+                      ? String(params.albumId)
                       : musicListPath,
                   shuffle: shuffle,
                 }}

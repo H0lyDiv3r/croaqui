@@ -65,6 +65,7 @@ func main() {
 			playlists,
 			queue,
 			app,
+
 			// ffmpeg,
 		},
 	})

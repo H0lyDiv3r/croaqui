@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"math"
 	"math/big"
+	"sync"
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
@@ -96,10 +98,28 @@ func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 }
 func (q *Queue) shuffleQuery(a *[]audio) {
 	b := *a
-	for i := len(*a) - 1; i > 0; i-- {
+	perRoutineAmount := 100
+	routineCount := math.Floor(float64(len(b) / perRoutineAmount))
+	var wg sync.WaitGroup
+
+	for i := 0; i < int(routineCount+1); i++ {
+		wg.Add(1)
+		if i >= int(routineCount) {
+			go shuffleWorker(b[(i*perRoutineAmount):], &wg)
+		} else {
+			go shuffleWorker(b[(i*perRoutineAmount):((i+1)*perRoutineAmount)-1], &wg)
+		}
+
+	}
+	wg.Wait()
+}
+
+func shuffleWorker(a []audio, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for i := len(a) - 1; i > 0; i-- {
 		randBig, _ := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
 		j := int(randBig.Int64())
 
-		b[i], b[j] = b[j], b[i]
+		a[i], a[j] = a[j], a[i]
 	}
 }
