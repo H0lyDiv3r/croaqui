@@ -128,7 +128,7 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                       borderRadius={"md"}
                       src={
                         currentTrack.image
-                          ? `data:image/jpeg;base64,${currentTrack.image}`
+                          ? `${currentTrack.image}`
                           : "./trackImage.svg"
                       }
                       width={"100%"}

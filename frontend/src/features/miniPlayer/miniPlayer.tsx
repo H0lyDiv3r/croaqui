@@ -127,13 +127,13 @@ export const MiniPlayer = () => {
                 // border={"1px solid"}
                 borderColor={getNeutral("light", 400)}
                 boxShadow={`0 2px 15px rgba(0, 0, 0, 0.2)`}
-                p={1}
+                p={"4px"}
               >
                 <Image
                   borderRadius={"lg"}
                   src={
                     currentTrack.image
-                      ? `data:image/jpeg;base64,${currentTrack.image}`
+                      ? `${currentTrack.image}`
                       : "./trackImage.svg"
                   }
                   width={"100%"}

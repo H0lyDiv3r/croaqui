@@ -143,7 +143,7 @@ export const MusicList = ({
   //   });
   // }, []);
   return (
-    <Box height={"100%"} px={8}>
+    <Box height={"100%"} px={2}>
       <Box
         display={"flex"}
         flexDirection={"column"}
