@@ -72,11 +72,16 @@ export const DirTree = () => {
                 key={dir.id}
                 onClick={() => {
                   setLocation("/");
+                  getAudioFiles({ path: dir.path });
                   GetDirs(dir.path).then((res) => {
                     if (res.data.dirs) {
+                      // console.log("showing audio in path fromhere", dir.path);
+                      // getAudioFiles({
+                      //   path: "/home/yuri/Data/music/Supertramp/",
+                      // });
                       setCurrentPath(dir.path);
                     } else {
-                      getAudioFiles({ path: dir.path });
+                      console.log("showing audio in path or here", dir.path);
                     }
                     setMusicListPath(dir.path);
                   });

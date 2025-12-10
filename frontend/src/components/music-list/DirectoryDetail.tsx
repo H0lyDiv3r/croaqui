@@ -92,9 +92,9 @@ export const DirectoryDetail = () => {
     // useQueryStore.setState((state) => {
     //   return { ...state, page: 0 };
     // });
-    useQueryStore.getState().clearQuery();
+    // useQueryStore.getState().clearQuery();
     getAudioFiles();
-  }, [currentPath]);
+  }, []);
 
   useEffect(() => {
     // EventsOn("MPV:FILE_LOADED", () => {

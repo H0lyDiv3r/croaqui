@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/H0lyDiv3r/croaqui/pkgs/db"
-	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
-	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 	"io/fs"
 	"log"
 	"path/filepath"
 	"strings"
+
+	"github.com/H0lyDiv3r/croaqui/pkgs/db"
+	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 )
 
 // getAudio
@@ -28,6 +29,8 @@ type audio struct {
 }
 
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
+
+	fmt.Println("showing audio in path", filter)
 
 	var result = []audio{}
 
@@ -93,8 +96,6 @@ func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 	}
 
 	query.Scan(&result)
-
-	fmt.Println("hey there boss", result)
 
 	return &ReturnType{Data: struct {
 		Files   []audio `json:"files"`

@@ -10,10 +10,10 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
     return;
   }
 
+  console.log("showing from the inside", params);
   const response = await GetAudio(
     JSON.stringify({
-      ...useQueryStore.getState(),
-      ...params,
+      ...query,
     }),
   );
 
