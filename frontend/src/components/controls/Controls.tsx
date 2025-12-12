@@ -76,20 +76,24 @@ const Controls: React.FC = () => {
   const loopVals = [TbRepeatOff, TbRepeat, TbRepeatOnce];
 
   useEffect(() => {
-    EventsOn("MPV:END", (msg) => {
+    const cancelMPVEnd = EventsOn("MPV:END", (msg) => {
       if (time.current) {
         clearInterval(time.current);
       }
       usePlayerStore.setState((state) => {
         return { ...state, paused: true };
       });
-      console.log("ended bro ended", msg);
 
       if (msg.reason === "eof") {
+        console.log("maybe its in the gutter", msg);
         handleNext();
       }
     });
+    return () => {
+      cancelMPVEnd();
+    };
   }, []);
+
   return (
     <Box
       width={"100%"}

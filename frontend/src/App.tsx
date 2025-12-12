@@ -1,7 +1,7 @@
 import "./App.css";
 import Player from "./features/Player";
 import { Box } from "@chakra-ui/react";
-import { getNeutral } from "./utils";
+import { getNeutral, getQueue } from "./utils";
 import { useEffect, useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch, useRoute } from "wouter";
@@ -32,6 +32,7 @@ function App() {
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
+  const currentTrack = usePlayerStore((state) => state.currentTrack);
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
@@ -41,17 +42,17 @@ function App() {
   const [match, params] = useRoute("/albums/:albumId");
 
   useLayoutEffect(() => {
-    EventsOn("toast:err", (err) => {
+    const cancelToastError = EventsOn("toast:err", (err) => {
       showToast("error", err.message);
     });
-    EventsOn("player_error", (err) => {
+    const cancelPlayerError = EventsOn("player_error", (err) => {
       showToast("error", err.message);
     });
-    EventsOn("toast:success", (msg) => {
+    const cancelToastSuccess = EventsOn("toast:success", (msg) => {
       showToast("success", msg);
     });
 
-    EventsOn("MPV:FILE_LOADED", () => {
+    const cancelFileLoaded = EventsOn("MPV:FILE_LOADED", () => {
       // GetImage().then((res) => {
       //   setCurrentTrackImage(res.data.image);
       // });
@@ -60,10 +61,38 @@ function App() {
         setPlayerStatus(res.data);
       });
     });
+    return () => {
+      cancelToastError();
+      cancelPlayerError();
+      cancelToastSuccess();
+      cancelFileLoaded();
+    };
   }, []);
   useEffect(() => {
     useSidebarDisclosure.setState({ leftBarOpen: false, rightBarOpen: false });
   }, [isSmall]);
+  useEffect(() => {
+    const queueInfo = {
+      type: (currentPlaylist ? "playlist" : match ? "album" : "dir") as
+        | "playlist"
+        | "album"
+        | "dir",
+      args: currentPlaylist
+        ? String(currentPlaylist || 0)
+        : match
+          ? String(params.albumId)
+          : musicListPath,
+      shuffle: shuffle,
+    };
+    // console.log("rerendering", queueInfo.args);
+    const fetchQueue = async () => {
+      const queue = await getQueue(queueInfo);
+      useQueueStore.setState({ items: queue, playingIndex: 0 });
+    };
+    if (currentTrack.path && queueInfo.args) {
+      fetchQueue();
+    }
+  }, [shuffle]);
   return (
     <Box
       display={"flex"}

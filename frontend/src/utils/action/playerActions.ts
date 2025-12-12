@@ -1,21 +1,5 @@
 import { usePlayerStore, useQueueStore } from "@/store";
-import {
-  GetImage,
-  GetStatus,
-  LoadMusic,
-} from "../../../wailsjs/go/player/Player";
-import { GetQueue } from "../../../wailsjs/go/queue/Queue";
-import { EventsOn } from "wailsjs/runtime/runtime";
-
-// const audioFiles = useDataStore((state) => state.musicFiles);
-// const scrollRef = useRef<HTMLDivElement>(null);
-// const setAll = usePlayerStore((state) => state.setPlayerStatus);
-// const setLoaded = usePlayerStore((state) => state.setLoaded);
-// const setTrack = usePlayerStore((state) => state.setCurrentTrack);
-// const currentPath = useDataStore((state) => state.currentPath);
-// const currentPlaylist = useDataStore((state) => state.currentPlaylist);
-// const playlist = usePlaylistStore((state) => state.playlists);
-// const setQueue = useQueueStore((state) => state.setQueue);
+import { GetImage, LoadMusic } from "../../../wailsjs/go/player/Player";
 
 const setLoaded = usePlayerStore.getState().setLoaded;
 const setAll = usePlayerStore.getState().setPlayerStatus;
@@ -69,6 +53,8 @@ export const handleNext = () => {
 
   const nextTrack = queue[nextIndex];
   setCurrentIndex(nextIndex);
+
+  console.log("wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere's my mind", nextIndex);
 
   if (nextTrack) {
     loadAudio(nextTrack);

@@ -49,17 +49,6 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
   };
 
   useEffect(() => {
-    console.log("rerendering", queueInfo.args);
-    const fetchQueue = async () => {
-      const queue = await getQueue(queueInfo);
-      useQueueStore.setState({ items: queue, playingIndex: 0 });
-    };
-    if (currentTrack.path && queueInfo.args) {
-      fetchQueue();
-    }
-  }, [shuffle]);
-
-  useEffect(() => {
     console.log("i will get metadata here");
   }, []);
 

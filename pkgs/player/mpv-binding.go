@@ -125,7 +125,7 @@ func (p *Player) EventLoop(eventLoopReady chan struct{}) {
 						Message: "unknown",
 					})
 				}
-			case mpv.EventFileLoaded, mpv.EventPlaybackRestart, mpv.EventAudioReconfig:
+			case mpv.EventFileLoaded:
 				fmt.Println("the file is loaded")
 				runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
 

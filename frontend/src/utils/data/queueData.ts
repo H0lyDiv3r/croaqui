@@ -21,7 +21,7 @@ export const getQueue = async (queueInfo: QueueInfo) => {
 
   console.log();
 
-  if (currentTrack.path) {
+  if (currentTrack.path && shuffle) {
     const newQueue = res.data.queue.filter(
       (track: any) => track.path !== currentTrack.path,
     );
