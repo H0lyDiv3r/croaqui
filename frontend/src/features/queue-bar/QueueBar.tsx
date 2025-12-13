@@ -8,8 +8,10 @@ import {
   useSidebarDisclosure,
 } from "@/store";
 import { QueueInfo } from "@/types";
-import { getNeutral, getQueue } from "@/utils";
+import { getNeutral } from "@/utils";
+import { loadFromQueue } from "@/utils/action";
 import { Box, Image, Tabs, Text } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaRegFolderOpen } from "react-icons/fa6";
 import { IoFolderOpenOutline } from "react-icons/io5";
@@ -193,48 +195,59 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                   <Box>
                     {queue.map((song: any, idx: number) => (
                       <Box
+                        display={"flex"}
+                        alignItems={"center"}
                         key={idx}
                         p={2}
-                        bg={getNeutral("light", 800)}
-                        _dark={{
-                          bg: getNeutral("dark", 800),
-                          color:
-                            currentTrack.path === song.path
-                              ? "brand.500"
-                              : getNeutral("dark", 200),
-                        }}
-                        my={2}
                         borderRadius={"md"}
                         textAlign={"left"}
+                        _hover={{
+                          cursor: "pointer",
+                          bg: getNeutral("light", 800),
+                        }}
                         color={
                           currentTrack.path === song.path
                             ? "brand.500"
-                            : getNeutral("light", 200)
+                            : getNeutral("light", 300)
                         }
-                      >
-                        <Text
-                          whiteSpace={"nowrap"}
-                          fontWeight={600}
-                          overflow={"hidden"}
-                        >
-                          {song.title}
-                        </Text>
-                        <Text
-                          fontSize={"xs"}
-                          color={
+                        _dark={{
+                          color:
                             currentTrack.path === song.path
-                              ? "brand.500"
-                              : getNeutral("light", 200)
-                          }
-                          _dark={{
-                            color:
+                              ? "brand.400"
+                              : getNeutral("dark", 300),
+                          _hover: {
+                            bg: getNeutral("dark", 800),
+                          },
+                        }}
+                        onClick={() => {
+                          loadFromQueue(idx);
+                        }}
+                      >
+                        <Box>
+                          <Text
+                            whiteSpace={"nowrap"}
+                            fontWeight={500}
+                            overflow={"hidden"}
+                          >
+                            {song.title}
+                          </Text>
+                          <Text
+                            fontSize={"xs"}
+                            color={
                               currentTrack.path === song.path
-                                ? "brand.700"
-                                : getNeutral("dark", 300),
-                          }}
-                        >
-                          {song.artist}
-                        </Text>
+                                ? "brand.500"
+                                : getNeutral("light", 300)
+                            }
+                            _dark={{
+                              color:
+                                currentTrack.path === song.path
+                                  ? "brand.700"
+                                  : getNeutral("dark", 300),
+                            }}
+                          >
+                            {song.artist}
+                          </Text>
+                        </Box>
                       </Box>
                     ))}
                   </Box>
@@ -247,5 +260,61 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
         </Box>
       ) : null}
     </>
+  );
+};
+
+const PlayingAnimation = () => {
+  const MotionBox = motion(Box);
+  return (
+    <Box display={"flex"} gap={"1px"} h={"100%"}>
+      <MotionBox
+        as="div"
+        w={"4px"}
+        h={"12px"}
+        bg="brand.500"
+        animate={{
+          scaleY: [0.7, 1, 0.2, 1],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "linear",
+        }}
+        style={{ originY: 1 }} // ← Bottom anchor (0 = top, 1 = bottom)
+      />
+      <MotionBox
+        as="div"
+        w={"4px"}
+        h={"12px"}
+        bg="brand.500"
+        animate={{
+          scaleY: [0.3, 1, 0.8, 1],
+        }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "linear",
+        }}
+        style={{ originY: 1 }} // ← Bottom anchor (0 = top, 1 = bottom)
+      />
+      <MotionBox
+        as="div"
+        w={"4px"}
+        h={"12px"}
+        bg="brand.500"
+        animate={{
+          scaleY: [0.6, 1, 0.6, 1],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "linear",
+        }}
+        style={{ originY: 1 }} // ← Bottom anchor (0 = top, 1 = bottom)
+      />
+    </Box>
   );
 };

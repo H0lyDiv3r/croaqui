@@ -89,3 +89,18 @@ export const handlePrev = () => {
     loadAudio(nextTrack);
   }
 };
+
+export const loadFromQueue = (index: number) => {
+  const queue = useQueueStore.getState().items;
+  const currentIndex = useQueueStore.getState().playingIndex;
+  const setCurrentIndex = useQueueStore.getState().setPlayingIndex;
+  if (index >= queue.length) {
+    return;
+  }
+  const nextTrack = queue[index];
+
+  if (nextTrack) {
+    setCurrentIndex(index);
+    loadAudio(nextTrack);
+  }
+};
