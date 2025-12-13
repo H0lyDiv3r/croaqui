@@ -30,7 +30,7 @@ export const AlbumCard = ({ item }: { item: Item }) => {
       width={"100%"}
       h={"18rem"}
       overflow={"hidden"}
-      boxShadow={"0px 0px 12px rgba(0, 0, 0, 0.2)"}
+      boxShadow={"0px 1px 4px rgba(0, 0, 0, 0.2)"}
       my={"2"}
       p={2}
       _hover={{ cursor: "pointer" }}
@@ -38,7 +38,7 @@ export const AlbumCard = ({ item }: { item: Item }) => {
         navigate(`/${encodeURIComponent(item.album)}`);
       }}
       borderRadius={"xl"}
-      bg={"red"}
+      bg={getNeutral("light", 900)}
       _dark={{
         bg: getNeutral("dark", 800),
       }}
@@ -81,22 +81,21 @@ export const AlbumCard = ({ item }: { item: Item }) => {
             bg={getNeutral("light", 900)}
             color={getNeutral("light", 200)}
             _dark={{
-              color: getNeutral("dark", 100),
+              color: getNeutral("dark", 200),
               bg: getNeutral("dark", 800),
             }}
             borderBottomRadius={"xl"}
           >
-            <Text fontSize={"sm"}>
-              {item.album.length > 20
-                ? item.album.slice(0, 20) + "..."
-                : item.album}
-              {/*{item.album}*/}
-            </Text>
+            <Text fontSize={"sm"}>by {item.artist}</Text>
           </Box>
         </Box>
       </Card.Body>
       <Card.Footer p={2} flexDir={"column"} justifyContent={"start"}>
-        <Text fontSize={"sm"}>By {item.artist} </Text>
+        <Text fontSize={"md"}>
+          {item.album.length > 20
+            ? item.album.slice(0, 20) + "..."
+            : item.album}
+        </Text>
         <Box
           display={"flex"}
           width={"100%"}

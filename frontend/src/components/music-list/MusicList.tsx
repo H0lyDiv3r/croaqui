@@ -14,7 +14,13 @@ import {
 import { getNeutral, getQueue, removeFromPlaylist, toHMS } from "@/utils";
 import { GetQueue } from "../../../wailsjs/go/queue/Queue";
 
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { getAudio } from "@/utils/data/audioData";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
 import { Empty } from "../empty";
@@ -47,6 +53,7 @@ export const MusicList = ({
   const [dropdownPos, setDropdownPos] = useState({ x: 0, y: 0 });
 
   const heightRef = useRef<HTMLElement>(null);
+  const [height, setHeight] = useState(100);
 
   // const getAudioFiles = async () => {
   //   const audioFiles = await getAudio({ hasMore: true, page: 0 });
@@ -142,6 +149,17 @@ export const MusicList = ({
   //     });
   //   });
   // }, []);
+
+  useLayoutEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      setHeight(entries[0].contentRect.height);
+      console.log("aaaaaaaaaay", entries[0].contentRect);
+    });
+
+    if (heightRef.current) resizeObserver.observe(heightRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
   return (
     <Box height={"100%"} px={2}>
       <Box
@@ -201,7 +219,7 @@ export const MusicList = ({
               className="scroll"
               itemCount={audioFiles.length}
               itemSize={60}
-              height={heightRef.current ? heightRef.current.offsetHeight : 200}
+              height={height}
               width={"100%"}
             >
               {({ index, style }: { index: number; style: any }) => {

@@ -51,7 +51,7 @@ export const NavBar = () => {
           {isSmall || isMedium ? (
             <>
               {/*<ChakraIcon icon={HiMiniBars2} />*/}
-              <NavMenu />
+              <Navigation />
               <Settings />
             </>
           ) : (
