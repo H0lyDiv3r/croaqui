@@ -6,6 +6,10 @@ export function GetQueue(arg1) {
   return window['go']['queue']['Queue']['GetQueue'](arg1);
 }
 
+export function ShuffleIndex(arg1) {
+  return window['go']['queue']['Queue']['ShuffleIndex'](arg1);
+}
+
 export function StartUp(arg1) {
   return window['go']['queue']['Queue']['StartUp'](arg1);
 }

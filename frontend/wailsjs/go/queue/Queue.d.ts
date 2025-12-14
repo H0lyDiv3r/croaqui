@@ -5,4 +5,6 @@ import {context} from '../models';
 
 export function GetQueue(arg1:queue.filter):Promise<queue.ReturnType>;
 
+export function ShuffleIndex(arg1:number):Promise<queue.ReturnType>;
+
 export function StartUp(arg1:context.Context):Promise<void>;

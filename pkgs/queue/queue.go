@@ -83,38 +83,55 @@ func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 
 	query.Scan(&res)
 
+	var shuffleIndex []int
 	if filterSetting.Shuffle {
-		q.shuffleQuery(&res)
+		shuffleIndex = q.ShuffleIndex(len(res)).Data.(struct {
+			ShuffleIndex []int `json:"shuffleIndex"`
+		}).ShuffleIndex
 	}
 
 	return &ReturnType{
 		Data: struct {
-			Queue []audio `json:"queue"`
+			Queue        []audio `json:"queue"`
+			ShuffleIndex []int   `json:"shuffleIndex"`
 		}{
-			Queue: res,
+			Queue:        res,
+			ShuffleIndex: shuffleIndex,
 		},
 	}, nil
 
 }
-func (q *Queue) shuffleQuery(a *[]audio) {
-	b := *a
+
+func (q *Queue) ShuffleIndex(a int) *ReturnType {
 	perRoutineAmount := 100
-	routineCount := math.Floor(float64(len(b) / perRoutineAmount))
+	routineCount := math.Floor(float64(a / perRoutineAmount))
+	nums := make([]int, a)
+	for i := range nums {
+		nums[i] = i
+	}
 	var wg sync.WaitGroup
 
 	for i := 0; i < int(routineCount+1); i++ {
 		wg.Add(1)
 		if i >= int(routineCount) {
-			go shuffleWorker(b[(i*perRoutineAmount):], &wg)
+			go shuffleWorker(nums[(i*perRoutineAmount):], &wg)
 		} else {
-			go shuffleWorker(b[(i*perRoutineAmount):((i+1)*perRoutineAmount)-1], &wg)
+			go shuffleWorker(nums[(i*perRoutineAmount):((i+1)*perRoutineAmount)-1], &wg)
 		}
 
 	}
 	wg.Wait()
+
+	return &ReturnType{
+		Data: struct {
+			ShuffleIndex []int `json:"shuffleIndex"`
+		}{
+			ShuffleIndex: nums,
+		},
+	}
 }
 
-func shuffleWorker(a []audio, wg *sync.WaitGroup) {
+func shuffleWorker(a []int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for i := len(a) - 1; i > 0; i-- {
 		randBig, _ := rand.Int(rand.Reader, big.NewInt(int64(i+1)))

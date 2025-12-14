@@ -10,3 +10,15 @@ export type QueueInfo = {
   args: string | null;
   shuffle: boolean;
 };
+export type Song = {
+  album: string;
+  artist: string;
+  duration: string;
+  favorite: boolean;
+  genre: string;
+  id: number;
+  name: string;
+  parentPath: string;
+  path: string;
+  title: string;
+};

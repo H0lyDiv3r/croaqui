@@ -1,5 +1,6 @@
 import { usePlayerStore, useQueueStore } from "@/store";
 import { GetImage, LoadMusic } from "../../../wailsjs/go/player/Player";
+import { Song } from "@/types";
 
 const setLoaded = usePlayerStore.getState().setLoaded;
 const setAll = usePlayerStore.getState().setPlayerStatus;
@@ -35,12 +36,15 @@ export const handleNext = () => {
   const currentIndex = useQueueStore.getState().playingIndex;
   const setCurrentIndex = useQueueStore.getState().setPlayingIndex;
   const loop = useQueueStore.getState().loop;
+  const shuffle = useQueueStore.getState().shuffle;
+  const shuffleIndex = useQueueStore.getState().shuffleIndex;
 
   if (!currentTrack || !queue || queue.length === 0) return;
 
   let nextIndex = 0;
   switch (loop) {
     case 0:
+      console.log("heyho", Math.min(queue.length - 1, currentIndex + 1));
       nextIndex = Math.min(queue.length - 1, currentIndex + 1);
       break;
     case 1:
@@ -51,10 +55,9 @@ export const handleNext = () => {
       break;
   }
 
-  const nextTrack = queue[nextIndex];
+  const nextTrack =
+    shuffle && shuffleIndex ? queue[shuffleIndex[nextIndex]] : queue[nextIndex];
   setCurrentIndex(nextIndex);
-
-  console.log("wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere's my mind", nextIndex);
 
   if (nextTrack) {
     loadAudio(nextTrack);
@@ -66,6 +69,8 @@ export const handlePrev = () => {
   const setCurrentIndex = useQueueStore.getState().setPlayingIndex;
   const queue = useQueueStore.getState().items;
   const loop = useQueueStore.getState().loop;
+  const shuffle = useQueueStore.getState().shuffle;
+  const shuffleIndex = useQueueStore.getState().shuffleIndex;
 
   let nextIndex = 0;
   switch (loop) {
@@ -82,7 +87,9 @@ export const handlePrev = () => {
       nextIndex = currentIndex;
       break;
   }
-  const nextTrack = queue[nextIndex];
+  const nextTrack =
+    shuffle && shuffleIndex ? queue[shuffleIndex[nextIndex]] : queue[nextIndex];
+
   setCurrentIndex(nextIndex);
 
   if (nextTrack) {

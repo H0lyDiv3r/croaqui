@@ -1,7 +1,7 @@
 import "./App.css";
 import Player from "./features/Player";
 import { Box } from "@chakra-ui/react";
-import { getNeutral, getQueue } from "./utils";
+import { getNeutral, getQueue, shuffleQueue } from "./utils";
 import { useEffect, useLayoutEffect } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch, useRoute } from "wouter";
@@ -72,26 +72,7 @@ function App() {
     useSidebarDisclosure.setState({ leftBarOpen: false, rightBarOpen: false });
   }, [isSmall]);
   useEffect(() => {
-    const queueInfo = {
-      type: (currentPlaylist ? "playlist" : match ? "album" : "dir") as
-        | "playlist"
-        | "album"
-        | "dir",
-      args: currentPlaylist
-        ? String(currentPlaylist || 0)
-        : match
-          ? String(params.albumId)
-          : musicListPath,
-      shuffle: shuffle,
-    };
-    // console.log("rerendering", queueInfo.args);
-    const fetchQueue = async () => {
-      const queue = await getQueue(queueInfo);
-      useQueueStore.setState({ items: queue, playingIndex: 0 });
-    };
-    if (currentTrack.path && queueInfo.args) {
-      fetchQueue();
-    }
+    shuffleQueue();
   }, [shuffle]);
   return (
     <Box

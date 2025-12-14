@@ -7,7 +7,7 @@ import {
   useQueueStore,
   useSidebarDisclosure,
 } from "@/store";
-import { QueueInfo } from "@/types";
+import { QueueInfo, Song } from "@/types";
 import { getNeutral } from "@/utils";
 import { loadFromQueue } from "@/utils/action";
 import { Box, Image, Tabs, Text } from "@chakra-ui/react";
@@ -27,6 +27,7 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
   const playIndex = useQueueStore((state) => state.playingIndex);
   const loop = useQueueStore((state) => state.loop);
   const shuffle = useQueueStore((state) => state.shuffle);
+  const shuffleIndex = useQueueStore((state) => state.shuffleIndex);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
 
@@ -49,10 +50,13 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
       rightBarOpen: target,
     }));
   };
+  const getSongAtShuffleIndex = (idx: number): Song | null => {
+    return shuffle && shuffleIndex ? queue[shuffleIndex[idx]] : null;
+  };
 
   useEffect(() => {
-    console.log("i will get metadata here");
-  }, []);
+    console.log("i will get metadata here", shuffleIndex);
+  }, [shuffleIndex]);
 
   return (
     <>
@@ -206,13 +210,19 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                           bg: getNeutral("light", 800),
                         }}
                         color={
-                          currentTrack.path === song.path
+                          currentTrack.path ===
+                          (getSongAtShuffleIndex(idx)
+                            ? getSongAtShuffleIndex(idx)?.path
+                            : song.path)
                             ? "brand.500"
                             : getNeutral("light", 300)
                         }
                         _dark={{
                           color:
-                            currentTrack.path === song.path
+                            currentTrack.path ===
+                            (getSongAtShuffleIndex(idx)
+                              ? getSongAtShuffleIndex(idx)?.path
+                              : song.path)
                               ? "brand.400"
                               : getNeutral("dark", 300),
                           _hover: {
@@ -229,7 +239,9 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                             fontWeight={500}
                             overflow={"hidden"}
                           >
-                            {song.title}
+                            {getSongAtShuffleIndex(idx)
+                              ? getSongAtShuffleIndex(idx)?.title
+                              : song.title}
                           </Text>
                           <Text
                             fontSize={"xs"}
@@ -240,12 +252,18 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                             }
                             _dark={{
                               color:
-                                currentTrack.path === song.path
+                                currentTrack.path ===
+                                (getSongAtShuffleIndex(idx)
+                                  ? getSongAtShuffleIndex(idx)?.path
+                                  : song.path)
                                   ? "brand.700"
                                   : getNeutral("dark", 300),
                             }}
                           >
                             {song.artist}
+                            {getSongAtShuffleIndex(idx)
+                              ? getSongAtShuffleIndex(idx)?.artist
+                              : song.artist}
                           </Text>
                         </Box>
                       </Box>

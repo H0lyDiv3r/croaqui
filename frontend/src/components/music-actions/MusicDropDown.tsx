@@ -8,13 +8,15 @@ import { getNeutral, getPlaylistContent, removeFromPlaylist } from "@/utils";
 import { PlaylistsMenu } from "./MusicActions";
 import { ChakraIcon } from "../ChackraIcon";
 import { useDataStore, usePlaylistStore } from "@/store";
+import { Song } from "@/types";
 
 const DialogOverlay: any = Dialog.Backdrop;
 const DialogContent: any = Dialog.Content;
 const DialogPositioner: any = Dialog.Positioner;
 const DialogBody: any = Dialog.Body;
+
 const MusicDropdown = ({
-  songId,
+  song,
   id,
   open,
   setOpen,
@@ -23,7 +25,7 @@ const MusicDropdown = ({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  songId: number;
+  song: Song;
   id: number | null;
   position: { x: number; y: number };
   clearIndexOfDropdown: () => void;
@@ -80,11 +82,20 @@ const MusicDropdown = ({
                 </Box>
                 <ItemsWrapper>
                   <PlaylistsMenu
-                    songId={songId}
+                    songId={song.id}
                     handleClose={() => {
                       setOpen(false);
                     }}
                   />
+                </ItemsWrapper>
+                <ItemsWrapper>
+                  <Box
+                    onClick={() => {
+                      console.log("ere quoooooooooooooooooooooy", song);
+                    }}
+                  >
+                    Add to Queue
+                  </Box>
                 </ItemsWrapper>
 
                 {currentPlaylistId && id && (
@@ -92,7 +103,7 @@ const MusicDropdown = ({
                     <Box
                       as={"button"}
                       onClick={() =>
-                        handleRemoveFromPlaylist(songId, currentPlaylistId, id)
+                        handleRemoveFromPlaylist(song.id, currentPlaylistId, id)
                       }
                     >
                       Remove from Playlist

@@ -244,7 +244,7 @@ export const MusicList = ({
       {idxOfDropdown >= 0 ? (
         <MusicDropdown
           id={audioFiles[idxOfDropdown].ipl || null}
-          songId={audioFiles[idxOfDropdown].id}
+          song={audioFiles[idxOfDropdown]}
           open={open}
           setOpen={setOpen}
           position={dropdownPos}
