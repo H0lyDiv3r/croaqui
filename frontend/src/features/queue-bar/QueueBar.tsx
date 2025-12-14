@@ -168,7 +168,9 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                 >
                   <Text fontSize={"md"} fontWeight={600}>
                     {calculateUpNext() + 1
-                      ? queue[calculateUpNext()]?.title
+                      ? shuffle && shuffleIndex
+                        ? queue[shuffleIndex[calculateUpNext()]].title
+                        : queue[calculateUpNext()]?.title
                       : "End of Queue"}
                   </Text>
                   <Text
