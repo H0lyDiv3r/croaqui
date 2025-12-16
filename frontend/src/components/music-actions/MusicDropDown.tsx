@@ -4,7 +4,12 @@ import { useState } from "react";
 import { TbDots } from "react-icons/tb";
 import { MdOutlineAddToQueue, MdOutlineQueue } from "react-icons/md";
 
-import { getNeutral, getPlaylistContent, removeFromPlaylist } from "@/utils";
+import {
+  addToQueue,
+  getNeutral,
+  getPlaylistContent,
+  removeFromPlaylist,
+} from "@/utils";
 import { PlaylistsMenu } from "./MusicActions";
 import { ChakraIcon } from "../ChackraIcon";
 import { useDataStore, usePlaylistStore } from "@/store";
@@ -91,7 +96,8 @@ const MusicDropdown = ({
                 <ItemsWrapper>
                   <Box
                     onClick={() => {
-                      console.log("ere quoooooooooooooooooooooy", song);
+                      addToQueue(song);
+                      setOpen(false);
                     }}
                   >
                     Add to Queue

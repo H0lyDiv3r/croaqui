@@ -212,19 +212,13 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                           bg: getNeutral("light", 800),
                         }}
                         color={
-                          currentTrack.path ===
-                          (getSongAtShuffleIndex(idx)
-                            ? getSongAtShuffleIndex(idx)?.path
-                            : song.path)
+                          playIndex === idx
                             ? "brand.500"
                             : getNeutral("light", 300)
                         }
                         _dark={{
                           color:
-                            currentTrack.path ===
-                            (getSongAtShuffleIndex(idx)
-                              ? getSongAtShuffleIndex(idx)?.path
-                              : song.path)
+                            playIndex === idx
                               ? "brand.400"
                               : getNeutral("dark", 300),
                           _hover: {
@@ -248,21 +242,17 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
                           <Text
                             fontSize={"xs"}
                             color={
-                              currentTrack.path === song.path
+                              playIndex === idx
                                 ? "brand.500"
                                 : getNeutral("light", 300)
                             }
                             _dark={{
                               color:
-                                currentTrack.path ===
-                                (getSongAtShuffleIndex(idx)
-                                  ? getSongAtShuffleIndex(idx)?.path
-                                  : song.path)
+                                playIndex === idx
                                   ? "brand.700"
                                   : getNeutral("dark", 300),
                             }}
                           >
-                            {song.artist}
                             {getSongAtShuffleIndex(idx)
                               ? getSongAtShuffleIndex(idx)?.artist
                               : song.artist}

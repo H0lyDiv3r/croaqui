@@ -100,11 +100,14 @@ export const handlePrev = () => {
 export const loadFromQueue = (index: number) => {
   const queue = useQueueStore.getState().items;
   const currentIndex = useQueueStore.getState().playingIndex;
+  const shuffleIndex = useQueueStore.getState().shuffleIndex;
+  const shuffle = useQueueStore.getState().shuffle;
   const setCurrentIndex = useQueueStore.getState().setPlayingIndex;
   if (index >= queue.length) {
     return;
   }
-  const nextTrack = queue[index];
+  const nextTrack =
+    shuffle && shuffleIndex ? queue[shuffleIndex[index]] : queue[index];
 
   if (nextTrack) {
     setCurrentIndex(index);

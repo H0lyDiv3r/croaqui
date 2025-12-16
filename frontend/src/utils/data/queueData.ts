@@ -90,3 +90,18 @@ export const shuffleQueue = async () => {
     useQueueStore.setState({ shuffleIndex: null });
   }
 };
+
+export const addToQueue = async (song: any) => {
+  const shuffle = useQueueStore.getState().shuffle;
+  const shuffleIndex = useQueueStore.getState().shuffleIndex;
+  const queue = useQueueStore.getState().items;
+  const setQueue = useQueueStore.getState().setQueue;
+  const setShuffleIndex = useQueueStore.getState().setShuffleIndex;
+  if (shuffle && shuffleIndex) {
+    setQueue([...queue, song]);
+    setShuffleIndex([...shuffleIndex, queue.length]);
+    return;
+  } else {
+    setQueue([...queue, song]);
+  }
+};

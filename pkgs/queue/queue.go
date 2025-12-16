@@ -116,7 +116,7 @@ func (q *Queue) ShuffleIndex(a int) *ReturnType {
 		if i >= int(routineCount) {
 			go shuffleWorker(nums[(i*perRoutineAmount):], &wg)
 		} else {
-			go shuffleWorker(nums[(i*perRoutineAmount):((i+1)*perRoutineAmount)-1], &wg)
+			go shuffleWorker(nums[(i*perRoutineAmount):((i+1)*perRoutineAmount)], &wg)
 		}
 
 	}
