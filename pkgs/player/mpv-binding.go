@@ -6,9 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/H0lyDiv3r/croaqui/internals/taglib"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/H0lyDiv3r/croaqui/pkgs/mpris"
+	"github.com/H0lyDiv3r/croaqui/pkgs/sharedTypes"
+	"github.com/godbus/dbus/v5"
 
 	"github.com/gen2brain/go-mpv"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -29,9 +34,7 @@ type PlayerStatus struct {
 	Speed    any `json:"speed"`
 }
 
-type ReturnType struct {
-	Data interface{} `json:"data"`
-}
+type ReturnType = sharedTypes.ReturnType
 
 type Command struct {
 	Fn         func() (any, error)
@@ -39,8 +42,11 @@ type Command struct {
 	ErrChan    chan error
 }
 
+var PlayerInstance *Player
+
 func MPV() *Player {
-	return &Player{}
+	PlayerInstance = &Player{}
+	return PlayerInstance
 }
 
 func (p *Player) StartUp(ctx context.Context) {
@@ -127,6 +133,8 @@ func (p *Player) EventLoop(eventLoopReady chan struct{}) {
 				}
 			case mpv.EventFileLoaded:
 				fmt.Println("the file is loaded")
+
+				go p.GetMetadata()
 				runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
 
 			}
@@ -151,6 +159,20 @@ func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 		return nil, err
 	}
 
+	stats, _ := p.GetStatus()
+
+	if status, ok := stats.Data.(PlayerStatus); ok {
+		if status.Paused.(bool) {
+			mpris.MprisInstance.EmitPropertiesChanged(map[string]dbus.Variant{
+				"PlaybackStatus": dbus.MakeVariant("Paused"),
+			})
+		} else {
+			mpris.MprisInstance.EmitPropertiesChanged(map[string]dbus.Variant{
+				"PlaybackStatus": dbus.MakeVariant("Playing"),
+			})
+		}
+	}
+
 	return &ReturnType{Data: struct {
 		Loaded bool `json:"loaded"`
 	}{Loaded: true}}, err
@@ -158,6 +180,13 @@ func (p *Player) LoadMusic(url string) (*ReturnType, error) {
 
 // refactor to use taglib maybe
 func (p *Player) GetMetadata() (*ReturnType, error) {
+	type Metadata struct {
+		Title       string `json:"title"`
+		Artist      string `json:"artist"`
+		Album       string `json:"album"`
+		TrackNumber int    `json:"track_number"`
+		Duration    int    `json:"duration"`
+	}
 
 	data, err := p.execute(
 		func() (any, error) {
@@ -171,12 +200,24 @@ func (p *Player) GetMetadata() (*ReturnType, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result interface{}
 
+	var result Metadata
 	err = json.Unmarshal([]byte(data.(string)), &result)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("showing metadata", result)
+	dbusMd := map[string]dbus.Variant{
+		// "mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
+		"xesam:title":  dbus.MakeVariant(result.Title),
+		"xesam:artist": dbus.MakeVariant([]string{result.Artist}),
+		"mpris:length": dbus.MakeVariant(result.Duration * 1000), // ms → μs
+	}
+
+	mpris.MprisInstance.EmitPropertiesChanged(
+		map[string]dbus.Variant{"Metadata": dbus.MakeVariant(dbusMd)},
+	)
 	return &ReturnType{Data: struct {
 		MetaData interface{} `json:"metadata"`
 	}{MetaData: result}}, nil
@@ -207,6 +248,16 @@ func (p *Player) TogglePlay() (*ReturnType, error) {
 		Position float64 `json:"position"`
 	})
 
+	if result.Paused {
+		mpris.MprisInstance.EmitPropertiesChanged(map[string]dbus.Variant{
+			"PlaybackStatus": dbus.MakeVariant("Paused"),
+		})
+	} else {
+		mpris.MprisInstance.EmitPropertiesChanged(map[string]dbus.Variant{
+			"PlaybackStatus": dbus.MakeVariant("Playing"),
+		})
+	}
+
 	return &ReturnType{Data: struct {
 		Paused   bool    `json:"paused"`
 		Position float64 `json:"position"`
@@ -230,6 +281,7 @@ func (p *Player) ToggleMute() (*ReturnType, error) {
 	result := data.(struct {
 		Muted bool `json:"muted"`
 	})
+
 	return &ReturnType{Data: struct {
 		Muted bool `json:"muted"`
 	}{Muted: result.Muted}}, err
@@ -360,6 +412,29 @@ func (p *Player) GetImage(path string) (*ReturnType, error) {
 
 	img := base64.StdEncoding.EncodeToString(res.Data)
 
+	data, _ := base64.StdEncoding.DecodeString(img)
+
+	os.Remove(mpris.MprisInstance.AlbumArtUrl)
+	tempFile, err := os.CreateTemp("", "mpris-cover-*."+strings.Split(res.MimeType, "/")[1])
+	if err != nil {
+
+	}
+	filename := tempFile.Name()
+	tempFile.Close()
+
+	mpris.MprisInstance.SetAlbumArtUrl(filename)
+	err = os.WriteFile(filename, data, 0644)
+	if err != nil {
+		os.Remove(filename)
+	}
+
+	dbusMd := map[string]dbus.Variant{
+		"mpris:artUrl": dbus.MakeVariant(filename), // ms → μs
+	}
+
+	mpris.MprisInstance.EmitPropertiesChanged(
+		map[string]dbus.Variant{"Metadata": dbus.MakeVariant(dbusMd)},
+	)
 	return &ReturnType{Data: struct {
 		Success bool   `json:"success"`
 		Image   string `json:"image"`

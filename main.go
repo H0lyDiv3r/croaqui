@@ -8,6 +8,7 @@ import (
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	"github.com/H0lyDiv3r/croaqui/pkgs/ffmpeg"
 	"github.com/H0lyDiv3r/croaqui/pkgs/media"
+	"github.com/H0lyDiv3r/croaqui/pkgs/mpris"
 	"github.com/H0lyDiv3r/croaqui/pkgs/player"
 	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 	"github.com/H0lyDiv3r/croaqui/pkgs/queue"
@@ -30,6 +31,7 @@ func main() {
 	playlists := playlist.NewPlaylist()
 	queue := queue.NewQueue()
 	app := app.New()
+	mpris := mpris.NewMprisInstance()
 	// Create application with options
 	//
 	//
@@ -57,6 +59,7 @@ func main() {
 			playlists.StartUp(ctx)
 			queue.StartUp(ctx)
 			app.StartUp(ctx)
+			mpris.Startup(ctx, player)
 
 		},
 		Bind: []interface{}{
@@ -65,8 +68,6 @@ func main() {
 			playlists,
 			queue,
 			app,
-
-			// ffmpeg,
 		},
 	})
 
