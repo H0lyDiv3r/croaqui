@@ -8,6 +8,7 @@ import (
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Mpris struct {
@@ -38,6 +39,7 @@ func NewMprisInstance() *Mpris {
 
 type MpriPlayer struct {
 	Playing bool
+	ctx     context.Context
 }
 
 func (m *Mpris) Startup(ctx context.Context, playerController PlayerController) {
@@ -65,6 +67,7 @@ func (m *Mpris) Startup(ctx context.Context, playerController PlayerController) 
 
 	player := &MpriPlayer{
 		Playing: false,
+		ctx:     ctx,
 	}
 
 	conn.Export(player, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player")
@@ -132,8 +135,39 @@ func (m *Mpris) EmitPropertiesChanged(p map[string]dbus.Variant) {
 }
 
 func (mp *MpriPlayer) PlayPause() *dbus.Error {
-	fmt.Println("coming deom olay pause")
-	MprisInstance.playerController.TogglePlay()
+	playStat, _ := MprisInstance.playerController.TogglePlay()
+
+	fmt.Println("coming deom olay pause", playStat.Data)
+
+	if stat, ok := playStat.Data.(struct {
+		Paused   bool    `json:"paused"`
+		Position float64 `json:"position"`
+	}); ok {
+		fmt.Println("coming deom olay pause")
+
+		runtime.EventsEmit(mp.ctx, "MPRIS", struct {
+			Type   string `json:"type"`
+			Action any    `json:"action"`
+		}{Type: "playpause", Action: stat.Paused})
+	}
+	return nil
+}
+
+func (mp *MpriPlayer) Next() *dbus.Error {
+
+	runtime.EventsEmit(mp.ctx, "MPRIS", struct {
+		Type   string `json:"type"`
+		Action any    `json:"action"`
+	}{Type: "next", Action: struct{}{}})
+	return nil
+}
+
+func (mp *MpriPlayer) Previous() *dbus.Error {
+
+	runtime.EventsEmit(mp.ctx, "MPRIS", struct {
+		Type   string `json:"type"`
+		Action any    `json:"action"`
+	}{Type: "previous", Action: struct{}{}})
 	return nil
 }
 

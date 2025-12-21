@@ -24,6 +24,7 @@ import { SearchResults } from "./pages/searchResults";
 import { SidebarNavigator } from "./features/sidebar-navigator";
 import { QueueBar } from "./features/queue-bar";
 import { GetImage, GetStatus } from "wailsjs/go/player/Player";
+import { handleNext, handlePrev } from "./utils/action";
 
 function App() {
   const { showToast } = useShowToast();
@@ -32,6 +33,7 @@ function App() {
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
+  const togglePaused = usePlayerStore((state) => state.togglePaused);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
@@ -61,11 +63,29 @@ function App() {
         setPlayerStatus(res.data);
       });
     });
+
+    const cancelMpris = EventsOn("MPRIS", (data) => {
+      console.log("MPRIS CALLED", data.action, data.type);
+      switch (data.type) {
+        case "playpause":
+          togglePaused(data.action);
+          break;
+        case "next":
+          handleNext();
+          break;
+        case "previous":
+          handlePrev();
+          break;
+        default:
+          break;
+      }
+    });
     return () => {
       cancelToastError();
       cancelPlayerError();
       cancelToastSuccess();
       cancelFileLoaded();
+      cancelMpris();
     };
   }, []);
   useEffect(() => {
