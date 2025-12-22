@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/H0lyDiv3r/croaqui/pkgs/sharedTypes"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -16,9 +17,7 @@ type AudioFiles struct {
 	AudioFiles []string `json:"audio_files"`
 }
 
-type ReturnType struct {
-	Data interface{} `json:"data"`
-}
+type ReturnType = sharedTypes.ReturnType
 
 type Media struct {
 	ctx context.Context

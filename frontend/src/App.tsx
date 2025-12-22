@@ -64,6 +64,11 @@ function App() {
       });
     });
 
+    const cancelScannerMessage = EventsOn("scanner:msg", (msg) => {
+      // showToast("info", msg);
+      console.log("scanner message", msg);
+    });
+
     const cancelMpris = EventsOn("MPRIS", (data) => {
       console.log("MPRIS CALLED", data.action, data.type);
       switch (data.type) {
@@ -86,6 +91,7 @@ function App() {
       cancelToastSuccess();
       cancelFileLoaded();
       cancelMpris();
+      cancelScannerMessage();
     };
   }, []);
   useEffect(() => {

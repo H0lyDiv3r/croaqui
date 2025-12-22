@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"log"
 	"path/filepath"
 	"strings"
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
 	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // getAudio
@@ -138,38 +138,73 @@ func (m *Media) SearchAudio(phrase string, fields []string) *ReturnType {
 
 // writeAudio
 func (m *Media) ScanForAudio(path string) error {
-	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return nil
-		}
-		if d.IsDir() {
-			if m.hasAudio(path) {
-				parts := strings.Split(path, "/")
-				_ = db.DBInstance.WriteDirData(db.Directory{
-					Name:       d.Name(),
-					Path:       path,
-					ParentPath: filepath.Dir(path),
-					Depth:      len(parts) - 1,
-				})
-			}
-		}
+	msgChan := make(chan string, 20)
+	errChan := make(chan error, 20)
+	done := make(chan struct{})
 
-		if isAudioFile(path) {
-			err := db.DBInstance.WriteAudioData(path)
+	go func() {
+		defer close(msgChan)
+		defer close(errChan)
+		defer close(done)
+
+		err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
-				log.Print(fmt.Errorf("failed to write audio to db:%w", err))
+				errChan <- fmt.Errorf("failed to walk directory %s: %w", path, err)
+				return nil
 			}
+			fmt.Println("path:", path)
+			if d.IsDir() {
+				if m.hasAudio(path) {
+					msgChan <- fmt.Sprintf("writing %s to database", path)
+					parts := strings.Split(path, "/")
+					dirErr := db.DBInstance.WriteDirData(db.Directory{
+						Name:       d.Name(),
+						Path:       path,
+						ParentPath: filepath.Dir(path),
+						Depth:      len(parts) - 1,
+					})
+					if dirErr != nil {
+						errChan <- fmt.Errorf("failed to write directory to db: %w", dirErr)
+					}
+				}
+			}
+
+			if isAudioFile(path) {
+				msgChan <- fmt.Sprintf("writing %s to database", path)
+				audioErr := db.DBInstance.WriteAudioData(path)
+				if audioErr != nil {
+					errChan <- fmt.Errorf("failed to write audio to db: %w", audioErr)
+				}
+			}
+			return nil
+		})
+
+		if err != nil {
+			emitter := customErr.New("db_error", fmt.Errorf("failed to walk directory: %w", err).Error())
+			emitter.Emit(m.ctx)
+			errChan <- err
+		}
+		m.Emit("scan successful")
+	}()
+
+	var lastErr error
+	for {
+		select {
+		case msg, ok := <-msgChan:
+			if ok {
+				runtime.EventsEmit(m.ctx, "scanner:msg", msg)
+			}
+		case err, ok := <-errChan:
+			if ok {
+				runtime.EventsEmit(m.ctx, "scanner:error", err.Error())
+				lastErr = err
+			}
+		case <-done:
+			return lastErr
+
 		}
 		return nil
-	})
-
-	if err != nil {
-		emitter := customErr.New("db_error", fmt.Errorf("failed to write files to db:%w", err).Error())
-		emitter.Emit(m.ctx)
-		return err
 	}
-	m.Emit("scan successful")
-	return nil
 }
 
 func (m *Media) hasAudio(path string) bool {

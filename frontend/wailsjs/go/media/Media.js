@@ -34,6 +34,10 @@ export function GetStandardDirs() {
   return window['go']['media']['Media']['GetStandardDirs']();
 }
 
+export function RemoveDir(arg1) {
+  return window['go']['media']['Media']['RemoveDir'](arg1);
+}
+
 export function ScanForAudio(arg1) {
   return window['go']['media']['Media']['ScanForAudio'](arg1);
 }

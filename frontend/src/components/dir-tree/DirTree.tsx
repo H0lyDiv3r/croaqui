@@ -9,11 +9,12 @@ import { GetDirs } from "../../../wailsjs/go/media/Media";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaFolder } from "react-icons/fa6";
-import { getNeutral } from "@/utils";
+import { getNeutral, handleRemoveDir } from "@/utils";
 import { QueryParams, useDataStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
 import { Empty } from "../empty";
 import { useLocation } from "wouter";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);
@@ -63,6 +64,10 @@ export const DirTree = () => {
                 borderRadius={"sm"}
                 overflow={"hidden"}
                 _hover={{
+                  "& [data-hover-target]": {
+                    opacity: 1,
+                    pointerEvents: "auto",
+                  },
                   bg: getNeutral("light", 700),
                   cursor: "pointer",
                   _dark: {
@@ -87,9 +92,32 @@ export const DirTree = () => {
                   });
                 }}
               >
-                <Box display={"flex"} alignItems={"center"} gap={"2"} p={3}>
-                  <ChakraIcon icon={FaFolder}></ChakraIcon>
-                  <Text overflow={"hidden"}>{dir.name}</Text>
+                <Box display={"flex"} justifyContent={"space-between"} p={3}>
+                  <Box display={"flex"} alignItems={"center"} gap={"2"}>
+                    <ChakraIcon icon={FaFolder}></ChakraIcon>
+                    <Text overflow={"hidden"}>{dir.name.slice(0, 20)}</Text>
+                  </Box>
+                  <Box
+                    data-hover-target
+                    as="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("delete dir", dir.path);
+                      handleRemoveDir(dir.path);
+                      // handleDeletePlaylist(Number(playlist.id));
+                    }}
+                    opacity={0}
+                    pointerEvents="none"
+                    _hover={{
+                      cursor: "pointer",
+                    }}
+                    borderRadius={"sm"}
+                  >
+                    <ChakraIcon
+                      icon={BsFillTrashFill}
+                      _hover={{ opacity: 0.5 }}
+                    />
+                  </Box>
                 </Box>
               </Box>
             ),

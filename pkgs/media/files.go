@@ -9,6 +9,8 @@ import (
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"gorm.io/gorm"
 )
 
 func (m *Media) GetContents(path string) (*ReturnType, error) {
@@ -115,34 +117,25 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 	}{Dirs: result}}, nil
 }
 
-// func (m *Media) FetchImage(url string) (string, error) {
-// 	p := mpv.New()
-// 	if err := p.Initialize(); err != nil {
-// 		return "", err
-// 	}
-// 	defer p.TerminateDestroy()
-// 	_ = p.SetProperty("pause", mpv.FormatFlag, true)
-// 	_ = p.SetProperty("vid", mpv.FormatFlag, false)
-// 	if err := p.Command([]string{"loadfile", url}); err != nil {
-// 		log.Print("unable to load music", err)
-// 		return "", err
-// 	}
+func (m *Media) RemoveDir(path string) error {
 
-// 	timeline := time.After(5 * time.Second)
-// 	for {
-// 		select {
-// 		case <-timeline:
-// 			return "", fmt.Errorf(" there has been an error loading path timeout")
-// 		default:
-// 			ev := p.WaitEvent(100)
-// 			if ev.EventID == mpv.EventFileLoaded {
-// 				b64, err := player.GetImageFromAudio(url)
-// 				if err != nil {
+	return db.DBInstance.Instance.Transaction(func(tx *gorm.DB) error {
 
-// 					return "", err
-// 				}
-// 				return b64, nil
-// 			}
-// 		}
-// 	}
-// }
+		if err := tx.Exec(`
+			DELETE FROM directories WHERE path LIKE ?
+			`, path+"%").Error; err != nil {
+			runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+			return err
+		}
+
+		if err := tx.Exec(`
+			DELETE FROM directories WHERE path LIKE ?
+			`, path+"%").Error; err != nil {
+			runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+			return err
+		}
+
+		runtime.EventsEmit(m.ctx, "toast:success", "Directory removed successfully")
+		return nil
+	})
+}
