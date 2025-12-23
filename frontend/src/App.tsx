@@ -1,8 +1,8 @@
 import "./App.css";
 import Player from "./features/Player";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { getNeutral, getQueue, shuffleQueue } from "./utils";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch, useRoute } from "wouter";
 import { Library } from "./pages";
@@ -39,6 +39,7 @@ function App() {
     (state) => state.setCurrentTrackImage,
   );
   const setPlayerStatus = usePlayerStore((state) => state.setPlayerStatus);
+  const [scanMsg, setScanMsg] = useState("");
   const { isSmall } = useScreenSize();
 
   const [match, params] = useRoute("/albums/:albumId");
@@ -65,8 +66,8 @@ function App() {
     });
 
     const cancelScannerMessage = EventsOn("scanner:msg", (msg) => {
-      // showToast("info", msg);
-      console.log("scanner message", msg);
+      setScanMsg(msg);
+      setTimeout(() => setScanMsg(""), 3000);
     });
 
     const cancelMpris = EventsOn("MPRIS", (data) => {
@@ -119,7 +120,7 @@ function App() {
           <MiniPlayer />
         </Box>
       ) : (
-        <>
+        <Box height={"100%"} display={"flex"} flexDirection={"column"}>
           <WindowBar />
 
           <NavBar />
@@ -150,7 +151,21 @@ function App() {
           </Box>
 
           <Player />
-        </>
+          <Box
+            textAlign={"left"}
+            width={"100%"}
+            height={"16px"}
+            overflow={"hidden"}
+          >
+            {scanMsg && scanMsg !== "" && (
+              <>
+                <Text fontSize={"xs"} color={"white"}>
+                  {scanMsg}
+                </Text>
+              </>
+            )}
+          </Box>
+        </Box>
       )}
     </Box>
   );

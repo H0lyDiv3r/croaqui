@@ -119,23 +119,65 @@ func (m *Media) GetDirs(path string) (*ReturnType, error) {
 
 func (m *Media) RemoveDir(path string) error {
 
-	return db.DBInstance.Instance.Transaction(func(tx *gorm.DB) error {
+	errChan := make(chan error)
+	done := make(chan struct{})
+	go func() {
+		defer close(errChan)
+		defer close(done)
 
-		if err := tx.Exec(`
+		err := db.DBInstance.Instance.Transaction(func(tx *gorm.DB) error {
+
+			if err := tx.Exec(`
 			DELETE FROM directories WHERE path LIKE ?
 			`, path+"%").Error; err != nil {
-			runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
-			return err
-		}
+				runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+				return err
+			}
+			if err := tx.Exec(`
+			DELETE FROM music_meta_data WHERE id IN (
+			SELECT mm.id FROM music_meta_data mm
 
-		if err := tx.Exec(`
-			DELETE FROM directories WHERE path LIKE ?
+			LEFT JOIN music_files mf ON mf.meta_data_id = mm.id
+			WHERE mf.path LIKE ?
+			)
 			`, path+"%").Error; err != nil {
-			runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
-			return err
-		}
+				runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+				return err
+			}
 
-		runtime.EventsEmit(m.ctx, "toast:success", "Directory removed successfully")
-		return nil
-	})
+			if err := tx.Exec(`
+			DELETE FROM playlist_musics WHERE id IN (
+			SELECT pm.id FROM playlist_musics pm
+			LEFT JOIN music_files mf ON mf.id = pm.music_id
+			WHERE mf.path LIKE ?
+			)
+			`, path+"%").Error; err != nil {
+				runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+				return err
+			}
+
+			if err := tx.Exec(`
+			DELETE FROM music_files WHERE path LIKE ?
+			`, path+"%").Error; err != nil {
+				runtime.EventsEmit(m.ctx, "toast:err", "Directory removed successfully")
+				return err
+			}
+
+			runtime.EventsEmit(m.ctx, "toast:success", "Directory removed successfully")
+			return nil
+		})
+		errChan <- err
+	}()
+
+	for {
+		select {
+		case err := <-errChan:
+			if err != nil {
+				return err
+			}
+		case <-done:
+			return nil
+		}
+	}
+
 }

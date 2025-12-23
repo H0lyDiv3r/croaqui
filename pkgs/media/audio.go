@@ -200,10 +200,10 @@ func (m *Media) ScanForAudio(path string) error {
 				lastErr = err
 			}
 		case <-done:
+			runtime.EventsEmit(m.ctx, "toast:success", fmt.Sprintf("successfully scanned %s", path))
 			return lastErr
 
 		}
-		return nil
 	}
 }
 
