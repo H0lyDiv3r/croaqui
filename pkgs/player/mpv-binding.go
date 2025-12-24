@@ -298,14 +298,15 @@ func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 				return nil, err
 			}
 			val, _ := p.mpv.GetProperty("speed", mpv.FormatDouble)
-			return &ReturnType{Data: struct {
+			return struct {
 				Speed float64 `json:"speed"`
-			}{Speed: val.(float64)}}, nil
+			}{Speed: val.(float64)}, nil
 		},
 	)
 	result := data.(struct {
 		Speed float64 `json:"speed"`
 	})
+	fmt.Println("Speed set successfully", result)
 	return &ReturnType{Data: struct {
 		Speed float64 `json:"speed"`
 	}{Speed: result.Speed}}, err

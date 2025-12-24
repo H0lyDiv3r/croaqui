@@ -97,7 +97,12 @@ const VolumeControl = ({
                   borderColor={getNeutral("light", 600)}
                   pt={2}
                 >
-                  <Box display="flex" gap={1}>
+                  <Box
+                    display="flex"
+                    gap={1}
+                    flexDir={"column"}
+                    alignItems={"center"}
+                  >
                     <ChakraIcon
                       icon={muted ? TbVolumeOff : TbVolume}
                       boxSize={5}
