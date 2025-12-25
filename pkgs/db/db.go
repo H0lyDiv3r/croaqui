@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/H0lyDiv3r/croaqui/internals/taglib"
@@ -27,7 +28,21 @@ func NewDB() *DB {
 
 func (d *DB) StartUp(ctx context.Context) {
 	d.ctx = ctx
-	dataBase, err := gorm.Open(sqlite.Open("/home/yuri/Data/projects/music-player-go/test-files/test.db"), &gorm.Config{})
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("failed to read Home dir")
+		return
+	}
+
+	filename := filepath.Join(homeDir, ".config", "share", "croaqui")
+
+	if err = os.MkdirAll(filename, 0755); err != nil {
+		log.Fatal("failed to create database")
+		return
+	}
+
+	dataBase, err := gorm.Open(sqlite.Open(filepath.Join(filename, "croaqui.db")), &gorm.Config{})
 	if err != nil {
 		emitter := customErr.New("db_error", err.Error())
 		emitter.Emit(ctx)
@@ -39,9 +54,7 @@ func (d *DB) StartUp(ctx context.Context) {
 	_ = dataBase.AutoMigrate(&Directory{})
 	_ = dataBase.AutoMigrate(&Playlist{})
 	_ = dataBase.AutoMigrate(&PlaylistMusic{})
-	// d.Instance.Create(&Playlist{Name: "favorites"})
 
-	log.Print("DB startup")
 }
 
 func (d *DB) WriteAudioData(path string) error {

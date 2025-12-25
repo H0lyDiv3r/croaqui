@@ -26,6 +26,10 @@ export function LoadMusic(arg1) {
   return window['go']['player']['Player']['LoadMusic'](arg1);
 }
 
+export function OnShutdown() {
+  return window['go']['player']['Player']['OnShutdown']();
+}
+
 export function SetPosition(arg1) {
   return window['go']['player']['Player']['SetPosition'](arg1);
 }

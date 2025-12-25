@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+	"os"
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/app"
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
@@ -23,6 +24,9 @@ import (
 var assets embed.FS
 
 func main() {
+	// Set locale for taglib
+	os.Setenv("LC_NUMERIC", "C")
+
 	// Create an instance of the app structure
 	player := player.MPV()
 	media := media.NewMedia()

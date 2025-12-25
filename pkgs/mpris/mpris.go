@@ -53,7 +53,6 @@ func (m *Mpris) Startup(ctx context.Context, playerController PlayerController) 
 		return
 	}
 	m.conn = conn
-	defer conn.Close()
 
 	reply, err := conn.RequestName("org.mpris.MediaPlayer2.Croaqui", dbus.NameFlagReplaceExisting)
 	if err != nil {
@@ -93,8 +92,6 @@ func (m *Mpris) Startup(ctx context.Context, playerController PlayerController) 
 
 	conn.Export(introspect.NewIntrospectable(node), "/org/mpris/MediaPlayer2", "org.freedesktop.Dbus.Introspectable")
 	go m.ExecutionLoop()
-
-	<-ctx.Done()
 }
 
 func (m *Mpris) ExecutionLoop() {
@@ -105,8 +102,6 @@ func (m *Mpris) ExecutionLoop() {
 		case cmd := <-m.execChan:
 			cmd.Command()
 			cmd.ReturnChan <- struct{}{}
-		default:
-			// Handle events or perform periodic tasks
 		}
 	}
 }
@@ -136,8 +131,6 @@ func (m *Mpris) EmitPropertiesChanged(p map[string]dbus.Variant) {
 
 func (mp *MpriPlayer) PlayPause() *dbus.Error {
 	playStat, _ := MprisInstance.playerController.TogglePlay()
-
-	fmt.Println("coming deom olay pause", playStat.Data)
 
 	if stat, ok := playStat.Data.(struct {
 		Paused   bool    `json:"paused"`
@@ -171,86 +164,6 @@ func (mp *MpriPlayer) Previous() *dbus.Error {
 	return nil
 }
 
-// 	mpris.MprisInstance.EmitPropertiesChanged(changed)
-
-// 	return nil
-// }
-// func New() {
-// 	go func() {
-// 		conn, err := dbus.SessionBus()
-// 		if err != nil {
-// 			fmt.Println("Failed to connect:", err)
-// 			return
-// 		}
-// 		defer conn.Close()
-
-// 		reply, err := conn.RequestName("org.mpris.MediaPlayer2.croaqui", dbus.NameFlagReplaceExisting)
-// 		if err != nil {
-// 			fmt.Println("Failed to request name:", err)
-// 			return
-// 		}
-// 		if reply != dbus.RequestNameReplyPrimaryOwner {
-// 			fmt.Println("Name already taken")
-// 			return
-// 		}
-
-// 		fmt.Println("MPRIS name registered")
-
-// 		player := &Player{}
-// 		media := &MediaPlayer2{}
-
-// 		conn.Export(player, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player")
-// 		conn.Export(media, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2")
-
-// 		node := &introspect.Node{
-// 			Name: "/org/mpris/MediaPlayer2",
-// 			Interfaces: []introspect.Interface{
-// 				{
-// 					Name: "org.mpris.MediaPlayer2.Player",
-// 					Methods: []introspect.Method{
-// 						{Name: "Pause"},
-// 						{Name: "Play"},
-// 						{Name: "PlayPause"},
-// 					},
-// 				},
-// 				{
-// 					Name: "org.mpris.MediaPlayer2",
-// 					Methods: []introspect.Method{
-// 						{Name: "Raise"},
-// 						{Name: "Quit"},
-// 					},
-// 				},
-// 			},
-// 		}
-
-// 		conn.Export(introspect.NewIntrospectable(node), "/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Introspectable")
-
-// 		fmt.Println("MPRIS service ready")
-
-// 		select {}
-// 	}()
-// }
-
-// type MediaPlayer2 struct{}
-
-// func (m *MediaPlayer2) Raise() *dbus.Error {
-// 	fmt.Println("Raise called")
-// 	return nil
-// }
-
-// func (m *MediaPlayer2) Quit() *dbus.Error {
-// 	fmt.Println("Quit called")
-// 	return nil
-// }
-
-// type Player struct{}
-
-// func (p *Player) Pause() *dbus.Error {
-// 	fmt.Println("PAUSE FROM WIDGET")
-// 	return nil
-// }
-
-// func (p *Player) Play() *dbus.Error {
-// 	fmt.Println("PLAY FROM WIDGET")
-// 	return nil
-// }
+func (m *Mpris) OnShutdown() {
+	m.conn.Close()
+}

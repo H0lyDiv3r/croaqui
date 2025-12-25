@@ -15,6 +15,8 @@ export function GetStatus():Promise<sharedTypes.ReturnType>;
 
 export function LoadMusic(arg1:string):Promise<sharedTypes.ReturnType>;
 
+export function OnShutdown():Promise<void>;
+
 export function SetPosition(arg1:number):Promise<sharedTypes.ReturnType>;
 
 export function SetSpeed(arg1:number):Promise<sharedTypes.ReturnType>;

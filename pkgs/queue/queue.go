@@ -22,9 +22,6 @@ func NewQueue() *Queue {
 
 func (q *Queue) StartUp(ctx context.Context) {
 	q.ctx = ctx
-	// q.Shuffle()
-
-	_, _ = q.GetQueue(filter{Type: "playlist", Args: "1", Shuffle: true})
 }
 
 type audio struct {

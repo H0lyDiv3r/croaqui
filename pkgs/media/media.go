@@ -29,7 +29,6 @@ func NewMedia() *Media {
 
 func (m *Media) StartUp(ctx context.Context) {
 	m.ctx = ctx
-	m.GetStandardDirs()
 }
 
 func isAudioFile(path string) bool {

@@ -407,7 +407,6 @@ func (p *Player) GetStatus() (*ReturnType, error) {
 func (p *Player) GetImage(path string) (*ReturnType, error) {
 	res, err := taglib.GetAlbumCover(path)
 	if err != nil {
-		log.Print(fmt.Errorf("failed to load image:%w", err).Error())
 		return nil, err
 	}
 
@@ -442,69 +441,6 @@ func (p *Player) GetImage(path string) (*ReturnType, error) {
 	}{Success: true, Image: fmt.Sprintf("data:%s;base64,%s", res.MimeType, img)}}, nil
 }
 
-func GetImageFromAudio(path string) (string, error) {
-	// meta, err := taglib.TaglibInstance.GetAlbumCover(path)
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// return meta.Data, nil
-
-	// fmt.Println("this is the meta extracted:", meta)
-
-	// if err := os.MkdirAll("./tmp", 0755); err != nil {
-	// 	return "", err
-	// }
-
-	// countRaw, err := m.GetProperty("track-list/count", mpv.FormatInt64)
-	// if err != nil {
-	// 	log.Printf("failed to get track count: %v", err)
-	// 	return "", err
-	// }
-
-	// count := countRaw.(int64)
-
-	// // Subscribe to property updates
-	// for i := range count {
-	// 	prop := fmt.Sprintf("track-list/%d/albumart", i)
-	// 	val, err := m.GetProperty(prop, mpv.FormatFlag)
-
-	// 	if err != nil {
-	// 		log.Printf("failed to get album art: %v", err)
-	// 		return "", err
-	// 	}
-	// 	if art, ok := val.(bool); ok && art {
-	// 		idProp := fmt.Sprintf("track-list/%d/id", 1)
-	// 		idRaw, _ := m.GetProperty(idProp, mpv.FormatInt64)
-	// 		id := idRaw.(int64)
-	// 		m.SetPropertyString("vo", "null")
-	// 		m.SetProperty("vid", mpv.FormatInt64, id)
-	// 		//create output files
-	// 		tempfile, err := os.CreateTemp("./tmp", "album_image_*.jpg")
-	// 		defer os.Remove(tempfile.Name())
-	// 		tempfile.Close()
-
-	// 		output := tempfile.Name()
-	// 		for {
-	// 			ev := m.WaitEvent(0.1)
-	// 			if ev != nil && ev.EventID == mpv.EventVideoReconfig {
-	// 				break
-	// 			}
-	// 		}
-	// 		// output := "./tmp/album_art.jpg"
-	// 		time.Sleep(100 * time.Millisecond)
-	// 		if err := m.Command([]string{"screenshot-to-file", output}); err != nil {
-	// 			log.Printf("failed to take screenshot: %v", err)
-	// 			return "", err
-	// 		}
-	// 		data, err := os.ReadFile(output)
-	// 		if err != nil {
-	// 			return "", err
-	// 		}
-	// 		b64 := base64.StdEncoding.EncodeToString(data)
-	// 		return b64, nil
-	// 	}
-
-	// }
-	return "", fmt.Errorf("no album art found")
+func (p *Player) OnShutdown() {
+	p.mpv.TerminateDestroy()
 }
