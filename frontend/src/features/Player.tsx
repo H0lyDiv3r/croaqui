@@ -17,9 +17,9 @@ import { ChakraIcon } from "@/components/ChackraIcon";
 import { addToFavorites, getNeutral, removeFromFavorites } from "@/utils";
 import { useScreenSize } from "@/hooks";
 const Player: React.FC = () => {
+  const currentTrack = usePlayerStore((state) => state.currentTrack);
   const [favorite, setFavorite] = useState(false);
   const { isMedium, isSmall, isLarge } = useScreenSize();
-  const currentTrack = usePlayerStore((state) => state.currentTrack);
   const leftOpen = useSidebarDisclosure((state) => state.leftBarOpen);
   const handleHide = (target: boolean) => {
     if ((isLarge || isMedium || isSmall) && leftOpen) {

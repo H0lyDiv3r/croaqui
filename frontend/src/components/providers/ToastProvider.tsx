@@ -9,6 +9,8 @@ export const ToastProvider = ({ children }: { children: any }) => {
   const toasts = useGeneralStore((state) => state.toasts);
   const handleRemoveToast = useGeneralStore((state) => state.clearToasts);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const miniPlayerOpen = useGeneralStore((state) => state.miniPlayerOpen);
   return (
     // <ToastContext.Provider value={vals}>
     <Box
@@ -19,21 +21,26 @@ export const ToastProvider = ({ children }: { children: any }) => {
       // overflow={"hidden"}
     >
       {children}
-      <Portal>
-        <AnimatePresence>
-          {toasts &&
-            toasts.map((toast, idx) => {
-              return (
-                <Toast
-                  key={idx}
-                  cw={containerRef.current?.offsetWidth || 0}
-                  data={toast}
-                  onClose={() => handleRemoveToast()}
-                />
-              );
-            })}
-        </AnimatePresence>
-      </Portal>
+
+      {!miniPlayerOpen && (
+        <>
+          <Portal>
+            <AnimatePresence>
+              {toasts &&
+                toasts.map((toast, idx) => {
+                  return (
+                    <Toast
+                      key={idx}
+                      cw={containerRef.current?.offsetWidth || 0}
+                      data={toast}
+                      onClose={() => handleRemoveToast()}
+                    />
+                  );
+                })}
+            </AnimatePresence>
+          </Portal>
+        </>
+      )}
     </Box>
     // </ToastContext.Provider>
   );

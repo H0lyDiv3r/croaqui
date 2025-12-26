@@ -14,7 +14,7 @@ import {
   Slider,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BsGripVertical } from "react-icons/bs";
 
 import {
@@ -24,12 +24,14 @@ import {
   ToggleMute,
 } from "../../../wailsjs/go/player/Player";
 import { BiVolume } from "react-icons/bi";
-import { TbVolume, TbVolumeOff } from "react-icons/tb";
+import { TbHeart, TbHeartFilled, TbVolume, TbVolumeOff } from "react-icons/tb";
 import { IoSpeedometer, IoSpeedometerOutline } from "react-icons/io5";
 import VolumeControl from "@/components/controls/VolumeControl";
 import PlaybackRateControl from "@/components/controls/PlaybackRateControl";
+import { addToFavorites, removeFromFavorites } from "@/utils";
 
 export const MiniPlayer = () => {
+  const [favorite, setFavorite] = useState(false);
   const plref = useRef<HTMLElement>(null);
   const fillColor = useColorModeValue("#abc265", "#abc265");
   const currentTrack = usePlayerStore((state) => state.currentTrack);
@@ -43,6 +45,9 @@ export const MiniPlayer = () => {
       );
     }
   }, []);
+  useLayoutEffect(() => {
+    setFavorite(currentTrack.favorite);
+  }, [currentTrack]);
   return (
     <>
       {/*<svg
@@ -118,17 +123,49 @@ export const MiniPlayer = () => {
             </svg>
           </Box>
           <Box pos={"absolute"} width={"100%"} display={"flex"}>
-            <Box width={"123px"} height={"112px"} p={2}>
+            <Box
+              width={"123px"}
+              height={"112px"}
+              p={2}
+              display={"flex"}
+              gap={2}
+              // bg={"red"}
+            >
               <Box
-                height={"100%"}
-                bg={getNeutral("light", 800)}
+                pos={"relative"}
                 borderRadius={"xl"}
                 overflow={"hidden"}
-                // border={"1px solid"}
+                border={"1px solid"}
                 borderColor={getNeutral("light", 400)}
                 boxShadow={`0 2px 15px rgba(0, 0, 0, 0.2)`}
-                p={"4px"}
+                width={"100%"}
+                // p={"4px"}
               >
+                <Box
+                  display={"flex"}
+                  flex={1}
+                  pos={"absolute"}
+                  bottom={0}
+                  bg={"rgba(255,255,255,0.3)"}
+                  width={"100%"}
+                  px={"4px"}
+                >
+                  <ChakraIcon
+                    onClick={() => {
+                      setFavorite((prev) => !prev);
+                      if (currentTrack.id) {
+                        if (favorite) {
+                          removeFromFavorites(currentTrack.id);
+                        } else {
+                          addToFavorites(currentTrack.id);
+                        }
+                      }
+                    }}
+                    color={getNeutral("dark", 800)}
+                    icon={favorite ? TbHeartFilled : TbHeart}
+                    boxSize={5}
+                  />
+                </Box>
                 <Image
                   borderRadius={"lg"}
                   src={
@@ -136,8 +173,6 @@ export const MiniPlayer = () => {
                       ? `${currentTrack.image}`
                       : "./trackImage.svg"
                   }
-                  width={"100%"}
-                  height={"100%"}
                   fit={"cover"}
                 />
               </Box>
