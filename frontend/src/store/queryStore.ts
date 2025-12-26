@@ -20,6 +20,7 @@ type Sort = {
 };
 
 export type QueryParams = {
+  search: string;
   artist: string;
   album: string;
   genre: string;
@@ -36,7 +37,10 @@ type QueryAction = {
   setQueryParams: (params: QueryParams) => void;
 };
 
+// const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
 export const useQueryStore = create<QueryParams & QueryAction>((set, get) => ({
+  search: "",
   artist: "",
   album: "",
   genre: "",

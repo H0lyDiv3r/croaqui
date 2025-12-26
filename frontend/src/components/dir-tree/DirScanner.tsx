@@ -94,6 +94,7 @@ const DirScanner = ({
                       e.stopPropagation();
                       handleScan(toBeScanned);
                     }}
+                    disabled={!toBeScanned}
                   >
                     scan
                   </DefaultButton>
@@ -202,6 +203,7 @@ const DirScanner = ({
                             onDoubleClick={(e) => {
                               e.stopPropagation();
                               setNavPath(navPath + "/" + dir);
+                              setToBeScanned(navPath + "/" + dir);
                             }}
                           >
                             <Box>
