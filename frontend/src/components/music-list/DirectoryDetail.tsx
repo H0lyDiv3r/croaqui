@@ -73,12 +73,6 @@ export const DirectoryDetail = () => {
   //   }));
   // };
 
-  const loadAudio = (item: any) => {
-    setLoaded(false);
-    setTrack(item);
-    LoadMusic(item.path);
-  };
-
   const handleGetQueue = async () => {
     return await getQueue({
       type: "dir",

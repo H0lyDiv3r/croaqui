@@ -1,5 +1,9 @@
 import { usePlayerStore, useQueueStore } from "@/store";
-import { GetImage, LoadMusic } from "../../../wailsjs/go/player/Player";
+import {
+  GetImage,
+  LoadMusic,
+  SetPlayerStats,
+} from "../../../wailsjs/go/player/Player";
 import { Song } from "@/types";
 
 const setLoaded = usePlayerStore.getState().setLoaded;
@@ -10,10 +14,10 @@ const setCurrentTrackImage = usePlayerStore.getState().setCurrentTrackImage;
 // const setCurrentTrackImage = usePlayerStore(
 //   (state) => state.setCurrentTrackImage,
 // );
-export const loadAudio = async (item: any) => {
+export const loadAudio = async (item: any, paused: boolean = false) => {
   setLoaded(false);
 
-  const loaded = await LoadMusic(item.path);
+  const loaded = await LoadMusic(item.path, paused);
 
   if (!loaded) {
     return;
@@ -113,4 +117,15 @@ export const loadFromQueue = (index: number) => {
     setCurrentIndex(index);
     loadAudio(nextTrack);
   }
+};
+
+export const setMpvPlayerStats = async (status: {
+  muted: boolean;
+  speed: number;
+  volume: number;
+  position: number;
+  paused: boolean;
+  duration: number;
+}) => {
+  await SetPlayerStats(status);
 };

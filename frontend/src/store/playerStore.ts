@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type currentTrack = {
   id: number | null;
@@ -35,93 +36,100 @@ interface playerStore {
   incrementPosition: () => void;
 }
 
-export const usePlayerStore = create<playerStore>((set) => ({
-  audioPath: "",
-  loaded: false,
-  paused: true,
-  position: 0,
-  duration: 0,
-  volume: 50,
-  muted: false,
-  speed: 1,
-  currentTrack: {
-    id: null,
-    image: null,
-    artist: "",
-    comment: "",
-    date: "",
-    description: "",
-    title: "",
-    path: "",
-    favorite: false,
-  },
-  setAudioPath: (audioPath: string) =>
-    set((state) => {
-      return { ...state, audioPath };
+export const usePlayerStore = create(
+  persist<playerStore>(
+    (set) => ({
+      audioPath: "",
+      loaded: false,
+      paused: true,
+      position: 0,
+      duration: 0,
+      volume: 50,
+      muted: false,
+      speed: 1,
+      currentTrack: {
+        id: null,
+        image: null,
+        artist: "",
+        comment: "",
+        date: "",
+        description: "",
+        title: "",
+        path: "",
+        favorite: false,
+      },
+      setAudioPath: (audioPath: string) =>
+        set((state) => {
+          return { ...state, audioPath };
+        }),
+      setCurrentTrack: (trackInfo: { [key: string]: any }) =>
+        set((state) => {
+          return {
+            ...state,
+            currentTrack: {
+              ...state.currentTrack,
+              id: trackInfo.id || null,
+              artist: trackInfo.artist || "",
+              comment: trackInfo.comment || "",
+              date: trackInfo.date || "",
+              description: trackInfo.description || "",
+              title: trackInfo.title || "",
+              path: trackInfo.path || "",
+              favorite: trackInfo.favorite || "",
+            },
+          };
+        }),
+      setCurrentTrackImage: (image: string | null) =>
+        set((state) => {
+          return { ...state, currentTrack: { ...state.currentTrack, image } };
+        }),
+      togglePaused: (paused) =>
+        set((state) => {
+          return { ...state, paused: paused };
+        }),
+      toggleMute: (value: boolean) =>
+        set((state) => {
+          return { ...state, muted: value };
+        }),
+      setLoaded: (loaded) =>
+        set((state) => {
+          return { ...state, loaded };
+        }),
+      setDuration: (duration: number) =>
+        set((state) => {
+          return { ...state, duration };
+        }),
+      setPosition: (position: number) =>
+        set((state) => {
+          return { ...state, position };
+        }),
+      incrementPosition: () =>
+        set((state) => {
+          return { ...state, position: state.position + 1 };
+        }),
+      setVolume: (volume: number) =>
+        set((state) => {
+          return { ...state, volume };
+        }),
+      setSpeed: (speed: number) =>
+        set((state) => {
+          return { ...state, speed };
+        }),
+      setPlayerStatus: (vals: { [key: string]: any }) =>
+        set((state) => {
+          return {
+            ...state,
+            paused: vals.paused,
+            position: vals.position,
+            duration: vals.duration,
+            volume: vals.volume,
+            muted: vals.muted,
+            speed: vals.speed,
+          };
+        }),
     }),
-  setCurrentTrack: (trackInfo: { [key: string]: any }) =>
-    set((state) => {
-      return {
-        ...state,
-        currentTrack: {
-          ...state.currentTrack,
-          id: trackInfo.id || null,
-          artist: trackInfo.artist || "",
-          comment: trackInfo.comment || "",
-          date: trackInfo.date || "",
-          description: trackInfo.description || "",
-          title: trackInfo.title || "",
-          path: trackInfo.path || "",
-          favorite: trackInfo.favorite || "",
-        },
-      };
-    }),
-  setCurrentTrackImage: (image: string | null) =>
-    set((state) => {
-      return { ...state, currentTrack: { ...state.currentTrack, image } };
-    }),
-  togglePaused: (paused) =>
-    set((state) => {
-      return { ...state, paused: paused };
-    }),
-  toggleMute: (value: boolean) =>
-    set((state) => {
-      return { ...state, muted: value };
-    }),
-  setLoaded: (loaded) =>
-    set((state) => {
-      return { ...state, loaded };
-    }),
-  setDuration: (duration: number) =>
-    set((state) => {
-      return { ...state, duration };
-    }),
-  setPosition: (position: number) =>
-    set((state) => {
-      return { ...state, position };
-    }),
-  incrementPosition: () =>
-    set((state) => {
-      return { ...state, position: state.position + 1 };
-    }),
-  setVolume: (volume: number) =>
-    set((state) => {
-      return { ...state, volume };
-    }),
-  setSpeed: (speed: number) =>
-    set((state) => {
-      return { ...state, speed };
-    }),
-  setPlayerStatus: (vals: { [key: string]: any }) =>
-    set((state) => {
-      return {
-        ...state,
-        paused: vals.paused,
-        position: vals.position,
-        duration: vals.duration,
-        volume: vals.volume,
-        muted: vals.muted,
-        speed: vals.speed,
-      };
-    }),
-}));
+    {
+      name: "player-store",
+    },
+  ),
+);

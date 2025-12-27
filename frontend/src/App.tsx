@@ -23,8 +23,13 @@ import { AlbumsLayout } from "./pages/albums/AlbumsLayout";
 import { SearchResults } from "./pages/searchResults";
 import { SidebarNavigator } from "./features/sidebar-navigator";
 import { QueueBar } from "./features/queue-bar";
-import { GetImage, GetStatus } from "wailsjs/go/player/Player";
-import { handleNext, handlePrev } from "./utils/action";
+import { GetImage, GetStatus, TogglePlay } from "wailsjs/go/player/Player";
+import {
+  handleNext,
+  handlePrev,
+  loadAudio,
+  setMpvPlayerStats,
+} from "./utils/action";
 
 function App() {
   const { showToast } = useShowToast();
@@ -35,6 +40,12 @@ function App() {
   const shuffle = useQueueStore((state) => state.shuffle);
   const togglePaused = usePlayerStore((state) => state.togglePaused);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const muted = usePlayerStore((state) => state.muted);
+  const speed = usePlayerStore((state) => state.speed);
+  const volume = usePlayerStore((state) => state.volume);
+  const position = usePlayerStore((state) => state.position);
+  const paused = usePlayerStore((state) => state.paused);
+
   const setCurrentTrackImage = usePlayerStore(
     (state) => state.setCurrentTrackImage,
   );
@@ -43,8 +54,32 @@ function App() {
   const { isSmall } = useScreenSize();
 
   const [match, params] = useRoute("/albums/:albumId");
+  const setQueue = useQueueStore((state) => state.setQueue);
+  const setPlayingIndex = useQueueStore((state) => state.setPlayingIndex);
+
+  const handleLoadAudio = async (item: any) => {
+    setPlayingIndex(0);
+    await loadAudio(item, true);
+    // const queue = await handleGetQueue(item);
+    // setQueue(queue);
+  };
 
   useLayoutEffect(() => {
+    // setting persisted state
+    if (currentTrack) {
+      handleLoadAudio(currentTrack);
+    }
+    console.log("about to set player status", muted, speed, volume);
+
+    setMpvPlayerStats({
+      muted,
+      speed,
+      volume,
+      paused,
+      position,
+      duration: 0,
+    });
+
     const cancelToastError = EventsOn("toast:err", (err) => {
       showToast("error", err.message);
     });

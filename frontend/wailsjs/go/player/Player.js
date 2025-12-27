@@ -22,12 +22,16 @@ export function GetStatus() {
   return window['go']['player']['Player']['GetStatus']();
 }
 
-export function LoadMusic(arg1) {
-  return window['go']['player']['Player']['LoadMusic'](arg1);
+export function LoadMusic(arg1, arg2) {
+  return window['go']['player']['Player']['LoadMusic'](arg1, arg2);
 }
 
 export function OnShutdown() {
   return window['go']['player']['Player']['OnShutdown']();
+}
+
+export function SetPlayerStats(arg1) {
+  return window['go']['player']['Player']['SetPlayerStats'](arg1);
 }
 
 export function SetPosition(arg1) {
