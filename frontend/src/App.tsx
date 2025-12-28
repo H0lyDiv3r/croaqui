@@ -67,18 +67,17 @@ function App() {
   useLayoutEffect(() => {
     // setting persisted state
     if (currentTrack) {
-      handleLoadAudio(currentTrack);
+      handleLoadAudio(currentTrack).then(() => {
+        setMpvPlayerStats({
+          muted,
+          speed,
+          volume,
+          paused,
+          position,
+          duration: 0,
+        });
+      });
     }
-    console.log("about to set player status", muted, speed, volume);
-
-    setMpvPlayerStats({
-      muted,
-      speed,
-      volume,
-      paused,
-      position,
-      duration: 0,
-    });
 
     const cancelToastError = EventsOn("toast:err", (err) => {
       showToast("error", err.message);
@@ -102,7 +101,6 @@ function App() {
     });
 
     const cancelMpris = EventsOn("MPRIS", (data) => {
-      console.log("MPRIS CALLED", data.action, data.type);
       switch (data.type) {
         case "playpause":
           togglePaused(data.action);

@@ -91,8 +91,6 @@ export const getComplementaryColor = (rgb: string): string => {
 
   l = l >= 0.7 ? Math.max(0.1, l - 0.4) : Math.max(0.9, l + 0.3);
 
-  console.log("this is the old and new", h, s, l);
-
   const { r, g, b } = hslToRgb(h, s, l);
   return `rgb(${r}, ${g}, ${b})`;
 };

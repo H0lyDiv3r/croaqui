@@ -7,7 +7,6 @@ import (
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/app"
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
-	"github.com/H0lyDiv3r/croaqui/pkgs/ffmpeg"
 	"github.com/H0lyDiv3r/croaqui/pkgs/media"
 	"github.com/H0lyDiv3r/croaqui/pkgs/mpris"
 	"github.com/H0lyDiv3r/croaqui/pkgs/player"
@@ -31,14 +30,10 @@ func main() {
 	player := player.MPV()
 	media := media.NewMedia()
 	data := db.NewDB()
-	ffmpeg := ffmpeg.NewFFmpeg()
 	playlists := playlist.NewPlaylist()
 	queue := queue.NewQueue()
 	app := app.New()
 	mpris := mpris.NewMprisInstance()
-	// Create application with options
-	//
-	//
 
 	err := wails.Run(&options.App{
 		Title: "Croaqui",
@@ -58,7 +53,6 @@ func main() {
 		OnStartup: func(ctx context.Context) {
 			data.StartUp(ctx)
 			media.StartUp(ctx)
-			ffmpeg.StartUp(ctx)
 			player.StartUp(ctx)
 			playlists.StartUp(ctx)
 			queue.StartUp(ctx)

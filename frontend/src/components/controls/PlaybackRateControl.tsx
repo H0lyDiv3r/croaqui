@@ -39,7 +39,6 @@ const PlaybackRateControl = ({ small = false }: { small?: boolean }) => {
   const { handlePlaybackRate } = {
     handlePlaybackRate: (value: number) => {
       SetSpeed(Math.min(Math.max(0.25, value), 2)).then((res) => {
-        console.log(res);
         setPlaybackRate(res.data.speed);
       });
       // setPlaybackRate(value);

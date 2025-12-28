@@ -36,15 +36,6 @@ export const MiniPlayer = () => {
   const fillColor = useColorModeValue("#abc265", "#abc265");
   const currentTrack = usePlayerStore((state) => state.currentTrack);
 
-  useEffect(() => {
-    if (plref.current) {
-      console.log(
-        "i am here bro",
-        plref.current.offsetHeight,
-        plref.current.offsetWidth,
-      );
-    }
-  }, []);
   useLayoutEffect(() => {
     setFavorite(currentTrack.favorite);
   }, [currentTrack]);

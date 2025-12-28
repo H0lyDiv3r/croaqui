@@ -10,9 +10,7 @@ export const AlbumsLayout = () => {
   const shuffle = useQueueStore((state) => state.shuffle);
   const [match, params] = useRoute("/albums/:albumId");
 
-  useEffect(() => {
-    console.log("incoming location", match, params);
-  }, [params]);
+  useEffect(() => {}, [params]);
   return (
     <Box display={"flex"} width={"100%"}>
       <Switch>

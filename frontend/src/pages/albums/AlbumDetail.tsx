@@ -47,7 +47,6 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     });
     // setAll(audioFiles);
     //
-    console.log("these are the audio files", audioFiles);
     useDataStore.setState((state) => ({
       ...state,
       musicFiles: [...audioFiles],
@@ -75,10 +74,6 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   //
   const getDominantColor = async (img: string) => {
     const colors = await analyze(`${img}`);
-    console.log(
-      "colors go brr",
-      colors ? colors[0].color : "rgba(255,255,255,1)",
-    );
     return colors ? colors[0].color : "rgba(255,255,255,1)";
   };
   const getBanner = async () => {

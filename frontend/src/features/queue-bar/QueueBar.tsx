@@ -54,9 +54,7 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
     return shuffle && shuffleIndex ? queue[shuffleIndex[idx]] : null;
   };
 
-  useEffect(() => {
-    console.log("i will get metadata here", shuffleIndex);
-  }, [shuffleIndex]);
+  useEffect(() => {}, [shuffleIndex]);
 
   return (
     <>

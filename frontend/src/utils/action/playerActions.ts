@@ -48,7 +48,6 @@ export const handleNext = () => {
   let nextIndex = 0;
   switch (loop) {
     case 0:
-      console.log("heyho", Math.min(queue.length - 1, currentIndex + 1));
       nextIndex = Math.min(queue.length - 1, currentIndex + 1);
       break;
     case 1:

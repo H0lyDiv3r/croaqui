@@ -85,7 +85,6 @@ const Controls: React.FC = () => {
       });
 
       if (msg.reason === "eof") {
-        console.log("maybe its in the gutter", msg);
         handleNext();
       }
     });

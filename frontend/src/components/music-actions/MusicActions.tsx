@@ -41,7 +41,6 @@ export const PlaylistsMenu = ({
           } else {
             addToPlaylist(songId, Number(vals.id));
           }
-          console.log("is this favs", JSON.parse(value["value"]));
           handleClose();
         }}
       >

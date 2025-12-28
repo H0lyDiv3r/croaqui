@@ -314,7 +314,6 @@ const MusicRow = ({
           },
         }}
         onClick={() => {
-          console.log("imheremayn", audioFiles);
           handleLoadAudio(audioFiles);
         }}
       >

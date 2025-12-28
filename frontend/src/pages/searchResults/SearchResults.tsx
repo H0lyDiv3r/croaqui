@@ -16,16 +16,13 @@ export const SearchResults = () => {
   const search = useQueryStore((state) => state.search);
 
   const handleGetQueue = async (song: any) => {
-    console.log("showing from search results", song);
     return await getQueue({
       type: "playlist",
       args: String(currentPlaylist || 0),
       shuffle: shuffle,
     });
   };
-  useEffect(() => {
-    console.log("useEffect called in search result");
-  }, []);
+
   return (
     <Box
       height={"100%"}

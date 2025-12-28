@@ -31,7 +31,6 @@ export const SearchBar = () => {
 
   const handleSubmit = async (e: React.FormEvent | Event) => {
     e.preventDefault();
-    console.log("going to submit now", phrase);
     setLocation("/search-results");
     const res = await handleSearch(phrase, activeFilters);
     setAudioFiles(res);
@@ -50,9 +49,6 @@ export const SearchBar = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("focused", searchRef.current);
-  }, [focused]);
   return (
     <Box display={"flex"} flexDir={"column"}>
       {focused ? (
@@ -65,7 +61,6 @@ export const SearchBar = () => {
           zIndex={3}
           onClick={(e) => {
             e.stopPropagation();
-            console.log("closing");
             setFocused(false);
           }}
         ></Box>

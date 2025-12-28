@@ -36,7 +36,6 @@ const Player: React.FC = () => {
   };
 
   useLayoutEffect(() => {
-    console.log("checking if favorite", currentTrack.favorite);
     setFavorite(currentTrack.favorite);
   }, [currentTrack]);
   return (
