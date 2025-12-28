@@ -72,7 +72,7 @@ function App() {
           muted,
           speed,
           volume,
-          paused,
+          paused: true,
           position,
           duration: 0,
         });

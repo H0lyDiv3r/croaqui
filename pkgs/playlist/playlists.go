@@ -89,7 +89,6 @@ func (p *Playlist) AddToFavorites(musicId uint) (*ReturnType, error) {
 		return nil, nil
 	}
 
-	fmt.Println("showing the title", favId)
 	//nolint:gosec
 	return p.AddToPlaylist(musicId, uint(favId))
 }
@@ -107,7 +106,6 @@ func (p *Playlist) RemoveFromFavorites(musicId uint) (*ReturnType, error) {
 		WHERE pm.playlist_id = ? AND pm.music_id = ?
 		`, favId, musicId).Scan(&mid)
 
-	fmt.Println("showing the title", favId, mid)
 	//nolint:gosec
 	return p.RemoveFromPlaylist(musicId, uint(favId), uint(mid))
 }
@@ -215,7 +213,7 @@ func (p *Playlist) CreatePlaylist(name string) (*ReturnType, error) {
 		SELECT EXISTS(SELECT 1 FROM playlists pl
 		WHERE pl.name = ?)`, name).Scan(&found)
 
-	fmt.Println("found a playlist", found, name)
+
 
 	if found == 1 {
 		emitter := customErr.New("db_error", "playlist already exists")
@@ -285,7 +283,7 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 		AND pm.deleted_at IS NULL
 		`, id).Scan(&playlistData.Songs)
 
-	fmt.Println("showing playlist data", playlistData.Counts, id)
+
 
 	return &ReturnType{Data: struct {
 		Playlist playlist `json:"playlist"`

@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -29,7 +28,7 @@ func (a *app) StartUp(ctx context.Context) {
 			height: 768,
 			width:  768,
 		}
-		fmt.Println("cant find screen")
+
 	}
 	for _, screen := range screens {
 		if screen.IsPrimary {

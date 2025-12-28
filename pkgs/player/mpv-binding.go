@@ -114,7 +114,6 @@ func (p *Player) EventLoop(eventLoopReady chan struct{}) {
 			case mpv.EventEnd:
 				end := ev.EndFile()
 				if end.Reason == mpv.EndFileEOF {
-					fmt.Println("ended because of eof")
 					runtime.EventsEmit(p.ctx, "MPV:END", struct {
 						Reason  string `json:"reason"`
 						Message string `json:"message"`
@@ -123,7 +122,6 @@ func (p *Player) EventLoop(eventLoopReady chan struct{}) {
 						Message: "end of file reached",
 					})
 				} else {
-					fmt.Println("ended for some stupid reason", end.Reason)
 					runtime.EventsEmit(p.ctx, "MPV:END", struct {
 						Reason  string `json:"reason"`
 						Message string `json:"message"`
@@ -132,7 +130,6 @@ func (p *Player) EventLoop(eventLoopReady chan struct{}) {
 					})
 				}
 			case mpv.EventFileLoaded:
-				fmt.Println("the file is loaded")
 
 				go p.GetMetadata()
 				runtime.EventsEmit(p.ctx, "MPV:FILE_LOADED", struct{}{})
@@ -211,7 +208,7 @@ func (p *Player) GetMetadata() (*ReturnType, error) {
 		return nil, err
 	}
 
-	fmt.Println("showing metadata", result)
+
 	dbusMd := map[string]dbus.Variant{
 		// "mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
 		"xesam:title":  dbus.MakeVariant(result.Title),
@@ -310,7 +307,6 @@ func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 	result := data.(struct {
 		Speed float64 `json:"speed"`
 	})
-	fmt.Println("Speed set successfully", result)
 	return &ReturnType{Data: struct {
 		Speed float64 `json:"speed"`
 	}{Speed: result.Speed}}, err

@@ -49,7 +49,7 @@ func (q *Queue) GetQueue(filterSetting filter) (*ReturnType, error) {
 
 	// var filterSetting filter
 
-	fmt.Println("filter setting", filterSetting)
+
 
 	query := db.DBInstance.Instance.Table("music_files as m").Select("name,path,title,album,artist,date,duration").Joins("LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id")
 
