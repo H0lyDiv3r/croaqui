@@ -5,10 +5,9 @@ import {
   getPlaylists,
 } from "@/utils";
 import { Box, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { BsFillCassetteFill, BsFillTrashFill } from "react-icons/bs";
-import { Empty } from "../empty";
 import { useDataStore, usePlaylistStore } from "@/store";
 
 export const Playlists = () => {

@@ -1,26 +1,23 @@
-import { Box, Button, Input, InputGroup, Text } from "@chakra-ui/react";
+import { Box, Input, InputGroup, Text } from "@chakra-ui/react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { ChakraIcon } from "../ChackraIcon";
 import { getBrandWithAlpha, getNeutral } from "@/utils";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { handleSearch } from "@/utils/action";
 import { useDataStore, useQueryStore } from "@/store";
 import { IoAlbums } from "react-icons/io5";
-import { BiNote, BiText, BiUser } from "react-icons/bi";
-import { MdTitle } from "react-icons/md";
+import { BiText, BiUser } from "react-icons/bi";
 import { PiPath } from "react-icons/pi";
 import { BsMusicNote } from "react-icons/bs";
 import { useLocation } from "wouter";
 
 export const SearchBar = () => {
-  // const [phrase, setPhrase] = useState<string>("");
   const [focused, setFocused] = useState(false);
   const [_, setLocation] = useLocation();
   const setAudioFiles = useDataStore((state) => state.setMusicFiles);
   const searchRef = useRef<HTMLInputElement>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const phrase = useQueryStore((state) => state.search);
-  const setQuery = useQueryStore((state) => state.setQueryParams);
   const filters = [
     { name: "album", icon: IoAlbums },
     { name: "artist", icon: BiUser },
@@ -36,8 +33,6 @@ export const SearchBar = () => {
     setAudioFiles(res);
   };
   const handleChange = (e: any) => {
-    // setPhrase(e.target.value);
-    // setQuery({ search: e.target.value });
     useQueryStore.setState((state) => ({ ...state, search: e.target.value }));
   };
 

@@ -1,5 +1,5 @@
 import { Badge, Box, ChakraProvider, Icon } from "@chakra-ui/react";
-import React, { forwardRef, memo, useContext, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   TbRepeat,
   TbRepeatOff,
@@ -19,8 +19,6 @@ import { getNeutral } from "@/utils";
 import { EventsOn } from "../../../wailsjs/runtime";
 
 import { handleNext, handlePrev } from "@/utils/action";
-// import { PlayerContext } from "./PlayerContextProvider";
-// import { GlobalContext } from "../../store/GlobalContextProvider";
 
 const Controls: React.FC = () => {
   const paused = usePlayerStore((state) => state.paused);
@@ -28,10 +26,7 @@ const Controls: React.FC = () => {
   const loaded = usePlayerStore((state) => state.loaded);
   const incrementPosition = usePlayerStore((state) => state.incrementPosition);
   const setPosition = usePlayerStore((state) => state.setPosition);
-  const position = usePlayerStore((state) => state.position);
   const playbackRate = usePlayerStore((state) => state.speed);
-  const queue = useQueueStore((state) => state.items);
-  const playingIndex = useQueueStore((state) => state.playingIndex);
   const handleLoop = useQueueStore((state) => state.setLoop);
   const loop = useQueueStore((state) => state.loop);
   const miniPlayerOpen = useGeneralStore((state) => state.miniPlayerOpen);

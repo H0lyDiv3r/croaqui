@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import { getNeutral, getQueue, toHMS } from "@/utils";
+import { getQueue } from "@/utils";
 import {
   useDataStore,
   usePlaylistStore,
@@ -7,10 +7,8 @@ import {
   useQueueStore,
 } from "@/store";
 import { MusicList } from "@/components/music-list";
-import { useEffect } from "react";
 
 export const SearchResults = () => {
-  const playlistMetaData = usePlaylistStore((state) => state.playlistMetaData);
   const shuffle = useQueueStore((state) => state.shuffle);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
   const search = useQueryStore((state) => state.search);

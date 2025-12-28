@@ -7,18 +7,17 @@ import {
 } from "@/utils";
 import { Box, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useDataStore, usePlayerStore, useQueueStore } from "@/store";
+import { useDataStore, useQueueStore } from "@/store";
 import { getAudio } from "@/utils/data/audioData";
 import { GetAlbumImage } from "../../../wailsjs/go/media/Media";
 import analyze from "rgbaster";
 import { MusicList } from "@/components/music-list";
 import { ChakraIcon } from "@/components/ChackraIcon";
 import { BsArrowLeft } from "react-icons/bs";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 
 export const AlbumDetail = ({ params }: { params: { id: string } }) => {
   // const params = useParams();
-  const [, setLocation] = useLocation();
   const [banner, setBanner] = useState("");
   const [dominantColor, setDominantColor] = useState("");
   const [complementColor, setComplementColor] = useState("");
@@ -28,15 +27,7 @@ export const AlbumDetail = ({ params }: { params: { id: string } }) => {
     duration: "",
     songs: "",
   });
-  const audioFiles = useDataStore((state) => state.musicFiles);
   const shuffle = useQueueStore((state) => state.shuffle);
-  const setAll = usePlayerStore((state) => state.setPlayerStatus);
-  const setLoaded = usePlayerStore((state) => state.setLoaded);
-  const setTrack = usePlayerStore((state) => state.setCurrentTrack);
-  const currentPath = useDataStore((state) => state.currentPath);
-  const setCurrentTrackImage = usePlayerStore(
-    (state) => state.setCurrentTrackImage,
-  );
 
   const getAudioFiles = async () => {
     const audioFiles = await getAudio({

@@ -1,4 +1,4 @@
-import { createPlaylist, getNeutral } from "@/utils";
+import { getNeutral } from "@/utils";
 import { Box, Button, Field, Input, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { DefaultButton } from "../buttons";

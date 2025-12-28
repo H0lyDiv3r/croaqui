@@ -1,5 +1,5 @@
-import { QueryParams, useDataStore, useQueryStore } from "@/store";
-import { GetAlbums, GetAudio } from "../../../wailsjs/go/media/Media";
+import { QueryParams, useQueryStore } from "@/store";
+import { GetAudio } from "../../../wailsjs/go/media/Media";
 
 export const getAudio = async (params?: Partial<QueryParams> | null) => {
   const query = {

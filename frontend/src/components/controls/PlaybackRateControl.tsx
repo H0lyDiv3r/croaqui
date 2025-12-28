@@ -1,4 +1,3 @@
-import React, { forwardRef, memo, useContext, useState } from "react";
 import { Menu, Box, Portal, Slider } from "@chakra-ui/react";
 import { SetSpeed } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";

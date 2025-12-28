@@ -5,15 +5,7 @@ import { useColorMode, useColorModeValue } from "@/components/ui/color-mode";
 import { WindowBar } from "@/components/WindowBar";
 import { usePlayerStore } from "@/store";
 import { getNeutral } from "@/utils";
-import {
-  Box,
-  Image,
-  Input,
-  Menu,
-  Portal,
-  Slider,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Image, Menu, Portal, Slider, Text } from "@chakra-ui/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BsGripVertical } from "react-icons/bs";
 
@@ -23,9 +15,7 @@ import {
   SetVolume,
   ToggleMute,
 } from "../../../wailsjs/go/player/Player";
-import { BiVolume } from "react-icons/bi";
 import { TbHeart, TbHeartFilled, TbVolume, TbVolumeOff } from "react-icons/tb";
-import { IoSpeedometer, IoSpeedometerOutline } from "react-icons/io5";
 import VolumeControl from "@/components/controls/VolumeControl";
 import PlaybackRateControl from "@/components/controls/PlaybackRateControl";
 import { addToFavorites, removeFromFavorites } from "@/utils";
@@ -33,7 +23,6 @@ import { addToFavorites, removeFromFavorites } from "@/utils";
 export const MiniPlayer = () => {
   const [favorite, setFavorite] = useState(false);
   const plref = useRef<HTMLElement>(null);
-  const fillColor = useColorModeValue("#abc265", "#abc265");
   const currentTrack = usePlayerStore((state) => state.currentTrack);
 
   useLayoutEffect(() => {

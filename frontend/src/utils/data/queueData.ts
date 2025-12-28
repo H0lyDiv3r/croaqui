@@ -1,20 +1,12 @@
-import {
-  useDataStore,
-  usePlayerStore,
-  useQueryStore,
-  useQueueStore,
-} from "@/store";
+import { usePlayerStore, useQueueStore } from "@/store";
 import { GetQueue, ShuffleIndex } from "../../../wailsjs/go/queue/Queue";
 import { QueueInfo } from "@/types";
 
 export const getQueue = async (queueInfo: QueueInfo) => {
-  const musicListPath = useDataStore.getState().musicListPath;
   const setShuffleIndex = useQueueStore.getState().setShuffleIndex;
   const currentTrack = usePlayerStore.getState().currentTrack;
-  const playIndex = useQueueStore.getState().playingIndex;
   const shuffle = useQueueStore.getState().shuffle;
 
-  const setCurrentIndex = useQueueStore.getState().setPlayingIndex;
   const res = await GetQueue({ ...queueInfo, args: queueInfo.args || "" });
   if (!res) {
     return;

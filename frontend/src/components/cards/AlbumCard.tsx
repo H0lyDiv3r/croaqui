@@ -5,7 +5,6 @@ import { useLocation } from "wouter";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaClock, FaMusic } from "react-icons/fa6";
 import { useEffect, useState } from "react";
-import { LuDiscAlbum } from "react-icons/lu";
 import { BiSolidAlbum } from "react-icons/bi";
 
 type Item = {
@@ -18,7 +17,7 @@ type Item = {
 };
 
 export const AlbumCard = ({ item }: { item: Item }) => {
-  const [location, navigate] = useLocation();
+  const [_, navigate] = useLocation();
   const [image, setImage] = useState<string | null>(null);
   const getImage = async (albumName: string) => {
     const res = await GetAlbumImage(albumName);

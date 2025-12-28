@@ -1,6 +1,4 @@
-import { Box, Menu, Portal, Text } from "@chakra-ui/react";
-import { BsThreeDots } from "react-icons/bs";
-import { ChakraIcon } from "../ChackraIcon";
+import { Box, Menu, Portal } from "@chakra-ui/react";
 import {
   addToFavorites,
   addToPlaylist,
@@ -13,7 +11,6 @@ const MenuTrigger: any = Menu.Trigger;
 const MenuPositioner: any = Menu.Positioner;
 const MenuContent: any = Menu.Content;
 const MenuItem: any = Menu.Item;
-const MenuTriggerItem: any = Menu.TriggerItem;
 
 export const PlaylistsMenu = ({
   songId,

@@ -1,18 +1,9 @@
-import { Box, Dialog, Portal, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Dialog, Portal, Text } from "@chakra-ui/react";
 import React from "react";
-import { useState } from "react";
-import { TbDots } from "react-icons/tb";
-import { MdOutlineAddToQueue, MdOutlineQueue } from "react-icons/md";
 
-import {
-  addToQueue,
-  getNeutral,
-  getPlaylistContent,
-  removeFromPlaylist,
-} from "@/utils";
+import { addToQueue, getNeutral, removeFromPlaylist } from "@/utils";
 import { PlaylistsMenu } from "./MusicActions";
-import { ChakraIcon } from "../ChackraIcon";
-import { useDataStore, usePlaylistStore } from "@/store";
+import { useDataStore } from "@/store";
 import { Song } from "@/types";
 
 const DialogOverlay: any = Dialog.Backdrop;
@@ -35,7 +26,6 @@ const MusicDropdown = ({
   position: { x: number; y: number };
   clearIndexOfDropdown: () => void;
 }) => {
-  // const { open, setOpen } = useDisclosure()
   const currentPlaylistId = useDataStore((state) => state.currentPlaylist);
 
   const handleRemoveFromPlaylist = async (

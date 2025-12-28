@@ -1,11 +1,9 @@
-import { Box, Menu, Portal, Slider, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Menu, Portal, Slider } from "@chakra-ui/react";
 import { SetVolume, ToggleMute } from "../../../wailsjs/go/player/Player";
 import { usePlayerStore } from "@/store";
 import { ChakraIcon } from "../ChackraIcon";
 import { getNeutral } from "@/utils";
 import { TbVolume, TbVolumeOff } from "react-icons/tb";
-import { IoVolumeHigh } from "react-icons/io5";
 
 const SliderControl: any = Slider.Control;
 const SliderTrack: any = Slider.Track;

@@ -17,7 +17,6 @@ import { DefaultButton } from "../buttons";
 const DialogOverlay: any = Dialog.Backdrop;
 const DialogContent: any = Dialog.Content;
 const DialogPositioner: any = Dialog.Positioner;
-const DialogTrigger: any = Dialog.Trigger;
 const DialogBody: any = Dialog.Body;
 const DirScanner = ({
   open,

@@ -3,31 +3,17 @@ import { MusicList } from "./MusicList";
 import {
   useDataStore,
   usePlayerStore,
-  usePlaylistStore,
   useQueryStore,
   useQueueStore,
 } from "@/store";
-import { getAudio, getQueue, removeFromPlaylist } from "@/utils";
-import { GetImage, GetStatus, LoadMusic } from "wailsjs/go/player/Player";
-import { useEffect, useRef, useState } from "react";
-import { EventsOn } from "wailsjs/runtime/runtime";
+import { getAudio, getQueue } from "@/utils";
+import { useEffect, useRef } from "react";
 
 export const DirectoryDetail = () => {
-  const audioFiles = useDataStore((state) => state.musicFiles);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const setAll = usePlayerStore((state) => state.setPlayerStatus);
-  const setLoaded = usePlayerStore((state) => state.setLoaded);
-  const setTrack = usePlayerStore((state) => state.setCurrentTrack);
-  const currentPath = useDataStore((state) => state.currentPath);
   const currentPlaylist = useDataStore((state) => state.currentPlaylist);
-  const playlist = usePlaylistStore((state) => state.playlists);
   const musicListPath = useDataStore((state) => state.musicListPath);
   const shuffle = useQueueStore((state) => state.shuffle);
-  const [hovered, setHovered] = useState<number | null>(null);
-
-  const setCurrentTrackImage = usePlayerStore(
-    (state) => state.setCurrentTrackImage,
-  );
 
   const getAudioFiles = async () => {
     const audioFiles = await getAudio({ hasMore: true, page: 0 });

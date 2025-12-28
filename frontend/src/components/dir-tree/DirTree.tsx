@@ -1,10 +1,4 @@
-import {
-  Box,
-  createTreeCollection,
-  For,
-  Text,
-  TreeView,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { GetDirs } from "../../../wailsjs/go/media/Media";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
