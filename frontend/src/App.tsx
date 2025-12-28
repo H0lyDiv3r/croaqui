@@ -182,19 +182,25 @@ function App() {
           </Box>
 
           <Player />
+
           <Box
             textAlign={"left"}
             width={"100%"}
             height={"16px"}
             overflow={"hidden"}
+            color={getNeutral("light", 300)}
+            _dark={{
+              color: getNeutral("dark", 300),
+            }}
+            pos={"absolute"}
+            bottom={0}
+            px={1}
           >
-            {scanMsg && scanMsg !== "" && (
-              <>
-                <Text fontSize={"xs"} color={"white"}>
-                  {scanMsg}
-                </Text>
-              </>
-            )}
+            <>
+              {scanMsg && scanMsg !== "" && (
+                <Text fontSize={"xs"}>{scanMsg}</Text>
+              )}
+            </>
           </Box>
         </Box>
       )}

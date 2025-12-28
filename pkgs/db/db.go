@@ -35,7 +35,7 @@ func (d *DB) StartUp(ctx context.Context) {
 		return
 	}
 
-	filename := filepath.Join(homeDir, ".config", "share", "croaqui")
+	filename := filepath.Join(homeDir, ".local", "share", "croaqui")
 
 	if err = os.MkdirAll(filename, 0755); err != nil {
 		log.Fatal("failed to create database")

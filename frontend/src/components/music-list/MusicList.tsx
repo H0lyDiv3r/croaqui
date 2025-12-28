@@ -156,7 +156,7 @@ export const MusicList = ({
       clearTimeout(cancelResize);
       cancelResize = setTimeout(() => {
         setHeight(entries[0].contentRect.height);
-      }, 1000);
+      }, 100);
     });
 
     if (heightRef.current) resizeObserver.observe(heightRef.current);

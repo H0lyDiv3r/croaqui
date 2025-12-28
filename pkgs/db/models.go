@@ -39,7 +39,7 @@ type Playlist struct {
 
 type PlaylistMusic struct {
 	gorm.Model
-	PlaylistID uint `gorm:"primaryKey"`
-	MusicID    uint `gorm:"primaryKey"`
+	PlaylistID uint
+	MusicID    uint
 	Position   uint
 }
