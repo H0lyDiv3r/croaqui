@@ -489,6 +489,12 @@ func (p *Player) SetPlayerStats(playerStatus PlayerStatus) (*ReturnType, error) 
 		return res, nil
 	})
 
+	if err != nil || data == nil {
+		return &ReturnType{Data: struct {
+			Updated PlayerStatus `json:"updated"`
+		}{Updated: PlayerStatus{}}}, err
+	}
+
 	return &ReturnType{Data: struct {
 		Updated PlayerStatus `json:"updated"`
 	}{Updated: data.(PlayerStatus)}}, err

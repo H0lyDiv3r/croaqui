@@ -151,14 +151,20 @@ export const MusicList = ({
   // }, []);
 
   useLayoutEffect(() => {
+    var cancelResize: NodeJS.Timeout;
     const resizeObserver = new ResizeObserver((entries) => {
-      setHeight(entries[0].contentRect.height);
-      console.log("aaaaaaaaaay", entries[0].contentRect);
+      clearTimeout(cancelResize);
+      cancelResize = setTimeout(() => {
+        setHeight(entries[0].contentRect.height);
+      }, 1000);
     });
 
     if (heightRef.current) resizeObserver.observe(heightRef.current);
 
-    return () => resizeObserver.disconnect();
+    return () => {
+      resizeObserver.disconnect();
+      clearTimeout(cancelResize);
+    };
   }, []);
   return (
     <Box height={"100%"} px={2}>

@@ -9,7 +9,6 @@ package taglib
 import "C"
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"unsafe"
@@ -133,7 +132,7 @@ func findCoverInDirectory(path string) (*AlbumCover, error) {
 	for _, filename := range commonCoverNames {
 		coverPath := filepath.Join(dir, filename)
 		if _, err := os.Stat(coverPath); err == nil {
-			data, err := ioutil.ReadFile(coverPath)
+			data, err := os.ReadFile(coverPath)
 			if err != nil {
 				continue
 			}

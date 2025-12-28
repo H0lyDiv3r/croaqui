@@ -75,7 +75,7 @@ func (m *Mpris) Startup(ctx context.Context, playerController PlayerController) 
 		Name: "/org/mpris/MediaPlayer2",
 		Interfaces: []introspect.Interface{
 			{
-				Name: "org.mpris.MeidaPlayer2.Player",
+				Name: "org.mpris.MediaPlayer2.Player",
 				Methods: []introspect.Method{
 					{Name: "Play"},
 					{Name: "Pause"},

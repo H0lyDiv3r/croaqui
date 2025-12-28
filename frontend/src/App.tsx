@@ -91,11 +91,7 @@ function App() {
     });
 
     const cancelFileLoaded = EventsOn("MPV:FILE_LOADED", () => {
-      // GetImage().then((res) => {
-      //   setCurrentTrackImage(res.data.image);
-      // });
       GetStatus().then((res) => {
-        console.log("about to set all", res);
         setPlayerStatus(res.data);
       });
     });

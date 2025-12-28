@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/H0lyDiv3r/croaqui/pkgs/db"
 	customErr "github.com/H0lyDiv3r/croaqui/pkgs/error"
-	"log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -33,6 +34,7 @@ type song struct {
 	Duration string `json:"duration"`
 	Genre    string `json:"genre"`
 	Position int    `json:"position"`
+	Favorite bool   `json:"favorite"`
 }
 
 type playlist struct {
@@ -272,11 +274,14 @@ func (p *Playlist) GetPlaylist(id uint) *ReturnType {
 		AND p.deleted_at IS NULL
 		`, id).Scan(&playlistData.Counts)
 	db.DBInstance.Instance.Raw(`
-		SELECT pm.playlist_id,pm.music_id,p.name as pname,pm.id AS ipl,m.id , m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre FROM playlist_musics pm
+		SELECT pm.playlist_id,pm.music_id,p.name as pname,pm.id AS ipl,m.id , m.name,m.path,mm.title,mm.artist,mm.album,mm.duration,mm.genre,
+		CASE WHEN p.name = 'favorites' THEN TRUE ELSE FALSE END as favorite
+		FROM playlist_musics pm
 		LEFT JOIN playlists p ON pm.playlist_id = p.id
 		LEFT JOIN music_files m ON pm.music_id = m.id
 		LEFT JOIN music_meta_data mm ON m.meta_data_id = mm.id
 		WHERE p.id = ?
+
 		AND pm.deleted_at IS NULL
 		`, id).Scan(&playlistData.Songs)
 
