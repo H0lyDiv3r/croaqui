@@ -1,4 +1,4 @@
-import { useDataStore, useQueueStore } from "@/store";
+import { useDataStore, usePlayerStore, useQueueStore } from "@/store";
 import { Box, Grid, GridItem, Text, useDisclosure } from "@chakra-ui/react";
 
 import { getNeutral, toHMS } from "@/utils";
@@ -157,6 +157,7 @@ const MusicRow = ({
   setDropdownPos: any;
 }) => {
   const setQueue = useQueueStore((state) => state.setQueue);
+  const currentTrack = usePlayerStore((state) => state.currentTrack);
   const setPlayingIndex = useQueueStore((state) => state.setPlayingIndex);
 
   const handleLoadAudio = async (item: any) => {
@@ -176,9 +177,16 @@ const MusicRow = ({
         whiteSpace={"nowrap"}
         gap={4}
         p={"2"}
-        color={getNeutral("light", 200)}
+        color={
+          currentTrack.path === audioFiles.path
+            ? "brand.500"
+            : getNeutral("light", 200)
+        }
         _dark={{
-          color: getNeutral("dark", 200),
+          color:
+            currentTrack.path === audioFiles.path
+              ? "brand.500"
+              : getNeutral("dark", 200),
         }}
         _hover={{
           "& [data-hover-target]": {
@@ -203,9 +211,16 @@ const MusicRow = ({
           <Text
             whiteSpace={"nowrap"}
             fontSize={"xs"}
-            color={getNeutral("light", 400)}
+            color={
+              currentTrack.path === audioFiles.path
+                ? "brand.400"
+                : getNeutral("light", 400)
+            }
             _dark={{
-              color: getNeutral("dark", 400),
+              color:
+                currentTrack.path === audioFiles.path
+                  ? "brand.400"
+                  : getNeutral("dark", 400),
             }}
           >
             {audioFiles.artist}
