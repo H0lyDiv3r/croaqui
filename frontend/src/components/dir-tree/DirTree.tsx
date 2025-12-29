@@ -1,10 +1,4 @@
-import {
-  Box,
-  createTreeCollection,
-  For,
-  Text,
-  TreeView,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { GetDirs } from "../../../wailsjs/go/media/Media";
 import { useEffect } from "react";
 import { ChakraIcon } from "../ChackraIcon";
@@ -86,7 +80,6 @@ export const DirTree = () => {
                       // });
                       setCurrentPath(dir.path);
                     } else {
-                      console.log("showing audio in path or here", dir.path);
                     }
                     setMusicListPath(dir.path);
                   });
@@ -102,7 +95,6 @@ export const DirTree = () => {
                     as="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("delete dir", dir.path);
                       handleRemoveDir(dir.path);
                       // handleDeletePlaylist(Number(playlist.id));
                     }}

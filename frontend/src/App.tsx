@@ -1,7 +1,7 @@
 import "./App.css";
 import Player from "./features/Player";
 import { Box, Text } from "@chakra-ui/react";
-import { getNeutral, getQueue, shuffleQueue } from "./utils";
+import { getNeutral, shuffleQueue } from "./utils";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { NavBar } from "./features/navbar";
 import { Route, Switch, useRoute } from "wouter";
@@ -16,14 +16,12 @@ import {
   useQueueStore,
   useSidebarDisclosure,
 } from "./store";
-import { ChakraIcon } from "./components/ChackraIcon";
-import { BsGripVertical } from "react-icons/bs";
 import { MiniPlayer } from "./features/miniPlayer";
 import { AlbumsLayout } from "./pages/albums/AlbumsLayout";
 import { SearchResults } from "./pages/searchResults";
 import { SidebarNavigator } from "./features/sidebar-navigator";
 import { QueueBar } from "./features/queue-bar";
-import { GetImage, GetStatus, TogglePlay } from "wailsjs/go/player/Player";
+import { GetStatus } from "wailsjs/go/player/Player";
 import {
   handleNext,
   handlePrev,
@@ -44,17 +42,12 @@ function App() {
   const speed = usePlayerStore((state) => state.speed);
   const volume = usePlayerStore((state) => state.volume);
   const position = usePlayerStore((state) => state.position);
-  const paused = usePlayerStore((state) => state.paused);
 
-  const setCurrentTrackImage = usePlayerStore(
-    (state) => state.setCurrentTrackImage,
-  );
   const setPlayerStatus = usePlayerStore((state) => state.setPlayerStatus);
   const [scanMsg, setScanMsg] = useState("");
   const { isSmall } = useScreenSize();
 
   const [match, params] = useRoute("/albums/:albumId");
-  const setQueue = useQueueStore((state) => state.setQueue);
   const setPlayingIndex = useQueueStore((state) => state.setPlayingIndex);
 
   const handleLoadAudio = async (item: any) => {
@@ -67,18 +60,17 @@ function App() {
   useLayoutEffect(() => {
     // setting persisted state
     if (currentTrack) {
-      handleLoadAudio(currentTrack);
+      handleLoadAudio(currentTrack).then(() => {
+        setMpvPlayerStats({
+          muted,
+          speed,
+          volume,
+          paused: true,
+          position,
+          duration: 0,
+        });
+      });
     }
-    console.log("about to set player status", muted, speed, volume);
-
-    setMpvPlayerStats({
-      muted,
-      speed,
-      volume,
-      paused,
-      position,
-      duration: 0,
-    });
 
     const cancelToastError = EventsOn("toast:err", (err) => {
       showToast("error", err.message);
@@ -102,7 +94,6 @@ function App() {
     });
 
     const cancelMpris = EventsOn("MPRIS", (data) => {
-      console.log("MPRIS CALLED", data.action, data.type);
       switch (data.type) {
         case "playpause":
           togglePaused(data.action);

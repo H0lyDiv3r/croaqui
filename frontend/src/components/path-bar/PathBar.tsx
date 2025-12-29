@@ -1,10 +1,8 @@
-import { useGeneralStore } from "@/store/generalStore";
 import { getNeutral } from "@/utils";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useRef } from "react";
 import { ChakraIcon } from "../ChackraIcon";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
-import { useDataStore } from "@/store";
 import { useLocation } from "wouter";
 
 export const PathBar = ({

@@ -41,7 +41,6 @@ export const addToPlaylist = async (songId: number, playlistId: number) => {
 };
 
 export const addToFavorites = async (songId: number) => {
-  console.log("showing song id", songId);
   const playlist = await AddToFavorites(songId);
   if (!playlist) {
     return null;

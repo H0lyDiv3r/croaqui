@@ -1,5 +1,5 @@
-import { QueryParams, useDataStore, useQueryStore } from "@/store";
-import { GetAlbums, GetAudio } from "../../../wailsjs/go/media/Media";
+import { QueryParams, useQueryStore } from "@/store";
+import { GetAudio } from "../../../wailsjs/go/media/Media";
 
 export const getAudio = async (params?: Partial<QueryParams> | null) => {
   const query = {
@@ -10,7 +10,6 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
     return;
   }
 
-  console.log("showing from the inside", params);
   const response = await GetAudio(
     JSON.stringify({
       ...query,
@@ -22,7 +21,6 @@ export const getAudio = async (params?: Partial<QueryParams> | null) => {
     return [];
   }
 
-  console.log("why are we here", response);
   useQueryStore.setState((state) => ({
     ...state,
     hasMore: response.data.hasMore,

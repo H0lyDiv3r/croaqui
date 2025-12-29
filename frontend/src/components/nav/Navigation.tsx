@@ -9,14 +9,12 @@ import { getNeutral } from "@/utils";
 export const Navigation = () => {
   return (
     <Box display={"flex"} className="search-bar" gap={"4"}>
-      {/*<Link href="/" color={isActive ? "red" : "green"}></Link>*/}
       <ActiveLink href={"/"}>
         <ChakraIcon icon={LuLibrary} boxSize={5} />
       </ActiveLink>
       <ActiveLink href="/albums">
         <ChakraIcon icon={IoAlbums} boxSize={5} />
       </ActiveLink>
-      {/*<Link href="/search-results">Artists</Link>*/}
     </Box>
   );
 };

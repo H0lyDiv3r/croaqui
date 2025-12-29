@@ -4,11 +4,10 @@ import { PathBar } from "@/components/path-bar";
 import { useScreenSize } from "@/hooks";
 import { createPlaylist, getNeutral } from "@/utils";
 import { Box, Tabs, useTabs } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSidebarDisclosure } from "@/store/sidebarDisclosure";
 import { SideBarActionTabs } from "@/components/controls/SideBarActionTabs";
 
-import { RiExpandLeftFill } from "react-icons/ri";
 import { RiExpandRightFill } from "react-icons/ri";
 import { VscFolderLibrary } from "react-icons/vsc";
 import { BiSolidPlaylist } from "react-icons/bi";
@@ -19,7 +18,6 @@ const TabsContent: any = Tabs.Content;
 
 export const SidebarNavigator = () => {
   const isOpen = useSidebarDisclosure((state) => state.leftBarOpen);
-  const switchSide = useSidebarDisclosure((state) => state.switch);
   const [showCreatePlaylistForm, setShowCreatePlaylistForm] = useState(false);
   const currentPath = useDataStore((state) => state.currentPath);
   const setCurrentPath = useDataStore((state) => state.setCurrentPath);

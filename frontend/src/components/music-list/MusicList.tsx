@@ -1,28 +1,9 @@
-import {
-  useDataStore,
-  usePlayerStore,
-  usePlaylistStore,
-  useQueryStore,
-  useQueueStore,
-} from "@/store";
+import { useDataStore, useQueueStore } from "@/store";
 import { Box, Grid, GridItem, Text, useDisclosure } from "@chakra-ui/react";
-import {
-  GetImage,
-  GetStatus,
-  LoadMusic,
-} from "../../../wailsjs/go/player/Player";
-import { getNeutral, getQueue, removeFromPlaylist, toHMS } from "@/utils";
-import { GetQueue } from "../../../wailsjs/go/queue/Queue";
 
-import React, {
-  Suspense,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import { getAudio } from "@/utils/data/audioData";
-import { EventsOn } from "../../../wailsjs/runtime/runtime";
+import { getNeutral, toHMS } from "@/utils";
+
+import { useLayoutEffect, useRef, useState } from "react";
 import { Empty } from "../empty";
 import { loadAudio } from "@/utils/action/playerActions";
 import MusicDropdown from "../music-actions/MusicDropDown";
@@ -38,117 +19,14 @@ export const MusicList = ({
   handleGetQueue: (song?: { [key: string]: any }) => Promise<any>;
 }) => {
   const audioFiles = useDataStore((state) => state.musicFiles);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
-  const setQueue = useQueueStore((state) => state.setQueue);
-  const setPlayingIndex = useQueueStore((state) => state.setPlayingIndex);
 
   const { open, setOpen } = useDisclosure();
-
-  const setCurrentTrackImage = usePlayerStore(
-    (state) => state.setCurrentTrackImage,
-  );
 
   const [idxOfDropdown, setIdxOfDropdown] = useState(-1);
   const [dropdownPos, setDropdownPos] = useState({ x: 0, y: 0 });
 
   const heightRef = useRef<HTMLElement>(null);
   const [height, setHeight] = useState(100);
-
-  // const getAudioFiles = async () => {
-  //   const audioFiles = await getAudio({ hasMore: true, page: 0 });
-  //   // setAll(audioFiles);
-  //   console.log("files giles mailes");
-  //   useDataStore.setState((state) => ({
-  //     ...state,
-  //     currentPlaylist: null,
-  //     musicFiles: [...audioFiles],
-  //   }));
-  // };
-
-  const handleScroll = async () => {
-    const current = scrollRef.current;
-    if (!current) return;
-    if (currentPlaylist) return;
-    if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
-      // getAudios(currentPath);
-      const newPage = await getAudio({
-        page: useQueryStore.getState().page + 1,
-      });
-      useQueryStore.setState((state) => ({
-        ...state,
-        page: state.hasMore ? state.page + 1 : state.page,
-      }));
-      if (!newPage) {
-        return;
-      }
-      useDataStore.setState((state) => ({
-        ...state,
-        musicFiles: [...state.musicFiles, ...newPage],
-      }));
-    }
-  };
-
-  const handleLoadAudio = async (item: any) => {
-    setPlayingIndex(0);
-    await loadAudio(item);
-    const queue = await handleGetQueue(item);
-    setQueue(queue);
-  };
-  // const loadAudio = (item: any) => {
-  //   console.log("loading file");
-  //   setLoaded(false);
-  //   setTrack(item);
-
-  //   LoadMusic(item.path)
-  //     .then((res) => {
-  //       console.log("loaded");
-  //       setLoaded(true);
-  //       setTrack(item);
-
-  //       GetQueue({ type: "dir", args: item.parentPath, shuffle: false }).then(
-  //         (res: any) => {
-  //           setQueue(res.data.queue);
-  //           console.log("here we have the queue", res.data.queue);
-  //         },
-  //       );
-  //       setTimeout(() => {
-  //         GetImage().then((res) => {
-  //           setCurrentTrackImage(res.data.image);
-  //         });
-  //       }, 1000);
-  //       GetStatus().then((res) => {
-  //         console.log("statuses", res.data);
-  //         setAll({ ...res.data, position: res.data.position || 0 });
-  //       });
-  //       // setAll(JSON.parse(res));
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error loading music:", error);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   // getAudio();
-  //   // useQueryStore.setState((state) => {
-  //   //   return { ...state, page: 0 };
-  //   // });
-  //   useQueryStore.getState().clearQuery();
-  //   getAudioFiles();
-  // }, [currentPath]);
-
-  // useEffect(() => {
-  //   EventsOn("MPV:FILE_LOADED", () => {
-  //     setLoaded(true);
-  //     // setTrack(item);
-  //     GetImage().then((res) => {
-  //       setCurrentTrackImage(res.data.image);
-  //     });
-  //     GetStatus().then((res) => {
-  //       setAll(res.data);
-  //     });
-  //   });
-  // }, []);
 
   useLayoutEffect(() => {
     var cancelResize: NodeJS.Timeout;
@@ -314,7 +192,6 @@ const MusicRow = ({
           },
         }}
         onClick={() => {
-          console.log("imheremayn", audioFiles);
           handleLoadAudio(audioFiles);
         }}
       >

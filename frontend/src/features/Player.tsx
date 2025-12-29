@@ -2,7 +2,6 @@ import React, { memo, useLayoutEffect } from "react";
 import "./player.css";
 import { Box, Image, Text } from "@chakra-ui/react";
 
-// import { motion } from "framer-motion";
 import { useState } from "react";
 import { TbHeart, TbHeartFilled } from "react-icons/tb";
 
@@ -36,7 +35,6 @@ const Player: React.FC = () => {
   };
 
   useLayoutEffect(() => {
-    console.log("checking if favorite", currentTrack.favorite);
     setFavorite(currentTrack.favorite);
   }, [currentTrack]);
   return (

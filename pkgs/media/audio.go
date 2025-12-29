@@ -30,7 +30,7 @@ type audio struct {
 
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 
-	fmt.Println("showing audio in path", filter)
+
 
 	var result = []audio{}
 
@@ -152,7 +152,7 @@ func (m *Media) ScanForAudio(path string) error {
 				errChan <- fmt.Errorf("failed to walk directory %s: %w", path, err)
 				return nil
 			}
-			fmt.Println("path:", path)
+		
 			if d.IsDir() {
 				if m.hasAudio(path) {
 					msgChan <- fmt.Sprintf("writing %s to database", path)

@@ -12,8 +12,6 @@ import { getNeutral } from "@/utils";
 import { loadFromQueue } from "@/utils/action";
 import { Box, Image, Tabs, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { FaRegFolderOpen } from "react-icons/fa6";
 import { IoFolderOpenOutline } from "react-icons/io5";
 
 const TabsList: any = Tabs.List;
@@ -21,18 +19,12 @@ const TabsContent: any = Tabs.Content;
 const TabsTrigger: any = Tabs.Trigger;
 export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
   const isOpen = useSidebarDisclosure((state) => state.rightBarOpen);
-  const isLeftOpen = useSidebarDisclosure((state) => state.leftBarOpen);
-  const switchSide = useSidebarDisclosure((state) => state.switch);
   const queue = useQueueStore((state) => state.items);
   const playIndex = useQueueStore((state) => state.playingIndex);
   const loop = useQueueStore((state) => state.loop);
   const shuffle = useQueueStore((state) => state.shuffle);
   const shuffleIndex = useQueueStore((state) => state.shuffleIndex);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
-  const currentPlaylist = useDataStore((state) => state.currentPlaylist);
-
-  const musicListPath = useDataStore((state) => state.musicListPath);
-  const { isLarge, isMedium, isSmall } = useScreenSize();
 
   const calculateUpNext = () => {
     switch (loop) {
@@ -53,10 +45,6 @@ export const QueueBar = ({ queueInfo }: { queueInfo: QueueInfo }) => {
   const getSongAtShuffleIndex = (idx: number): Song | null => {
     return shuffle && shuffleIndex ? queue[shuffleIndex[idx]] : null;
   };
-
-  useEffect(() => {
-    console.log("i will get metadata here", shuffleIndex);
-  }, [shuffleIndex]);
 
   return (
     <>
