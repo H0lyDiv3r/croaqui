@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Croaqui
+Comment=A modern music player for Linux
+Exec=croaqui
+Icon=com.github.H0lyDiv3r.croaqui
+Type=Application
+Categories=Audio;Music;Player;
+Terminal=false
+StartupNotify=true

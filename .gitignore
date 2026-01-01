@@ -4,7 +4,6 @@ frontend/dist
 build
 test-files
 tmp
-resources
 ffprobe
 libtag_c.a
 libtag.a

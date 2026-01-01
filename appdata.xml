@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.H0lyDiv3r.croaqui</id>
+  <name>Croaqui</name>
+  <summary>A modern, lightweight music player for Linux</summary>
+  <description>
+    <p>Croaqui is a sleek desktop music player for Linux, built with Go and React. It provides powerful audio playback capabilities with support for multiple audio formats.</p>
+    <p>Key Features:</p>
+    <ul>
+      <li>High-quality audio playback using MPV</li>
+      <li>Comprehensive playlist management</li>
+      <li>Flexible queue system</li>
+      <li>Full metadata reading and display</li>
+      <li>Wide audio format support via FFmpeg</li>
+      <li>Modern, responsive UI built with React</li>
+      <li>Native Linux desktop integration</li>
+    </ul>
+  </description>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <url type="homepage">https://github.com/H0lyDiv3r/croaqui</url>
+  <url type="bugtracker">https://github.com/H0lyDiv3r/croaqui/issues</url>
+  <developer_name>Yohannes Hailemariam</developer_name>
+  <content_rating type="oars-1.1" />
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/H0lyDiv3r/croaqui/main/designs/screenshot1.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.0.0" date="2025-01-01">
+      <description>
+        <p>Initial release of Croaqui music player</p>
+      </description>
+    </release>
+  </releases>
+</component>
