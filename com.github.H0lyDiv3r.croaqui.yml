@@ -35,18 +35,20 @@ modules:
     build-options:
       cflags: -I/usr/include/mpv
     sources:
-      - type: dir
-        path: .
+      - type: git
+        url: https://github.com/H0lyDiv3r/croaqui
+        commit: 6a8971e7befdd9e80543ff8166d2fd687a46c643
     build-commands:
       # ---- Toolchain wiring ----
       - export GOROOT=/usr/lib/sdk/golang
       - export PATH=$PATH:/usr/lib/sdk/golang/bin:/usr/lib/sdk/node20/bin
 
       # ---- Frontend build ----
+      - ls -la
+      - ls -la frontend || echo "frontend not found"
+      - npm --version
       - cd frontend
-      - npm ci --legacy-peer-deps
-      - npm run build
-      - cd ..
+      - cd frontend && rm -rf node_modules package-lock.json && npm install && npm run build && cd ..
 
         # ---- Install Wails CLI (local, not global) ----
       - go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.0
