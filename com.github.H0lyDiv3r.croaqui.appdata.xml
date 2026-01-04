@@ -22,11 +22,13 @@
   <url type="bugtracker">https://github.com/H0lyDiv3r/croaqui/issues</url>
   <developer_name>Yohannes Hailemariam</developer_name>
   <content_rating type="oars-1.1" />
-  <screenshots>
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/H0lyDiv3r/croaqui/main/designs/screenshot1.png</image>
-    </screenshot>
-  </screenshots>
+  <categories>
+    <category>Audio</category>
+    <category>Music</category>
+  </categories>
+  <provides>
+    <binary>croaqui</binary>
+  </provides>
   <releases>
     <release version="1.0.0" date="2025-01-01">
       <description>

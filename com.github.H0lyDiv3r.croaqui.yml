@@ -1,96 +1,72 @@
-app-id: com.github.H0lyDiv3r.croaqui
-runtime: org.freedesktop.Platform
-runtime-version: "24.08"
-sdk: org.freedesktop.Sdk
+app-id: com.github.h0lydiv3r.croaqui
+
+runtime: org.gnome.Platform
+runtime-version: "46"
+sdk: org.gnome.Sdk
+
+command: croaqui
+
 sdk-extensions:
-  - org.freedesktop.Sdk.Extension.golang
-  - org.freedesktop.Sdk.Extension.node20
+  - org.gnome.Sdk.Extension.golang
+  - org.freedesktop.Sdk.Extension.node18
+
+build-options:
+  append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node18/bin
+  env:
+    CGO_ENABLED: "1"
+    GOFLAGS: "-mod=readonly"
 
 finish-args:
-  - --share=ipc
-  - --socket=x11
+  # Display
   - --socket=wayland
-  - --socket=pulseaudio
-  - --device=dri
-  - --filesystem=home
-  - --own-name=org.mpris.MediaPlayer2.croaqui
+  - --socket=fallback-x11
 
-# build-options:
-#   append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node20/bin
-#   prepend-ld-library-path: /usr/lib/sdk/node20/lib
-#   prepend-pkg-config-path: /usr/lib/sdk/golang/lib/pkgconfig
-#   env:
-#     NPM_CONFIG_USERCONFIG: /tmp/npmrc
-#     GOPATH: /run/build
-#     GO111MODULE: "on"
-#
-build-options:
-  env:
-    GOROOT: /usr/lib/sdk/golang
-  append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node20/bin
+  # GPU
+  - --device=dri
+
+  # GTK / WebKit
+  - --share=ipc
+
+  # Audio
+  - --socket=pulseaudio
+
+  # Media access
+  - --filesystem=xdg-music
+  - --filesystem=xdg-videos
+
+  # MPRIS
+  - --own-name=org.mpris.MediaPlayer2.croaqui
 
 modules:
   - name: croaqui
     buildsystem: simple
-    build-options:
-      cflags: -I/usr/include/mpv
     sources:
       - type: git
-        url: https://github.com/H0lyDiv3r/croaqui
-        commit: 6a8971e7befdd9e80543ff8166d2fd687a46c643
+        url: https://github.com/H0lyDiv3r/croaqui.git
+        branch: main
+
     build-commands:
-      # ---- Toolchain wiring ----
-      - export GOROOT=/usr/lib/sdk/golang
-      - export PATH=$PATH:/usr/lib/sdk/golang/bin:/usr/lib/sdk/node20/bin
+      # ---- Frontend ----
+      - npm ci --prefix frontend
+      - npm run build --prefix frontend
 
-      # ---- Frontend build ----
-      - ls -la
-      - ls -la frontend || echo "frontend not found"
-      - npm --version
-      - cd frontend
-      - cd frontend && rm -rf node_modules package-lock.json && npm install && npm run build && cd ..
+      # ---- Backend ----
+      - go mod download
+      - go build -o croaqui
 
-        # ---- Install Wails CLI (local, not global) ----
-      - go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.0
+      # ---- Install binary ----
+      - install -Dm755 croaqui /app/bin/croaqui
 
-      # ---- Build app ----
-      - /usr/lib/sdk/golang/bin/wails build -platform linux/amd64 -clean
+      # ---- Desktop file ----
+      - install -Dm644 com.github.h0lydiv3r.croaqui.desktop \
+        /app/share/applications/com.github.h0lydiv3r.croaqui.desktop
 
-      # ---- Install output ----
-      - install -Dm755 build/bin/mywailsapp /app/bin/mywailsapp
-      - export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig && go build -mod=vendor -o croaqui-bin main.go
-      - install -Dm755 croaqui-bin ${FLATPAK_DEST}/bin/croaqui
-      - install -Dm644 com.github.H0lyDiv3r.croaqui.desktop ${FLATPAK_DEST}/share/applications/
-      - install -Dm644 com.github.H0lyDiv3r.croaqui.appdata.xml ${FLATPAK_DEST}/share/metainfo/
-      - install -Dm644 resources/icons/64x64/apps/com.github.H0lyDiv3r.croaqui.png ${FLATPAK_DEST}/share/icons/hicolor/64x64/apps/
-      - install -Dm644 resources/icons/128x128/apps/com.github.H0lyDiv3r.croaqui.png ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps/
-      - install -Dm644 resources/icons/scalable/apps/com.github.H0lyDiv3r.croaqui.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/
+      # ---- AppStream metadata ----
+      - install -Dm644 com.github.h0lydiv3r.croaqui.appdata.xml \
+        /app/share/metainfo/com.github.h0lydiv3r.croaqui.appdata.xml
 
-# modules:
-#   - name: mywailsapp
-#     buildsystem: simple
-
-#     build-commands:
-#       # ---- Toolchain wiring ----
-#       - export GOROOT=/usr/lib/sdk/golang
-#       - export PATH=$PATH:/usr/lib/sdk/golang/bin:/usr/lib/sdk/node18/bin
-
-#       # ---- Frontend build ----
-#       - cd frontend
-#       - npm ci
-#       - npm run build
-#       - cd ..
-
-#       # ---- Install Wails CLI (local, not global) ----
-#       - go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.0
-
-#       # ---- Build app ----
-#       - /usr/lib/sdk/golang/bin/wails build -platform linux/amd64 -clean
-
-#       # ---- Install output ----
-#       - install -Dm755 build/bin/mywailsapp /app/bin/mywailsapp
-
-#     sources:
-#       - type: git
-#         url: https://github.com/user/mywailsapp.git
-#         tag: v1.0.0
+      # ---- Icons ----
+      - install -Dm644 resources/icons/64x64/apps/com.github.h0lydiv3r.croaqui.png \
+        /app/share/icons/hicolor/64x64/apps/com.github.h0lydiv3r.croaqui.png
+      - install -Dm644 resources/icons/128x128/apps/com.github.h0lydiv3r.croaqui.png \
+        /app/share/icons/hicolor/128x128/apps/com.github.h0lydiv3r.croaqui.png
