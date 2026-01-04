@@ -25,7 +25,6 @@ export const NavBar = () => {
       alignItems={"center"}
       height={"5rem"}
       justifyContent={"center"}
-      overflow={"hidden"}
     >
       <Grid
         templateColumns="repeat(24, 1fr)"
