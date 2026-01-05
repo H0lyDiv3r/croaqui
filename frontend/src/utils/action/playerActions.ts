@@ -53,8 +53,16 @@ export const handleNext = () => {
       break;
   }
 
-  const nextTrack =
-    shuffle && shuffleIndex ? queue[shuffleIndex[nextIndex]] : queue[nextIndex];
+  // Get the actual queue index, checking bounds on shuffleIndex
+  let queueIndex = nextIndex;
+  if (shuffle && shuffleIndex && nextIndex < shuffleIndex.length) {
+    const shuffledQueueIndex = shuffleIndex[nextIndex];
+    if (shuffledQueueIndex !== undefined && shuffledQueueIndex < queue.length) {
+      queueIndex = shuffledQueueIndex;
+    }
+  }
+
+  const nextTrack = queue[queueIndex];
   setCurrentIndex(nextIndex);
 
   if (nextTrack) {
@@ -85,8 +93,17 @@ export const handlePrev = () => {
       nextIndex = currentIndex;
       break;
   }
-  const nextTrack =
-    shuffle && shuffleIndex ? queue[shuffleIndex[nextIndex]] : queue[nextIndex];
+
+  // Get the actual queue index, checking bounds on shuffleIndex
+  let queueIndex = nextIndex;
+  if (shuffle && shuffleIndex && nextIndex < shuffleIndex.length) {
+    const shuffledQueueIndex = shuffleIndex[nextIndex];
+    if (shuffledQueueIndex !== undefined && shuffledQueueIndex < queue.length) {
+      queueIndex = shuffledQueueIndex;
+    }
+  }
+
+  const nextTrack = queue[queueIndex];
 
   setCurrentIndex(nextIndex);
 
@@ -103,8 +120,17 @@ export const loadFromQueue = (index: number) => {
   if (index >= queue.length) {
     return;
   }
-  const nextTrack =
-    shuffle && shuffleIndex ? queue[shuffleIndex[index]] : queue[index];
+
+  // Get the actual queue index, checking bounds on shuffleIndex
+  let queueIndex = index;
+  if (shuffle && shuffleIndex && index < shuffleIndex.length) {
+    const shuffledQueueIndex = shuffleIndex[index];
+    if (shuffledQueueIndex !== undefined && shuffledQueueIndex < queue.length) {
+      queueIndex = shuffledQueueIndex;
+    }
+  }
+
+  const nextTrack = queue[queueIndex];
 
   if (nextTrack) {
     setCurrentIndex(index);

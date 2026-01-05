@@ -30,8 +30,6 @@ type audio struct {
 
 func (m *Media) GetAudio(filter string) (*ReturnType, error) {
 
-
-
 	var result = []audio{}
 
 	var filterSettings struct {
@@ -152,9 +150,10 @@ func (m *Media) ScanForAudio(path string) error {
 				errChan <- fmt.Errorf("failed to walk directory %s: %w", path, err)
 				return nil
 			}
-		
+
 			if d.IsDir() {
-				if m.hasAudio(path) {
+
+				if m.hasAudio(path) && !isHiddenFolder(path) {
 					msgChan <- fmt.Sprintf("writing %s to database", path)
 					parts := strings.Split(path, "/")
 					dirErr := db.DBInstance.WriteDirData(db.Directory{
@@ -184,7 +183,9 @@ func (m *Media) ScanForAudio(path string) error {
 			emitter.Emit(m.ctx)
 			errChan <- err
 		}
+		runtime.EventsEmit(m.ctx, "SCAN:COMPLETE")
 		m.Emit("scan successful")
+
 	}()
 
 	var lastErr error
@@ -229,24 +230,7 @@ func (m *Media) hasAudio(path string) bool {
 
 //updateAudio
 
-// getAlbums
-
-// getArtists
-// func (p *Player) LoadMusic(url string) (*ReturnType, error) {
-// 	if err := p.mpv.Command([]string{"loadfile", url}); err != nil {
-// 		fmt.Println("unable to load")
-// 		log.Fatal("unable to load music", err)
-// 		return nil, err
-// 	}
-
-// 	for {
-// 		ev := p.mpv.WaitEvent(-1)
-// 		if ev.EventID == mpv.EventFileLoaded {
-// 			fmt.Println("the file is loaded")
-// 			return &ReturnType{Data: struct {
-// 				Loaded bool `json:"loaded"`
-// 			}{Loaded: true}}, nil
-// 		}
-// 	}
-
-// }
+func isHiddenFolder(path string) bool {
+	base := filepath.Base(path)
+	return strings.HasPrefix(base, ".")
+}

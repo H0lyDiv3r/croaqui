@@ -9,6 +9,7 @@ import { getAudio } from "@/utils/data/audioData";
 import { Empty } from "../empty";
 import { useLocation } from "wouter";
 import { BsFillTrashFill } from "react-icons/bs";
+import { EventsOn } from "wailsjs/runtime/runtime";
 
 export const DirTree = () => {
   const dirs = useDataStore((state) => state.dirs);
@@ -41,6 +42,12 @@ export const DirTree = () => {
   useEffect(() => {
     getDir();
   }, [currentPath]);
+
+  useEffect(() => {
+    EventsOn("SCAN:COMPLETE", () => {
+      getDir();
+    });
+  }, []);
 
   return (
     <Box
