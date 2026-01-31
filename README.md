@@ -18,7 +18,7 @@ Just another attempt at making a local linux music player with cool ui, playlist
 - **Modern UI**: Beautiful, responsive interface built with React and Chakra UI
 
 ## Get The Binary(RECOMENDED)
-[Releases](https://github.com/H0lyDiv3r/croaqui/releases)
+### [Releases](https://github.com/H0lyDiv3r/croaqui/releases)
   
 
 ## Prerequisites To Build From Source
@@ -30,6 +30,7 @@ Before installing Croaky, ensure you have the following installed:
 - **Wails**: Desktop application framework ([Installation Guide](https://wails.io/docs/gettingstarted/installation))
 - **MPV**: Audio/video player ([Ubuntu/Debian: `sudo apt install mpv`](https://mpv.io/installation/))
 - **Taglib**: you are going to need the static build for taglib.(https://taglib.org/)
+
 ## Installation
 
 ### Building from Source
