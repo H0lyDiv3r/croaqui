@@ -17,8 +17,8 @@ Just another attempt at making a local linux music player with cool ui, playlist
 - **Format Support**: Wide range of audio formats via FFmpeg integration
 - **Modern UI**: Beautiful, responsive interface built with React and Chakra UI
 
-** Get The Binary
-
+** Get The Binary(RECOMENDED)
+[Releases](https://github.com/H0lyDiv3r/croaqui/releases)
   
 
 ## Prerequisites To Build From Source
@@ -95,42 +95,34 @@ The application will open in development mode with hot reloading enabled.
 ## Gallery
 
  **Scan for Audio**
-   - Navigate to your music directory and scan for audio files
    <img width="1920" height="1200" alt="scan-for-audio" src="https://github.com/user-attachments/assets/be955ba6-5488-4709-8225-8a41bb2424ec" />
 
 
 **Navigate Directory**
-   - Browse your music folders to find and select songs
    <img width="1920" height="1200" alt="navigate-dir" src="https://github.com/user-attachments/assets/d4ad3a36-5fab-47aa-bf4c-daeec187d3f8" />
 
 
 **Navigate Albums**
-   - Explore your music library organized by albums
    <img width="1920" height="1200" alt="navigate-albums" src="https://github.com/user-attachments/assets/94f7231b-6d1f-4f0c-9f94-9eeb3917dab9" />
 
 
 **Inside Album**
-   - View all tracks in an album and select songs to play
    <img width="1920" height="1200" alt="inside-album" src="https://github.com/user-attachments/assets/38c2aa97-cf06-4da0-8ec6-989fcb511709" />
 
 
 **Navigate Playlists**
-   - Access and manage your saved playlists
    <img width="1920" height="1200" alt="navigate-playlists" src="https://github.com/user-attachments/assets/fb285e2f-0b3c-4113-bb34-5674e21f10b4" />
 
 
 **Create Playlist**
-   - Create new playlists and add your favorite songs
    <img width="1920" height="1200" alt="create-playlist" src="https://github.com/user-attachments/assets/28ba5f4f-a3a6-499b-863c-7fce3bcdb38e" />
 
 
 **Queue**
-   - Manage your playback queue, add songs, and reorder tracks
    <img width="1920" height="1200" alt="queue" src="https://github.com/user-attachments/assets/129fbb2a-cd46-4941-a0e0-51c180a1bd3f" />
 
 
 **Mini Player**
-   - Use the compact mini player for playback control
    <img width="1920" height="1200" alt="mini-player" src="https://github.com/user-attachments/assets/7ca662f4-8297-46ed-bbf4-42e48464145f" />
 
    
