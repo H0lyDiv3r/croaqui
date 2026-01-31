@@ -87,42 +87,42 @@ The application will open in development mode with hot reloading enabled.
 
 2. **Scan for Audio**
    - Navigate to your music directory and scan for audio files
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/scan-for-audio.png
+   <img width="1920" height="1200" alt="scan-for-audio" src="https://github.com/user-attachments/assets/be955ba6-5488-4709-8225-8a41bb2424ec" />
 
 
 3. **Navigate Directory**
    - Browse your music folders to find and select songs
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-dir.png
+   <img width="1920" height="1200" alt="navigate-dir" src="https://github.com/user-attachments/assets/d4ad3a36-5fab-47aa-bf4c-daeec187d3f8" />
 
 
 4. **Navigate Albums**
    - Explore your music library organized by albums
-   
-/home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-albums.png
+   <img width="1920" height="1200" alt="navigate-albums" src="https://github.com/user-attachments/assets/94f7231b-6d1f-4f0c-9f94-9eeb3917dab9" />
 
+   
 5. **Inside Album**
    - View all tracks in an album and select songs to play
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/inside-album.png
+   <img width="1920" height="1200" alt="inside-album" src="https://github.com/user-attachments/assets/38c2aa97-cf06-4da0-8ec6-989fcb511709" />
 
 
 6. **Navigate Playlists**
    - Access and manage your saved playlists
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-playlists.png
+   <img width="1920" height="1200" alt="navigate-playlists" src="https://github.com/user-attachments/assets/fb285e2f-0b3c-4113-bb34-5674e21f10b4" />
 
 
 7. **Create Playlist**
    - Create new playlists and add your favorite songs
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/create-playlist.png
+   <img width="1920" height="1200" alt="create-playlist" src="https://github.com/user-attachments/assets/28ba5f4f-a3a6-499b-863c-7fce3bcdb38e" />
 
 
 8. **Queue**
    - Manage your playback queue, add songs, and reorder tracks
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/queue.png
+   <img width="1920" height="1200" alt="queue" src="https://github.com/user-attachments/assets/129fbb2a-cd46-4941-a0e0-51c180a1bd3f" />
 
 
 9. **Mini Player**
    - Use the compact mini player for playback control
-   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/mini-player.png
+   <img width="1920" height="1200" alt="mini-player" src="https://github.com/user-attachments/assets/7ca662f4-8297-46ed-bbf4-42e48464145f" />
 
    
 ## Architecture
