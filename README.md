@@ -85,17 +85,45 @@ The application will open in development mode with hot reloading enabled.
 1. **Launch Croaky**
    - Run the built executable or start development mode
 
-2. **Add Music**
-   - Import your music library by selecting folders or individual files
+2. **Scan for Audio**
+   - Navigate to your music directory and scan for audio files
+   
+   ![Scan for Audio](test-files/app-desc-pics/scan-for-audio.png)
 
-3. **Create Playlists**
-   - Organize your music into custom playlists
+3. **Navigate Directory**
+   - Browse your music folders to find and select songs
+   
+   ![Navigate Directory](test-files/app-desc-pics/navigate-dir.png)
 
-4. **Control Playback**
-   - Use the intuitive controls for play, pause, skip, and volume
+4. **Navigate Albums**
+   - Explore your music library organized by albums
+   
+   ![Navigate Albums](test-files/app-desc-pics/navigate-albums.png)
 
-5. **Manage Queue**
-   - Add songs to queue, reorder, or clear the queue
+5. **Inside Album**
+   - View all tracks in an album and select songs to play
+   
+   ![Inside Album](test-files/app-desc-pics/inside-album.png)
+
+6. **Navigate Playlists**
+   - Access and manage your saved playlists
+   
+   ![Navigate Playlists](test-files/app-desc-pics/navigate-playlists.png)
+
+7. **Create Playlist**
+   - Create new playlists and add your favorite songs
+   
+   ![Create Playlist](test-files/app-desc-pics/create-playlist.png)
+
+8. **Queue**
+   - Manage your playback queue, add songs, and reorder tracks
+   
+   ![Queue](test-files/app-desc-pics/queue.png)
+
+9. **Mini Player**
+   - Use the compact mini player for playback control
+   
+   ![Mini Player](test-files/app-desc-pics/mini-player.png)
 
 ## Architecture
 
