@@ -106,7 +106,7 @@ Croaky is built using:
 - **Audio Engine**: MPV for playback
 - **Metadata**: TagLib for audio file metadata
 - **Processing**: FFmpeg for audio format handling
-- **Database**: Custom database implementation for playlists and settings
+- **Database**: Sqlite
 
 ## Contributing
 
