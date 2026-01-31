@@ -17,7 +17,7 @@ Just another attempt at making a local linux music player with cool ui, playlist
 - **Format Support**: Wide range of audio formats via FFmpeg integration
 - **Modern UI**: Beautiful, responsive interface built with React and Chakra UI
 
-** Get The Binary(RECOMENDED)
+## Get The Binary(RECOMENDED)
 [Releases](https://github.com/H0lyDiv3r/croaqui/releases)
   
 
