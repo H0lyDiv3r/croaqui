@@ -48,9 +48,11 @@ Before installing Croaky, ensure you have the following installed:
    wails build
    ```
 4. **Build static libs for taglib**
-   i. clone taglib 2.1.1.
-   ii. build the static libs. we are interested in tag_c.h, libtag.a, libtag_c.a
-   iii. move tag_c.h to ./internals/include and libtag.a and libtag_c.a to ./internals/lib 
+   ```bash
+      clone taglib 2.1.1.
+      build the static libs. we are interested in tag_c.h, libtag.a, libtag_c.a
+      move tag_c.h to ./internals/include and libtag.a and libtag_c.a to ./internals/lib
+   ```
 
 6. **Run the Application**
    ```bash
