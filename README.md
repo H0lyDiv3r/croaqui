@@ -87,44 +87,44 @@ The application will open in development mode with hot reloading enabled.
 
 2. **Scan for Audio**
    - Navigate to your music directory and scan for audio files
-   
-   ![Scan for Audio](test-files/app-desc-pics/scan-for-audio.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/scan-for-audio.png
+
 
 3. **Navigate Directory**
    - Browse your music folders to find and select songs
-   
-   ![Navigate Directory](test-files/app-desc-pics/navigate-dir.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-dir.png
+
 
 4. **Navigate Albums**
    - Explore your music library organized by albums
    
-   ![Navigate Albums](test-files/app-desc-pics/navigate-albums.png)
+/home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-albums.png
 
 5. **Inside Album**
    - View all tracks in an album and select songs to play
-   
-   ![Inside Album](test-files/app-desc-pics/inside-album.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/inside-album.png
+
 
 6. **Navigate Playlists**
    - Access and manage your saved playlists
-   
-   ![Navigate Playlists](test-files/app-desc-pics/navigate-playlists.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/navigate-playlists.png
+
 
 7. **Create Playlist**
    - Create new playlists and add your favorite songs
-   
-   ![Create Playlist](test-files/app-desc-pics/create-playlist.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/create-playlist.png
+
 
 8. **Queue**
    - Manage your playback queue, add songs, and reorder tracks
-   
-   ![Queue](test-files/app-desc-pics/queue.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/queue.png
+
 
 9. **Mini Player**
    - Use the compact mini player for playback control
-   
-   ![Mini Player](test-files/app-desc-pics/mini-player.png)
+   /home/yuri/Data/projects/music-player-go/test-files/app-desc-pics/mini-player.png
 
+   
 ## Architecture
 
 Croaky is built using:
