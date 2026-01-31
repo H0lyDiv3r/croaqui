@@ -4,7 +4,9 @@
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.19-blue.svg)](https://golang.org)
 [![Wails](https://img.shields.io/badge/wails-v2.0+-blue.svg)](https://wails.io)
 
-A modern, lightweight music player for Linux, built with Go and React. Croaky provides a sleek desktop application experience with powerful audio playback capabilities, playlist management, and metadata handling.
+Just another attempt at making a local linux music player with cool ui, playlist managemenet and more to come
+
+<img width="1920" height="1200" alt="navigate-albums" src="https://github.com/user-attachments/assets/94f7231b-6d1f-4f0c-9f94-9eeb3917dab9" />
 
 ## Features
 
@@ -14,7 +16,6 @@ A modern, lightweight music player for Linux, built with Go and React. Croaky pr
 - **Metadata Support**: Full metadata reading and display using TagLib
 - **Format Support**: Wide range of audio formats via FFmpeg integration
 - **Modern UI**: Beautiful, responsive interface built with React and Chakra UI
-- **Cross-Platform Ready**: Built with Wails for native Linux desktop experience
 
 ## Prerequisites
 
@@ -24,8 +25,7 @@ Before installing Croaky, ensure you have the following installed:
 - **Node.js**: Latest LTS version with npm
 - **Wails**: Desktop application framework ([Installation Guide](https://wails.io/docs/gettingstarted/installation))
 - **MPV**: Audio/video player ([Ubuntu/Debian: `sudo apt install mpv`](https://mpv.io/installation/))
-- **FFmpeg**: Multimedia framework (optional, for extended format support)
-
+- **Taglib**: you are going to need the static build for taglib.(https://taglib.org/)
 ## Installation
 
 ### Building from Source
@@ -47,8 +47,12 @@ Before installing Croaky, ensure you have the following installed:
    ```bash
    wails build
    ```
+4. **Build static libs for taglib**
+   i. clone taglib 2.1.1.
+   ii. build the static libs. we are interested in tag_c.h, libtag.a, libtag_c.a
+   iii. move tag_c.h to ./internals/include and libtag.a and libtag_c.a to ./internals/lib 
 
-4. **Run the Application**
+6. **Run the Application**
    ```bash
    ./build/croaky
    ```
@@ -68,12 +72,14 @@ To set up a development environment:
    cd frontend && npm install && cd ..
    ```
 
-3. **Set Locale for Development**
+3. **Build static libs for taglib**
    ```bash
-   export LC_NUMERIC=C
+      clone taglib 2.1.1.
+      build the static libs. we are interested in tag_c.h, libtag.a, libtag_c.a
+      move tag_c.h to ./internals/include and libtag.a and libtag_c.a to ./internals/lib
    ```
 
-4. **Start Development Server**
+5. **Start Development Server**
    ```bash
    wails dev
    ```
@@ -125,16 +131,6 @@ The application will open in development mode with hot reloading enabled.
    <img width="1920" height="1200" alt="mini-player" src="https://github.com/user-attachments/assets/7ca662f4-8297-46ed-bbf4-42e48464145f" />
 
    
-## Architecture
-
-Croaky is built using:
-
-- **Backend**: Go with Wails framework
-- **Frontend**: React with TypeScript, Chakra UI, and Framer Motion
-- **Audio Engine**: MPV for playback
-- **Metadata**: TagLib for audio file metadata
-- **Processing**: FFmpeg for audio format handling
-- **Database**: Sqlite
 
 ## Contributing
 
