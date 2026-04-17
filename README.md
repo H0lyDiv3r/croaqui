@@ -1,5 +1,6 @@
 # Croaqui
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/H0lyDiv3r/croaqui)](https://goreportcard.com/report/github.com/H0lyDiv3r/croaqui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.19-blue.svg)](https://golang.org)
 [![Wails](https://img.shields.io/badge/wails-v2.0+-blue.svg)](https://wails.io)
