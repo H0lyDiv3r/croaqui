@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"embed"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -24,21 +23,10 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-func clearWebKitData(appName string) error {
-	cacheDir := filepath.Join(os.Getenv("HOME"), ".cache", appName)
-
-	if err := os.RemoveAll(cacheDir); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("failed to remove cache dir: %v", err)
-	}
-
-	return nil
-}
-
 func main() {
 	// Set locale for taglib
 	os.Setenv("LC_NUMERIC", "C")
 
-	// Create an instance of the app structure
 	player := player.MPV()
 	media := media.NewMedia()
 	data := db.NewDB()
@@ -72,6 +60,14 @@ func main() {
 			mpris.Startup(ctx, player)
 
 		},
+		OnShutdown: func(ctx context.Context) {
+			data.OnShutdown()
+			player.OnShutdown()
+
+			//write a shutdown marker to show a clean shutdown
+			writeShutdownMarker()
+
+		},
 		Bind: []interface{}{
 			media,
 			player,
@@ -84,4 +80,11 @@ func main() {
 	if err != nil {
 		println("Error:", err.Error())
 	}
+}
+
+func writeShutdownMarker() {
+	home, _ := os.UserHomeDir()
+	marker := filepath.Join(home, ".local", "share", "croaqui", "clean_shutdown.ok")
+
+	_ = os.WriteFile(marker, []byte("ok"), 0644)
 }

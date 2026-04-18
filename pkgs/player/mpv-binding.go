@@ -236,18 +236,18 @@ func (p *Player) TogglePlay() (*ReturnType, error) {
 		}
 		paused, _ := p.mpv.GetProperty("pause", mpv.FormatFlag)
 		val, _ := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
-		
+
 		// Safe type assertions with nil checks
 		var pausedVal bool
 		if paused != nil {
 			pausedVal = paused.(bool)
 		}
-		
+
 		var position float64
 		if val != nil {
 			position = val.(float64)
 		}
-		
+
 		return struct {
 			Paused   bool    `json:"paused"`
 			Position float64 `json:"position"`
@@ -292,22 +292,22 @@ func (p *Player) ToggleMute() (*ReturnType, error) {
 			return nil, err
 		}
 		isMuted, _ := p.mpv.GetProperty("mute", mpv.FormatFlag)
-		
+
 		// Safe type assertion with nil check
 		var muteVal bool
 		if isMuted != nil {
 			muteVal = isMuted.(bool)
 		}
-		
+
 		return struct {
 			Muted bool `json:"muted"`
 		}{Muted: muteVal}, nil
 	})
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	result, ok := data.(struct {
 		Muted bool `json:"muted"`
 	})
@@ -331,30 +331,30 @@ func (p *Player) SetSpeed(speed float64) (*ReturnType, error) {
 				return nil, err
 			}
 			val, _ := p.mpv.GetProperty("speed", mpv.FormatDouble)
-			
+
 			// Safe type assertion with nil check
 			var speedVal float64
 			if val != nil {
 				speedVal = val.(float64)
 			}
-			
+
 			return struct {
 				Speed float64 `json:"speed"`
 			}{Speed: speedVal}, nil
 		},
 	)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	result, ok := data.(struct {
 		Speed float64 `json:"speed"`
 	})
 	if !ok {
 		return nil, fmt.Errorf("invalid type assertion in SetSpeed")
 	}
-	
+
 	return &ReturnType{Data: struct {
 		Speed float64 `json:"speed"`
 	}{Speed: result.Speed}}, err
@@ -380,30 +380,30 @@ func (p *Player) GetPosition() (*ReturnType, error) {
 	data, err := p.execute(
 		func() (any, error) {
 			val, err := p.mpv.GetProperty("time-pos", mpv.FormatDouble)
-			
+
 			// Safe type assertion with nil check
 			var position float64
 			if val != nil {
 				position = val.(float64)
 			}
-			
+
 			return struct {
 				Position float64 `json:"position"`
 			}{Position: position}, err
 		},
 	)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	result, ok := data.(struct {
 		Position float64 `json:"position"`
 	})
 	if !ok {
 		return nil, fmt.Errorf("invalid type assertion in GetPosition")
 	}
-	
+
 	return &ReturnType{Data: struct {
 		Position float64 `json:"position"`
 	}{Position: result.Position}}, err
@@ -420,30 +420,30 @@ func (p *Player) SetVolume(volume int) (*ReturnType, error) {
 				return nil, err
 			}
 			val, _ := p.mpv.GetProperty("volume", mpv.FormatInt64)
-			
+
 			// Safe type assertion with nil check
 			var volumeVal int64
 			if val != nil {
 				volumeVal = val.(int64)
 			}
-			
+
 			return struct {
 				Volume int64 `json:"volume"`
 			}{Volume: volumeVal}, nil
 		},
 	)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	result, ok := data.(struct {
 		Volume int64 `json:"volume"`
 	})
 	if !ok {
 		return nil, fmt.Errorf("invalid type assertion in SetVolume")
 	}
-	
+
 	return &ReturnType{Data: struct {
 		Volume int64 `json:"volume"`
 	}{Volume: result.Volume}}, err
@@ -577,5 +577,9 @@ func (p *Player) SetPlayerStats(playerStatus PlayerStatus) (*ReturnType, error) 
 }
 
 func (p *Player) OnShutdown() {
+	if p == nil {
+		return
+	}
 	p.mpv.TerminateDestroy()
+	return
 }
