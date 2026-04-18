@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -17,6 +18,7 @@ import (
 type DB struct {
 	ctx      context.Context
 	Instance *gorm.DB
+	sqlDB    *sql.DB
 }
 
 var DBInstance *DB
@@ -48,12 +50,33 @@ func (d *DB) StartUp(ctx context.Context) {
 		emitter.Emit(ctx)
 		return
 	}
+
+	sqlDB, err := dataBase.DB()
+	if err != nil {
+		emitter := customErr.New("db_error", err.Error())
+		emitter.Emit(ctx)
+		return
+	}
+	sqlDB.SetMaxOpenConns(1)
+	sqlDB.SetMaxIdleConns(1)
+	sqlDB.SetConnMaxLifetime(0)
+
 	d.Instance = dataBase
-	_ = dataBase.AutoMigrate(&MusicMetaData{})
-	_ = dataBase.AutoMigrate(&MusicFile{})
-	_ = dataBase.AutoMigrate(&Directory{})
-	_ = dataBase.AutoMigrate(&Playlist{})
-	_ = dataBase.AutoMigrate(&PlaylistMusic{})
+	d.sqlDB = sqlDB
+	err = dataBase.AutoMigrate(
+		&MusicMetaData{},
+		&MusicFile{},
+		&Directory{},
+		&Playlist{},
+		&PlaylistMusic{},
+	)
+
+	if err != nil {
+		_ = sqlDB.Close()
+		d.Instance = nil
+		d.sqlDB = nil
+		return
+	}
 
 }
 
@@ -101,4 +124,16 @@ func (d *DB) WriteDirData(data Directory) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (d *DB) OnShutdown() {
+	if d == nil || d.sqlDB == nil {
+		return
+	}
+
+	if d.Instance != nil {
+		_ = d.Instance.Exec("PRAGMA wal_checkpoint(FULL);").Error
+	}
+
+	_ = d.sqlDB.Close()
 }
