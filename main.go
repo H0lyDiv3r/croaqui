@@ -13,6 +13,7 @@ import (
 	"github.com/H0lyDiv3r/croaqui/pkgs/player"
 	"github.com/H0lyDiv3r/croaqui/pkgs/playlist"
 	"github.com/H0lyDiv3r/croaqui/pkgs/queue"
+	"github.com/H0lyDiv3r/croaqui/pkgs/stream"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -34,6 +35,7 @@ func main() {
 	queue := queue.NewQueue()
 	app := app.New()
 	mpris := mpris.NewMprisInstance()
+	stream := stream.NewStream()
 
 	err := wails.Run(&options.App{
 		Title: "Croaqui",
@@ -58,7 +60,7 @@ func main() {
 			queue.StartUp(ctx)
 			app.StartUp(ctx)
 			mpris.Startup(ctx, player)
-
+			stream.StartUp(ctx)
 		},
 		OnShutdown: func(ctx context.Context) {
 			data.OnShutdown()
