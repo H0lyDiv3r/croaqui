@@ -16,8 +16,14 @@ import { FaBars } from "react-icons/fa6";
 import { HiMiniBars2 } from "react-icons/hi2";
 import { Link } from "wouter";
 
+import { useState } from "react";
+import { FaTowerBroadcast } from "react-icons/fa6";
+import { StreamModal } from "@/components/stream/StreamModal";
+
 export const NavBar = () => {
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
+  const [streamOpen, setStreamOpen] = useState(false);
+
   return (
     <Box
       className="navbar"
@@ -48,20 +54,20 @@ export const NavBar = () => {
           justifyContent={"end"}
           alignItems={"center"}
         >
-          {isSmall || isMedium ? (
-            <>
-              {/*<ChakraIcon icon={HiMiniBars2} />*/}
-              <Navigation />
-              <Settings />
-            </>
-          ) : (
-            <>
-              <Navigation />
-              <Settings />
-            </>
-          )}
+          <Box
+            cursor={"pointer"}
+            title="P2P Stream Test"
+            onClick={() => setStreamOpen(true)}
+            display={"flex"}
+            alignItems={"center"}
+          >
+            <ChakraIcon icon={FaTowerBroadcast} boxSize={5} />
+          </Box>
+          <Navigation />
+          <Settings />
         </GridItem>
       </Grid>
+      <StreamModal open={streamOpen} setOpen={setStreamOpen} />
     </Box>
   );
 };

@@ -2,11 +2,17 @@ package stream
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"net"
+	"strconv"
 	"sync"
+	"time"
 
 	"github.com/pion/ice/v4"
 	"github.com/pion/stun/v4"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var stunServers = []string{
@@ -15,50 +21,85 @@ var stunServers = []string{
 	"stun:stun1.l.google.com:19302",
 }
 
-type LocalSessionInfo struct {
+var turnServer = "172.17.0.1:3478"
+var turnUser = "pionuser"
+var turnPass = "supersecretpass123"
+
+type SessionCreds struct {
+	PeerId     string   `json:"peerId"`
 	Ufrag      string   `json:"ufrag"`
 	Pwd        string   `json:"pwd"`
 	Candidates []string `json:"candidates"`
 }
 
 type Peer struct {
-	PeerId int
-	Agent  *ice.Agent
-	Conn   *ice.Conn
+	Id            string
+	Agent         *ice.Agent
+	Conn          *ice.Conn
+	RemoteSession SessionCreds
 }
 
 type Stream struct {
 	ctx     context.Context
 	IsHost  bool
-	Session LocalSessionInfo
-	Peers   []*Peer
+	Session SessionCreds
+	Peers   map[string]*Peer
 }
 
 func NewStream() *Stream {
-	return &Stream{}
+	return &Stream{
+		Peers: make(map[string]*Peer),
+	}
 }
 
 func (s *Stream) StartUp(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *Stream) OpenConnection() {
+func (s *Stream) CreatePeer(isHost bool) string {
 
-	var stunUris []*stun.URI
+	s.IsHost = isHost
+
+	var stunURIs []*stun.URI
 	for _, rawURI := range stunServers {
 		uri, err := stun.ParseURI(rawURI)
 		if err != nil {
 			// TODO:handle error
 		}
-		stunUris = append(stunUris, uri)
+		stunURIs = append(stunURIs, uri)
+	}
+
+	if turnServer != "" {
+		turnURI, err := stun.ParseURI("turn:" + turnServer + "?transport=udp")
+		if err == nil {
+			turnURI.Username = turnUser
+			turnURI.Password = turnPass
+			stunURIs = append(stunURIs, turnURI)
+			fmt.Printf("📦 Configured TURN Relay: %s (user: %s)\n", turnServer, turnUser)
+		} else {
+			fmt.Printf("⚠️  Failed to parse TURN server URI: %v\n", err)
+		}
 	}
 
 	agent, err := ice.NewAgentWithOptions(
-		ice.WithUrls(stunUris),
+		ice.WithUrls(stunURIs),
 		ice.WithNetworkTypes([]ice.NetworkType{ice.NetworkTypeUDP4}),
 		ice.WithIncludeLoopback(),
 		ice.WithIPFilter(func(ip net.IP) bool {
-			//ipFilterGoesHere
+			if ip4 := ip.To4(); ip4 != nil {
+				// Allow Coturn relay IP explicitly
+				if ip4[0] == 172 && ip4[1] == 17 && ip4[2] == 0 && ip4[3] == 1 {
+					return true
+				}
+				// Filter out other Docker bridge subnets (172.17.0.0/16 to 172.31.255.255)
+				if ip4[0] == 172 && ip4[1] >= 17 && ip4[1] <= 31 {
+					return false
+				}
+				// Filter out libvirt default bridge (192.168.122.0/24)
+				if ip4[0] == 192 && ip4[1] == 168 && ip4[2] == 122 {
+					return false
+				}
+			}
 			return true
 		}),
 	)
@@ -67,14 +108,19 @@ func (s *Stream) OpenConnection() {
 		//handle error
 	}
 
+	peerId := strconv.Itoa(len(s.Peers) + 1)
 	// new Peers
-	_ = Peer{
-		PeerId: len(s.Peers) + 1,
-		Agent:  agent,
+	p := Peer{
+		Id:    peerId,
+		Agent: agent,
 	}
 
-	err = agent.OnConnectionStateChange(func(s ice.ConnectionState) {
-		//log connection state
+	s.Peers[peerId] = &p
+	err = agent.OnConnectionStateChange(func(state ice.ConnectionState) {
+		println("[Stream ICE] Connection state changed:", state.String())
+		if s.ctx != nil {
+			runtime.EventsEmit(s.ctx, "stream:state", state.String())
+		}
 	})
 
 	if err != nil {
@@ -109,9 +155,136 @@ func (s *Stream) OpenConnection() {
 		//handle error
 	}
 
-	s.Session = LocalSessionInfo{
+	s.Session = SessionCreds{
+		PeerId:     peerId,
 		Ufrag:      ufrag,
 		Pwd:        pwd,
 		Candidates: candidates,
 	}
+
+	if s.IsHost {
+		localEncoded, err := encodeSession(s.Session)
+		if err != nil {
+			//handle error
+		}
+		return localEncoded
+	} else {
+
+		return ""
+
+	}
+
+}
+
+func (s *Stream) ConnectPeer(sessionKey string, isHost bool) SessionCreds {
+
+	remote, err := decodeSession(sessionKey)
+	if err != nil {
+		// handle error
+	}
+
+	var peer *Peer
+	if isHost {
+		peer = s.Peers[remote.PeerId]
+		if peer == nil {
+			peer = s.Peers[s.Session.PeerId]
+		}
+	} else {
+		peer = s.Peers[s.Session.PeerId]
+		// Sync client's session to match host's peer ID
+		s.Session.PeerId = remote.PeerId
+	}
+
+	if peer == nil {
+		println("[Stream] Error: peer not found for ID:", remote.PeerId)
+		return s.Session
+	}
+
+	agent := peer.Agent
+	peer.RemoteSession = remote
+
+	for _, candStr := range remote.Candidates {
+		c, err := ice.UnmarshalCandidate(candStr)
+		if err != nil {
+			continue
+		}
+		if err := agent.AddRemoteCandidate(c); err != nil {
+			println("[Stream ICE] Error adding remote candidate:", err.Error())
+		}
+	}
+
+	if isHost {
+		go func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+			defer cancel()
+			println("[Stream ICE] Host dialing remote peer...")
+			conn, err := agent.Dial(ctx, remote.Ufrag, remote.Pwd)
+			if err != nil {
+				println("[Stream ICE] Host Dial failed:", err.Error())
+				if s.ctx != nil {
+					runtime.EventsEmit(s.ctx, "stream:log", "Host Dial failed: "+err.Error())
+				}
+			} else {
+				pair, pErr := agent.GetSelectedCandidatePair()
+				connMsg := "Host connected successfully!"
+				if pErr == nil && pair != nil {
+					connMsg = fmt.Sprintf("Host connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
+				}
+				println("[Stream ICE]", connMsg)
+				if s.ctx != nil {
+					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
+				}
+			}
+			peer.Conn = conn
+		}()
+	} else {
+		go func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+			defer cancel()
+			println("[Stream ICE] Client waiting in Accept...")
+			conn, err := agent.Accept(ctx, remote.Ufrag, remote.Pwd)
+			if err != nil {
+				println("[Stream ICE] Client Accept failed:", err.Error())
+				if s.ctx != nil {
+					runtime.EventsEmit(s.ctx, "stream:log", "Client Accept failed: "+err.Error())
+				}
+			} else {
+				pair, pErr := agent.GetSelectedCandidatePair()
+				connMsg := "Client connected successfully!"
+				if pErr == nil && pair != nil {
+					connMsg = fmt.Sprintf("Client connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
+				}
+				println("[Stream ICE]", connMsg)
+				if s.ctx != nil {
+					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
+				}
+			}
+			peer.Conn = conn
+		}()
+	}
+
+	return s.Session
+}
+
+func (s *Stream) EncodeSession(session SessionCreds) string {
+	res, _ := encodeSession(session)
+	return res
+}
+
+func encodeSession(s SessionCreds) (string, error) {
+	b, err := json.Marshal(s)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(b), nil
+}
+
+func decodeSession(s string) (SessionCreds, error) {
+	var info SessionCreds
+	b, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		return info, err
+	}
+	err = json.Unmarshal(b, &info)
+	return info, err
 }

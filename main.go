@@ -76,6 +76,7 @@ func main() {
 			playlists,
 			queue,
 			app,
+			stream,
 		},
 	})
 

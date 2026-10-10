@@ -92,3 +92,26 @@ export namespace sharedTypes {
 
 }
 
+export namespace stream {
+	
+	export class SessionCreds {
+	    peerId: string;
+	    ufrag: string;
+	    pwd: string;
+	    candidates: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SessionCreds(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.peerId = source["peerId"];
+	        this.ufrag = source["ufrag"];
+	        this.pwd = source["pwd"];
+	        this.candidates = source["candidates"];
+	    }
+	}
+
+}
+
