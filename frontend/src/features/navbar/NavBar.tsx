@@ -20,6 +20,8 @@ import { useState } from "react";
 import { FaTowerBroadcast } from "react-icons/fa6";
 import { StreamModal } from "@/components/stream/StreamModal";
 
+import { Connect } from "../../../wailsjs/go/stream/Stream";
+
 export const NavBar = () => {
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
   const [streamOpen, setStreamOpen] = useState(false);
@@ -67,7 +69,21 @@ export const NavBar = () => {
           <Settings />
         </GridItem>
       </Grid>
-      <StreamModal open={streamOpen} setOpen={setStreamOpen} />
+      {/*<StreamModal open={streamOpen} setOpen={setStreamOpen} />*/}
+      <>
+        <Button onClick={() => {
+          console.log("connecting")
+          Connect(true,"")
+        }}>
+         Host
+        </Button>
+        <Button onClick={() => {
+          console.log("connecting")
+          Connect(false, "test")
+        }}>
+          Connect
+        </Button>
+      </>
     </Box>
   );
 };

@@ -1,11 +1,13 @@
 package stream
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"strconv"
 	"sync"
 	"time"
@@ -46,6 +48,10 @@ type Stream struct {
 	Peers   map[string]*Peer
 }
 
+type Offer struct {
+	Offer string `json:"offer"`
+}
+
 func NewStream() *Stream {
 	return &Stream{
 		Peers: make(map[string]*Peer),
@@ -56,9 +62,41 @@ func (s *Stream) StartUp(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *Stream) CreatePeer(isHost bool) string {
-
+func (s *Stream) Connect(isHost bool, roomId string) {
 	s.IsHost = isHost
+
+	sessionEncoded := s.CreatePeer()
+
+	if s.IsHost {
+		room := createRoomKey()
+
+		fmt.Println("this is the room key", room)
+
+		peerSession, err := queryHandshake("http://localhost:9090/create", sessionEncoded, room)
+		if err != nil {
+
+		}
+
+		s.ConnectPeer(peerSession, s.IsHost)
+	} else {
+
+		hostRemoteSession, err := queryHandshake("http://localhost:9090/join", "", roomId)
+		if err != nil {
+
+		}
+
+		s.ConnectPeer(hostRemoteSession, s.IsHost)
+
+		_, err = queryHandshake("http://localhost:9090/accept", sessionEncoded, roomId)
+		if err != nil {
+
+		}
+
+	}
+
+}
+
+func (s *Stream) CreatePeer() string {
 
 	var stunURIs []*stun.URI
 	for _, rawURI := range stunServers {
@@ -162,17 +200,14 @@ func (s *Stream) CreatePeer(isHost bool) string {
 		Candidates: candidates,
 	}
 
-	if s.IsHost {
-		localEncoded, err := encodeSession(s.Session)
-		if err != nil {
-			//handle error
-		}
-		return localEncoded
-	} else {
-
-		return ""
-
+	localEncoded, err := encodeSession(s.Session)
+	if err != nil {
+		//handle error
 	}
+
+	fmt.Println("this is the local encoded", s.Session.Ufrag)
+
+	return localEncoded
 
 }
 
@@ -287,4 +322,52 @@ func decodeSession(s string) (SessionCreds, error) {
 	}
 	err = json.Unmarshal(b, &info)
 	return info, err
+}
+
+func queryHandshake(url, offer, room string) (string, error) {
+
+	var b Offer
+
+	client := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+
+	data, err := json.Marshal(map[string]string{
+		"offer": offer,
+	})
+
+	if err != nil {
+		//handle
+		return "", fmt.Errorf("failed to send prepare body")
+	}
+
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		url,
+		bytes.NewReader(data),
+	)
+
+	param := req.URL.Query()
+
+	req.Header.Set("Content-Type", "application/json")
+	param.Add("room", room)
+	req.URL.RawQuery = param.Encode()
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to send request")
+	}
+
+	defer res.Body.Close()
+
+	if err := json.NewDecoder(res.Body).Decode(&b); err != nil {
+		return "", nil
+	}
+
+	return b.Offer, nil
+}
+
+func createRoomKey() string {
+	return "test"
 }

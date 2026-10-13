@@ -3,9 +3,11 @@
 import {stream} from '../models';
 import {context} from '../models';
 
+export function Connect(arg1:boolean,arg2:string):Promise<void>;
+
 export function ConnectPeer(arg1:string,arg2:boolean):Promise<stream.SessionCreds>;
 
-export function CreatePeer(arg1:boolean):Promise<string>;
+export function CreatePeer():Promise<string>;
 
 export function EncodeSession(arg1:stream.SessionCreds):Promise<string>;
 
