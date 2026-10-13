@@ -48,10 +48,6 @@ type Stream struct {
 	Peers   map[string]*Peer
 }
 
-type Offer struct {
-	Offer string `json:"offer"`
-}
-
 func NewStream() *Stream {
 	return &Stream{
 		Peers: make(map[string]*Peer),
@@ -72,7 +68,7 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 
 		fmt.Println("this is the room key", room)
 
-		peerSession, err := queryHandshake("http://localhost:9090/create", sessionEncoded, room)
+		peerSession, err := queryHandshake("http://10.236.211.134:9090/create", sessionEncoded, room)
 		if err != nil {
 
 		}
@@ -80,14 +76,14 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 		s.ConnectPeer(peerSession, s.IsHost)
 	} else {
 
-		hostRemoteSession, err := queryHandshake("http://localhost:9090/join", "", roomId)
+		hostRemoteSession, err := queryHandshake("http://10.236.211.134:9090/join", "", roomId)
 		if err != nil {
 
 		}
 
 		s.ConnectPeer(hostRemoteSession, s.IsHost)
 
-		_, err = queryHandshake("http://localhost:9090/accept", sessionEncoded, roomId)
+		_, err = queryHandshake("http://10.236.211.134:9090/accept", sessionEncoded, roomId)
 		if err != nil {
 
 		}
