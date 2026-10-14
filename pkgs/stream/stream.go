@@ -62,9 +62,13 @@ func (s *Stream) StartUp(ctx context.Context) {
 func (s *Stream) Connect(isHost bool, roomId string) {
 	s.IsHost = isHost
 
-	s.Handshake = NewHandshake("http://192.168.1.26:9090")
+	s.Handshake = NewHandshake("http://172.17.0.1:9090")
 
-	sessionEncoded := s.CreatePeer()
+	sessionEncoded, err := s.CreatePeer()
+
+	if err != nil {
+
+	}
 
 	if s.IsHost {
 		roomKey := s.Handshake.GenerateRoomKey(12)
@@ -92,13 +96,13 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 	}
 }
 
-func (s *Stream) CreatePeer() string {
+func (s *Stream) CreatePeer() (string, error) {
 
 	var stunURIs []*stun.URI
 	for _, rawURI := range stunServers {
 		uri, err := stun.ParseURI(rawURI)
 		if err != nil {
-			// TODO:handle error
+			return "", fmt.Errorf("failed to parse stun uris %v", err)
 		}
 		stunURIs = append(stunURIs, uri)
 	}
@@ -109,9 +113,10 @@ func (s *Stream) CreatePeer() string {
 			turnURI.Username = turnUser
 			turnURI.Password = turnPass
 			stunURIs = append(stunURIs, turnURI)
+			//handle
 			fmt.Printf("📦 Configured TURN Relay: %s (user: %s)\n", turnServer, turnUser)
 		} else {
-			fmt.Printf("⚠️  Failed to parse TURN server URI: %v\n", err)
+			return "", fmt.Errorf("failed to configure turn servers %v: ", err)
 		}
 	}
 
@@ -139,7 +144,7 @@ func (s *Stream) CreatePeer() string {
 	)
 
 	if err != nil {
-		//handle error
+		return "", fmt.Errorf("failed to create an agent %v: ", err)
 	}
 
 	peerId := strconv.Itoa(len(s.Peers) + 1)
@@ -151,14 +156,14 @@ func (s *Stream) CreatePeer() string {
 
 	s.Peers[peerId] = &p
 	err = agent.OnConnectionStateChange(func(state ice.ConnectionState) {
-		println("[Stream ICE] Connection state changed:", state.String())
+		//state change
 		if s.ctx != nil {
 			runtime.EventsEmit(s.ctx, "stream:state", state.String())
 		}
 	})
 
 	if err != nil {
-		//handle error
+		return "", fmt.Errorf("failed to set connection state handler %v", err)
 	}
 
 	// gathering candidates
@@ -177,7 +182,7 @@ func (s *Stream) CreatePeer() string {
 	})
 
 	if err != nil {
-		// handle error
+		return "", fmt.Errorf("failed to set candidate handler %v", err)
 	}
 
 	agent.GatherCandidates()
@@ -186,7 +191,7 @@ func (s *Stream) CreatePeer() string {
 	ufrag, pwd, err := agent.GetLocalUserCredentials()
 
 	if err != nil {
-		//handle error
+		return "", fmt.Errorf("failed to get local user credentials %v", err)
 	}
 
 	s.Session = SessionCreds{
@@ -198,16 +203,14 @@ func (s *Stream) CreatePeer() string {
 
 	localEncoded, err := encodeSession(s.Session)
 	if err != nil {
-		//handle error
+		return "", fmt.Errorf("failed to encode session %v", err)
 	}
 
-	fmt.Println("this is the local encoded", s.Session.Ufrag)
-
-	return localEncoded
+	return localEncoded, nil
 
 }
 
-func (s *Stream) ConnectPeer(sessionKey string, isHost bool) SessionCreds {
+func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 
 	remote, err := decodeSession(sessionKey)
 	if err != nil {
@@ -215,20 +218,12 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) SessionCreds {
 	}
 
 	var peer *Peer
-	if isHost {
-		peer = s.Peers[remote.PeerId]
-		if peer == nil {
-			peer = s.Peers[s.Session.PeerId]
-		}
-	} else {
-		peer = s.Peers[s.Session.PeerId]
-		// Sync client's session to match host's peer ID
-		s.Session.PeerId = remote.PeerId
-	}
+
+	peer = s.Peers[s.Session.PeerId]
 
 	if peer == nil {
 		println("[Stream] Error: peer not found for ID:", remote.PeerId)
-		return s.Session
+		//error
 	}
 
 	agent := peer.Agent
@@ -294,7 +289,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) SessionCreds {
 		}()
 	}
 
-	return s.Session
+	return nil
 }
 
 func (s *Stream) EncodeSession(session SessionCreds) string {

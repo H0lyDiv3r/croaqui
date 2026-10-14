@@ -5,7 +5,7 @@ import {context} from '../models';
 
 export function Connect(arg1:boolean,arg2:string):Promise<void>;
 
-export function ConnectPeer(arg1:string,arg2:boolean):Promise<stream.SessionCreds>;
+export function ConnectPeer(arg1:string,arg2:boolean):Promise<void>;
 
 export function CreatePeer():Promise<string>;
 
