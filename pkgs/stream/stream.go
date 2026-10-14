@@ -42,10 +42,11 @@ type Peer struct {
 }
 
 type Stream struct {
-	ctx     context.Context
-	IsHost  bool
-	Session SessionCreds
-	Peers   map[string]*Peer
+	ctx       context.Context
+	IsHost    bool
+	Session   SessionCreds
+	Peers     map[string]*Peer
+	Handshake *Handshake
 }
 
 func NewStream() *Stream {
@@ -61,35 +62,34 @@ func (s *Stream) StartUp(ctx context.Context) {
 func (s *Stream) Connect(isHost bool, roomId string) {
 	s.IsHost = isHost
 
+	s.Handshake = NewHandshake("http://192.168.1.26:9090")
+
 	sessionEncoded := s.CreatePeer()
 
 	if s.IsHost {
-		room := createRoomKey()
-
-		fmt.Println("this is the room key", room)
-
-		peerSession, err := queryHandshake("http://10.236.211.134:9090/create", sessionEncoded, room)
+		roomKey := s.Handshake.GenerateRoomKey(12)
+		fmt.Println("this is the room key", s.Handshake.RoomKey, roomKey)
+		//send roomKey out into the world
+		room, err := s.Handshake.CreateRoom(sessionEncoded)
 		if err != nil {
-
+			return
 		}
 
-		s.ConnectPeer(peerSession, s.IsHost)
+		s.ConnectPeer(room.PeerSeesion, s.IsHost)
 	} else {
 
-		hostRemoteSession, err := queryHandshake("http://10.236.211.134:9090/join", "", roomId)
+		hostRemoteSession, err := s.Handshake.JoinRoom(roomId)
 		if err != nil {
-
+			return
 		}
 
 		s.ConnectPeer(hostRemoteSession, s.IsHost)
 
-		_, err = queryHandshake("http://10.236.211.134:9090/accept", sessionEncoded, roomId)
+		err = s.Handshake.AcceptConnection(sessionEncoded)
 		if err != nil {
-
+			return
 		}
-
 	}
-
 }
 
 func (s *Stream) CreatePeer() string {

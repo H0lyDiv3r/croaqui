@@ -8,6 +8,7 @@ import {
   Button,
   Grid,
   GridItem,
+  Input,
   Menu,
   Portal,
   Text,
@@ -25,6 +26,7 @@ import { Connect } from "../../../wailsjs/go/stream/Stream";
 export const NavBar = () => {
   const { isSmall, isMedium, isLarge, isExtraLarge } = useScreenSize();
   const [streamOpen, setStreamOpen] = useState(false);
+  const [roomId, setRoomId] = useState("");
 
   return (
     <Box
@@ -70,20 +72,33 @@ export const NavBar = () => {
         </GridItem>
       </Grid>
       {/*<StreamModal open={streamOpen} setOpen={setStreamOpen} />*/}
-      <>
-        <Button onClick={() => {
-          console.log("connecting")
-          Connect(true,"")
-        }}>
-         Host
+      <Box display="flex" alignItems="center" gap={2} ml={4}>
+        <Button
+          size="sm"
+          onClick={() => {
+            console.log("connecting as host");
+            Connect(true, "");
+          }}
+        >
+          Host
         </Button>
-        <Button onClick={() => {
-          console.log("connecting")
-          Connect(false, "test")
-        }}>
+        <Input
+          size="sm"
+          width="120px"
+          placeholder="Room key"
+          value={roomId}
+          onChange={(e) => setRoomId(e.target.value)}
+        />
+        <Button
+          size="sm"
+          onClick={() => {
+            console.log("connecting to room:", roomId);
+            Connect(false, roomId);
+          }}
+        >
           Connect
         </Button>
-      </>
+      </Box>
     </Box>
   );
 };
