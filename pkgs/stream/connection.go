@@ -1,17 +1,16 @@
 package stream
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net"
-	"net/http"
 	"strconv"
 	"sync"
 	"time"
 
+	"github.com/H0lyDiv3r/croaqui/pkgs/events"
 	"github.com/pion/ice/v4"
 	"github.com/pion/stun/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -74,6 +73,7 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 		roomKey := s.Handshake.GenerateRoomKey(12)
 		fmt.Println("this is the room key", s.Handshake.RoomKey, roomKey)
 		//send roomKey out into the world
+		runtime.EventsEmit(s.ctx, events.StreamRoomKeyGenerated, roomKey)
 		room, err := s.Handshake.CreateRoom(sessionEncoded)
 		if err != nil {
 			return
@@ -326,52 +326,4 @@ func decodeSession(s string) (SessionCreds, error) {
 	}
 	err = json.Unmarshal(b, &info)
 	return info, err
-}
-
-func queryHandshake(url, offer, room string) (string, error) {
-
-	var b Offer
-
-	client := &http.Client{
-		Timeout: 60 * time.Second,
-	}
-
-	data, err := json.Marshal(map[string]string{
-		"offer": offer,
-	})
-
-	if err != nil {
-		//handle
-		return "", fmt.Errorf("failed to send prepare body")
-	}
-
-	req, err := http.NewRequestWithContext(
-		context.Background(),
-		"POST",
-		url,
-		bytes.NewReader(data),
-	)
-
-	param := req.URL.Query()
-
-	req.Header.Set("Content-Type", "application/json")
-	param.Add("room", room)
-	req.URL.RawQuery = param.Encode()
-
-	res, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("failed to send request")
-	}
-
-	defer res.Body.Close()
-
-	if err := json.NewDecoder(res.Body).Decode(&b); err != nil {
-		return "", nil
-	}
-
-	return b.Offer, nil
-}
-
-func createRoomKey() string {
-	return "test"
 }

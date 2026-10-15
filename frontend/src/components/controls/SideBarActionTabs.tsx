@@ -4,8 +4,9 @@ import { Box, Field, Input, Tabs, Text, useDisclosure } from "@chakra-ui/react";
 import { ChakraIcon } from "../ChackraIcon";
 import { RiExpandLeftFill } from "react-icons/ri";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
+import { FaTowerBroadcast } from "react-icons/fa6";
 import React, { Suspense, useEffect, useState } from "react";
-import { CreatePlaylistForm } from "../forms";
+import { ConnectionForm, CreatePlaylistForm } from "../forms";
 import { AnimatePresence, motion } from "framer-motion";
 
 const TabsList: any = Tabs.List;
@@ -13,6 +14,8 @@ const TabsTrigger: any = Tabs.Trigger;
 const TabsIndicator: any = Tabs.Indicator;
 
 const DirScanner = React.lazy(() => import("../dir-tree/DirScanner"));
+
+const MotionBox = motion(Box);
 
 export const SideBarActionTabs = ({
   tabs,
@@ -29,13 +32,13 @@ export const SideBarActionTabs = ({
   handleOpenForm: (target: boolean) => void;
   handlePlaylistFormSubmission: (value: string) => void;
 }) => {
-  const MotionBox = motion(Box);
-
   const { open, setOpen } = useDisclosure();
+  const [showConnectionForm, setShowConnectionForm] = useState(false);
 
   useEffect(() => {
     // Add your effect logic here
     handleOpenForm(false);
+    setShowConnectionForm(false);
   }, [tabs.value]);
   return (
     <Box display={"flex"} flexDir={"column"} gap={2} mb={2}>
@@ -109,6 +112,7 @@ export const SideBarActionTabs = ({
             as={"button"}
             px={2}
             onClick={() => {
+              setShowConnectionForm(false);
               if (tabs.value === "dir") {
                 handleOpenForm(false);
                 setOpen(true);
@@ -132,6 +136,7 @@ export const SideBarActionTabs = ({
           >
             <ChakraIcon icon={MdOutlinePlaylistAdd} boxSize={5} />
           </Box>
+
           <Suspense>
             <DirScanner
               open={open}
@@ -141,11 +146,47 @@ export const SideBarActionTabs = ({
             />
           </Suspense>
         </Box>
+        <Box
+          bg={getNeutral("light", 800)}
+          _dark={{ bg: getNeutral("dark", 800) }}
+          rounded="l3"
+          p="1"
+        >
+          <Box
+            as={"button"}
+            px={2}
+            onClick={() => {
+              setShowConnectionForm(!showConnectionForm);
+              handleOpenForm(false);
+            }}
+            width={"100%"}
+            height={"100%"}
+            borderRadius={"md"}
+            bg={showConnectionForm ? "brand.500" : "brand.400"}
+            borderColor={getNeutral("light", 600)}
+            _dark={{
+              borderColor: getNeutral("dark", 600),
+              color: getNeutral("dark", 700),
+            }}
+            _hover={{
+              cursor: "pointer",
+              bg: "brand.500",
+            }}
+            title="Stream Connection"
+          >
+            <ChakraIcon icon={FaTowerBroadcast} boxSize={4} />
+          </Box>
+        </Box>
       </Box>
       <AnimatePresence>
         {showPlaylistForm ? (
           <MotionBox>
             <CreatePlaylistForm handleSubmit={handlePlaylistFormSubmission} />
+          </MotionBox>
+        ) : null}
+        {showConnectionForm ? (
+          <MotionBox>
+            <ConnectionForm />
           </MotionBox>
         ) : null}
       </AnimatePresence>

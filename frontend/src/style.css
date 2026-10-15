@@ -52,3 +52,20 @@ body {
     /*clip-path: polygon(0 0, 0 100%, 30% 100%, 30% 60%, 100% 60%, 100% 0);*/
     clip-path: url(/frontend/public/Subtract.svg);
 }
+
+::selection {
+    background-color: #BDD07E;
+    color: #121721;
+}
+
+::-moz-selection {
+    background-color: #BDD07E;
+    color: #121721;
+}
+
+input::selection,
+textarea::selection {
+    background-color: #BDD07E;
+    color: #121721;
+}
+
