@@ -194,6 +194,10 @@ func (s *Stream) CreatePeer() (string, error) {
 		return "", fmt.Errorf("failed to get local user credentials %v", err)
 	}
 
+	// storing PeerId here not because the remote peer needs it.
+	// it is stored his because the local peer needs to know which peer owns the conn and remote session
+	// everytime create peer is called the peerId will be incremented and peer id will have different ids
+	// encoding and sending it to peer for now but it is not to be used by the remote.
 	s.Session = SessionCreds{
 		PeerId:     peerId,
 		Ufrag:      ufrag,
@@ -215,6 +219,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 	remote, err := decodeSession(sessionKey)
 	if err != nil {
 		// handle error
+		return fmt.Errorf("connect peer: failed to decode session $v: ", err)
 	}
 
 	var peer *Peer
@@ -222,8 +227,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 	peer = s.Peers[s.Session.PeerId]
 
 	if peer == nil {
-		println("[Stream] Error: peer not found for ID:", remote.PeerId)
-		//error
+		return fmt.Errorf("connecting peer: peer with the id of %s not found: %v", s.Session.PeerId)
 	}
 
 	agent := peer.Agent
@@ -232,10 +236,12 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 	for _, candStr := range remote.Candidates {
 		c, err := ice.UnmarshalCandidate(candStr)
 		if err != nil {
+			//log
 			continue
 		}
 		if err := agent.AddRemoteCandidate(c); err != nil {
-			println("[Stream ICE] Error adding remote candidate:", err.Error())
+			//log
+			// println("[Stream ICE] Error adding remote candidate:", err.Error())
 		}
 	}
 
@@ -243,9 +249,11 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 		go func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 			defer cancel()
+			//log
 			println("[Stream ICE] Host dialing remote peer...")
 			conn, err := agent.Dial(ctx, remote.Ufrag, remote.Pwd)
 			if err != nil {
+				//log
 				println("[Stream ICE] Host Dial failed:", err.Error())
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", "Host Dial failed: "+err.Error())
@@ -256,6 +264,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 				if pErr == nil && pair != nil {
 					connMsg = fmt.Sprintf("Host connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
 				}
+				//log
 				println("[Stream ICE]", connMsg)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
@@ -267,9 +276,11 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 		go func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 			defer cancel()
+			//log
 			println("[Stream ICE] Client waiting in Accept...")
 			conn, err := agent.Accept(ctx, remote.Ufrag, remote.Pwd)
 			if err != nil {
+				//log
 				println("[Stream ICE] Client Accept failed:", err.Error())
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", "Client Accept failed: "+err.Error())
@@ -280,6 +291,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 				if pErr == nil && pair != nil {
 					connMsg = fmt.Sprintf("Client connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
 				}
+				//log
 				println("[Stream ICE]", connMsg)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
@@ -292,6 +304,7 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 	return nil
 }
 
+// to be removed. its only here for test ui
 func (s *Stream) EncodeSession(session SessionCreds) string {
 	res, _ := encodeSession(session)
 	return res
