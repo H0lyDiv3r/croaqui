@@ -40,8 +40,18 @@ type Peer struct {
 	RemoteSession SessionCreds
 }
 
+type ConnectionStatus string
+
+const (
+	StatusDisconnected ConnectionStatus = "disconnected"
+	StatusConnecting   ConnectionStatus = "connecting"
+	StatusConnected    ConnectionStatus = "connected"
+	StatusError        ConnectionStatus = "error"
+)
+
 type Stream struct {
 	ctx       context.Context
+	Status    ConnectionStatus
 	IsHost    bool
 	Session   SessionCreds
 	Peers     map[string]*Peer
@@ -50,7 +60,8 @@ type Stream struct {
 
 func NewStream() *Stream {
 	return &Stream{
-		Peers: make(map[string]*Peer),
+		Status: StatusDisconnected,
+		Peers:  make(map[string]*Peer),
 	}
 }
 
@@ -58,15 +69,28 @@ func (s *Stream) StartUp(ctx context.Context) {
 	s.ctx = ctx
 }
 
+func (s *Stream) GetStatus() ConnectionStatus {
+	return s.Status
+}
+
+func (s *Stream) setStatus(status ConnectionStatus) {
+	s.Status = status
+	if s.ctx != nil {
+		runtime.EventsEmit(s.ctx, events.StreamStatusChanged, string(status))
+	}
+}
+
 func (s *Stream) Connect(isHost bool, roomId string) {
 	s.IsHost = isHost
+	s.setStatus(StatusConnecting)
 
 	s.Handshake = NewHandshake("http://172.17.0.1:9090")
 
 	sessionEncoded, err := s.CreatePeer()
 
 	if err != nil {
-
+		s.setStatus(StatusError)
+		return
 	}
 
 	if s.IsHost {
@@ -76,6 +100,7 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 		runtime.EventsEmit(s.ctx, events.StreamRoomKeyGenerated, roomKey)
 		room, err := s.Handshake.CreateRoom(sessionEncoded)
 		if err != nil {
+			s.setStatus(StatusError)
 			return
 		}
 
@@ -84,6 +109,7 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 
 		hostRemoteSession, err := s.Handshake.JoinRoom(roomId)
 		if err != nil {
+			s.setStatus(StatusError)
 			return
 		}
 
@@ -91,6 +117,7 @@ func (s *Stream) Connect(isHost bool, roomId string) {
 
 		err = s.Handshake.AcceptConnection(sessionEncoded)
 		if err != nil {
+			s.setStatus(StatusError)
 			return
 		}
 	}
@@ -250,22 +277,19 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 			defer cancel()
 			//log
-			println("[Stream ICE] Host dialing remote peer...")
 			conn, err := agent.Dial(ctx, remote.Ufrag, remote.Pwd)
 			if err != nil {
-				//log
-				println("[Stream ICE] Host Dial failed:", err.Error())
+				s.setStatus(StatusError)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", "Host Dial failed: "+err.Error())
 				}
 			} else {
+				s.setStatus(StatusConnected)
 				pair, pErr := agent.GetSelectedCandidatePair()
 				connMsg := "Host connected successfully!"
 				if pErr == nil && pair != nil {
 					connMsg = fmt.Sprintf("Host connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
 				}
-				//log
-				println("[Stream ICE]", connMsg)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
 				}
@@ -276,23 +300,19 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 		go func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 			defer cancel()
-			//log
-			println("[Stream ICE] Client waiting in Accept...")
 			conn, err := agent.Accept(ctx, remote.Ufrag, remote.Pwd)
 			if err != nil {
-				//log
-				println("[Stream ICE] Client Accept failed:", err.Error())
+				s.setStatus(StatusError)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", "Client Accept failed: "+err.Error())
 				}
 			} else {
+				s.setStatus(StatusConnected)
 				pair, pErr := agent.GetSelectedCandidatePair()
 				connMsg := "Client connected successfully!"
 				if pErr == nil && pair != nil {
 					connMsg = fmt.Sprintf("Client connected via %s (%s <-> %s)!", pair.Local.Type().String(), pair.Local.Address(), pair.Remote.Address())
 				}
-				//log
-				println("[Stream ICE]", connMsg)
 				if s.ctx != nil {
 					runtime.EventsEmit(s.ctx, "stream:log", connMsg)
 				}

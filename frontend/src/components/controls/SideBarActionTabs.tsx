@@ -7,6 +7,7 @@ import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { FaTowerBroadcast } from "react-icons/fa6";
 import React, { Suspense, useEffect, useState } from "react";
 import { ConnectionForm, CreatePlaylistForm } from "../forms";
+import { ConnectionStatus } from "../stream";
 import { AnimatePresence, motion } from "framer-motion";
 
 const TabsList: any = Tabs.List;
@@ -36,7 +37,6 @@ export const SideBarActionTabs = ({
   const [showConnectionForm, setShowConnectionForm] = useState(false);
 
   useEffect(() => {
-    // Add your effect logic here
     handleOpenForm(false);
     setShowConnectionForm(false);
   }, [tabs.value]);
@@ -178,6 +178,7 @@ export const SideBarActionTabs = ({
           </Box>
         </Box>
       </Box>
+      <ConnectionStatus />
       <AnimatePresence>
         {showPlaylistForm ? (
           <MotionBox>

@@ -11,4 +11,6 @@ export function CreatePeer():Promise<string>;
 
 export function EncodeSession(arg1:stream.SessionCreds):Promise<string>;
 
+export function GetStatus():Promise<stream.ConnectionStatus>;
+
 export function StartUp(arg1:context.Context):Promise<void>;

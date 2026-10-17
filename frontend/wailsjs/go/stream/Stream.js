@@ -18,6 +18,10 @@ export function EncodeSession(arg1) {
   return window['go']['stream']['Stream']['EncodeSession'](arg1);
 }
 
+export function GetStatus() {
+  return window['go']['stream']['Stream']['GetStatus']();
+}
+
 export function StartUp(arg1) {
   return window['go']['stream']['Stream']['StartUp'](arg1);
 }
