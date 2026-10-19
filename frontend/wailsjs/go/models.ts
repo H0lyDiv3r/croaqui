@@ -1,5 +1,17 @@
 export namespace player {
 	
+	export class Player {
+	
+	
+	    static createFrom(source: any = {}) {
+	        return new Player(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	
+	    }
+	}
 	export class PlayerStatus {
 	    paused: any;
 	    position: any;

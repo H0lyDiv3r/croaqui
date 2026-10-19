@@ -35,28 +35,42 @@ export const NavBar = () => {
       height={"5rem"}
       justifyContent={"center"}
     >
-      <Grid
-        templateColumns="repeat(24, 1fr)"
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
         width={isExtraLarge ? "80%" : "95%"}
-        gap={"6"}
+        gap={"4"}
       >
-        <GridItem
-          colSpan={{ base: 6, lg: 8 }}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
+        <Box flexShrink={0} display={"flex"} alignItems={"center"}>
           <Logo />
-        </GridItem>
-        <GridItem colSpan={{ base: 12, lg: 8 }}>
+        </Box>
+        <Box flex={1} maxW={"420px"} mx={"auto"}>
           <SearchBar />
-        </GridItem>
-        <GridItem
-          colSpan={{ base: 6, lg: 8 }}
+        </Box>
+        <Box
           display={"flex"}
-          gap={"6"}
+          gap={"3"}
           justifyContent={"end"}
           alignItems={"center"}
+          flexShrink={0}
         >
+          <Button
+            size="xs"
+            onClick={() => {
+              (window as any)?.go?.stream?.Stream?.StreamAudio?.("");
+            }}
+          >
+            Send
+          </Button>
+          <Button
+            size="xs"
+            onClick={() => {
+              (window as any)?.go?.stream?.Stream?.AcceptAudio?.();
+            }}
+          >
+            Accept
+          </Button>
           <Box
             cursor={"pointer"}
             title="P2P Stream Test"
@@ -68,8 +82,8 @@ export const NavBar = () => {
           </Box>
           <Navigation />
           <Settings />
-        </GridItem>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 };

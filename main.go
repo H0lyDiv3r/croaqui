@@ -60,7 +60,7 @@ func main() {
 			queue.StartUp(ctx)
 			app.StartUp(ctx)
 			mpris.Startup(ctx, player)
-			stream.StartUp(ctx)
+			stream.StartUp(ctx, player)
 		},
 		OnShutdown: func(ctx context.Context) {
 			data.OnShutdown()
