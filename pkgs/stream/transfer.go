@@ -3,6 +3,8 @@ package stream
 import (
 	"fmt"
 	"io"
+	"net"
+	"net/http"
 	"os"
 	"time"
 )
@@ -64,24 +66,29 @@ func (s *Stream) AcceptAudio() {
 		}
 	}()
 
-	//read
-	go func() {
+	listener, err := net.Listen("tcp", "localhost:0")
 
-		buf := make([]byte, 4096)
-		totalBytes := 0
-		for {
-			n, err := pr.Read(buf)
+	if err != nil {
+		return
+	}
 
-			if err != nil {
+	server := &http.Server{
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "audio/mpeg")
+			w.Header().Set("Transfer-Encoding", "chunked")
+			io.Copy(w, pr)
+		}),
+	}
 
-				fmt.Println("finished playing", err)
-			}
+	go server.Serve(listener)
 
-			totalBytes += n
-			fmt.Printf("[Consumer] Read %d bytes from pipe | Total: %d bytes\n", n, totalBytes)
-		}
+	defer server.Close()
 
-	}()
+	streamURL := fmt.Sprintf("http://%s", listener.Addr().String())
+
+	if s.Player != nil {
+		s.Player.LoadMusic(streamURL, false)
+	}
 
 	// listener, err := net.Listen("tcp", "127.0.0.1:0")
 	//
