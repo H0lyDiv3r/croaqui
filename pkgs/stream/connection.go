@@ -12,6 +12,7 @@ import (
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/events"
 	"github.com/pion/ice/v4"
+	"github.com/pion/sctp"
 	"github.com/pion/stun/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -242,6 +243,11 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 				}
 			}
 			peer.Conn = conn
+			assoc, err := sctp.ServerWithOptions(sctp.WithNetConn(peer.Conn))
+			peer.SCTP = assoc
+			audioStream, err := assoc.OpenStream(0, sctp.PayloadTypeWebRTCBinary)
+			peer.AudioStream = audioStream
+
 		}()
 	} else {
 		go func() {
@@ -265,6 +271,13 @@ func (s *Stream) ConnectPeer(sessionKey string, isHost bool) error {
 				}
 			}
 			peer.Conn = conn
+			assoc, err := sctp.ClientWithOptions(sctp.WithNetConn(peer.Conn))
+			peer.SCTP = assoc
+
+			audioStream, err := assoc.OpenStream(0, sctp.PayloadTypeWebRTCBinary)
+			// controlStream, err := assoc.OpenStream(1, sctp.PayloadTypeWebRTCBinary)
+			peer.AudioStream = audioStream
+
 		}()
 	}
 

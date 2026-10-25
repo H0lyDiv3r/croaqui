@@ -26,7 +26,7 @@ func (s *Stream) StreamAudio(url string) {
 		if n > 0 {
 			for _, peer := range s.Peers {
 				if peer.Conn != nil {
-					peer.Conn.Write(buf[:n])
+					peer.AudioStream.Write(buf[:n])
 				}
 			}
 			time.Sleep(5 * time.Millisecond)
@@ -50,7 +50,7 @@ func (s *Stream) AcceptAudio() {
 		defer pw.Close()
 		buf := make([]byte, 1200)
 		for {
-			n, err := peer.Conn.Read(buf)
+			n, err := peer.AudioStream.Read(buf)
 
 			if err != nil {
 				return
@@ -81,8 +81,6 @@ func (s *Stream) AcceptAudio() {
 	}
 
 	go server.Serve(listener)
-
-	defer server.Close()
 
 	streamURL := fmt.Sprintf("http://%s", listener.Addr().String())
 
@@ -130,7 +128,7 @@ func (s *Stream) AcceptAudio() {
 	//			peer.Conn.SetReadDeadline(time.Now().Add(3 * time.Second))
 	//		}
 	//
-	//		n, err := peer.Conn.Read(buf)
+	//		n, err := peer.AudioStream.Read(buf)
 	//		if err != nil {
 	//			break
 	//		}

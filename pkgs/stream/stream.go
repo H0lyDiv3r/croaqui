@@ -5,6 +5,7 @@ import (
 
 	"github.com/H0lyDiv3r/croaqui/pkgs/player"
 	"github.com/pion/ice/v4"
+	"github.com/pion/sctp"
 )
 
 var stunServers = []string{
@@ -29,6 +30,9 @@ type Peer struct {
 	Agent         *ice.Agent
 	Conn          *ice.Conn
 	RemoteSession SessionCreds
+	SCTP          *sctp.Association
+	AudioStream   *sctp.Stream
+	ControlStream *sctp.Stream
 }
 
 type ConnectionStatus string
